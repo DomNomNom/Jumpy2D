@@ -20,7 +20,7 @@ class Controller:
   
   def __init__(self):
     if self.joyID >= pygame.joystick.get_count(): # check we have a joystick
-      raise Exception("OMG I CAN'T FIND ANY (more) JOYSTICKS!") # FIXME this needs to be a exception
+      raise Exception("OMG I CAN'T FIND ANY (more) JOYSTICKS!")
 
     # Setup and init joystick
     self.j = pygame.joystick.Joystick(self.joyID)
@@ -30,7 +30,7 @@ class Controller:
     # Check init status
     if self.j.get_init() != 1: 
       self.printInfo()
-      raise "OMG, something is wrong with this joystick"
+      raise Exception("OMG, something is wrong with this joystick")
 
     clock.schedule(self.checkInput) # maybe this wants to be elsewhere?
     #print "Joystick initialized"
@@ -55,7 +55,7 @@ class Controller:
       elif e.type == pygame.JOYBUTTONUP:
         print "buttonUP"
       elif e.type == pygame.JOYBUTTONDOWN:
-        print "buttonDOWN"
+        print "buttonDOWN:", e.dict
   
 
   def printInfo(self):
