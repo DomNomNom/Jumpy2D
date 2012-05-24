@@ -18,7 +18,7 @@ class Controller:
   stick_l_raw = Vector(0.0, 0.0)
   stick_r_raw = Vector(0.0, 0.0)
   
-  def __init__(self):
+  def __init__(self, debug=False): # TODO: store/use debug variable
     if self.joyID >= pygame.joystick.get_count(): # check we have a joystick
       raise Exception("OMG I CAN'T FIND ANY (more) JOYSTICKS!")
 

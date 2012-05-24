@@ -18,7 +18,7 @@ class Engine:
 
   def __init__(self, window):
     self.window = window
-    self.windowCenter = Vector(window.get_size()[0], window.get_size()[1]) / 2
+    self.windowCenter = Vector(fromTuple=window.get_size()) / 2
 
     try:
       gameController = Controller()

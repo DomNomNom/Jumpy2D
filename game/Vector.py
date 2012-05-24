@@ -9,10 +9,13 @@ class Vector:
   x = 0 
   y = 0
   
-  # Constructor
-  def __init__(self, x=0, y=0):
-    self.x = x
-    self.y = y
+  # Constructor. fromTuple is dominant when specified
+  def __init__(self, x=0, y=0, fromTuple=None):
+    if fromTuple:
+      (self.x, self.y) = fromTuple
+    else:
+      self.x = x
+      self.y = y
     
   def __neg__(self):
     return Vector(
