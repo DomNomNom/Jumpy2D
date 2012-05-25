@@ -1,7 +1,7 @@
 import pyglet
 
 from game.Engine import Engine
-
+from game.globals import engine
 
 window = pyglet.window.Window()
 engine = Engine(window)

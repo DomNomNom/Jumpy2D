@@ -24,6 +24,7 @@ class Engine:
       gameController = Controller()
     except: pass
 
+
   # DEBUG: draw a cross at the position of a vector
   def drawCross(self, v):
     r = 8
@@ -51,3 +52,10 @@ class Engine:
 
     glColor3f(1.0, 1.0, 1.0)
     self.drawCross(self.windowCenter)
+
+
+  def addEntity(e):
+    pass #TODO
+
+  def removeEntity(e):
+    pass # TODO
