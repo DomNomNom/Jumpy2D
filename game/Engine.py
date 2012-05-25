@@ -1,24 +1,37 @@
 from pyglet.gl import *
+from pyglet import clock
 
 from game.Controller import Controller
 from game.Vector import Vector
 
 class Engine:
 
-  window = None
-  windowCenter = Vector()
-
   gameController = None
 
   groups = {} # TODO map from group to list of Entities
 
   time = 0
-  prevTime = 0
+
+  window = pyglet.window.Window()
+  windowCenter = Vector()
+  mousePos = Vector()
+
+  """
+  @window.event
+  def on_draw():
+    pass # draw loop in here maybe?
+  """
 
 
-  def __init__(self, window):
-    self.window = window
-    self.windowCenter = Vector(fromTuple=window.get_size()) / 2
+  def __init__(self):
+    # Window events
+    @self.window.event
+    def on_mouse_motion(x, y, dx, dy):
+      self.mousePos = Vector(x, y)
+
+    self.windowCenter = Vector(fromTuple=self.window.get_size()) / 2
+
+    clock.schedule(self.run)
 
     try:
       gameController = Controller()
@@ -36,13 +49,13 @@ class Engine:
     glEnd()
 
 
-  def run(self):
+  def run(self, dt):
     glClearColor(0,0,0, 0)
     glClear(GL_COLOR_BUFFER_BIT)
     glLoadIdentity()
 
     glColor3f(1.0, 0.0, 0.0)
-    #self.drawCross(Vector(posX, posY)) # FIXME: mouse input
+    self.drawCross(self.mousePos)
 
     if self.gameController: # if we have a controller
       glColor3f(0.0, 1.0, 0.0)
