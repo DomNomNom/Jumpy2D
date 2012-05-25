@@ -1,9 +1,10 @@
-import pyglet
+from pyglet import app
 
 from game.Engine import Engine
 import game.globals
 
+game.globals.engine = Engine()
 
-game.globals.engine = Engine() # FIXME? is this the global one?
+#e2 = Engine()
 
-pyglet.app.run()
+app.run()

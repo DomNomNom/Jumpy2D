@@ -12,7 +12,7 @@ class Engine:
 
   time = 0
 
-  window = pyglet.window.Window()
+  window = None
   windowCenter = Vector()
   mousePos = Vector()
 
@@ -24,18 +24,18 @@ class Engine:
 
 
   def __init__(self):
-    # Window events
+    # Window
+    self.window = pyglet.window.Window()
     @self.window.event
     def on_mouse_motion(x, y, dx, dy):
       self.mousePos = Vector(x, y)
-
     self.windowCenter = Vector(fromTuple=self.window.get_size()) / 2
-
-    clock.schedule(self.run)
 
     try:
       gameController = Controller()
     except: pass
+
+    clock.schedule(self.run)
 
 
   # DEBUG: draw a cross at the position of a vector

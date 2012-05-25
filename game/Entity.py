@@ -11,4 +11,4 @@ class Entity:
 
   def draw(self):
     pass
-    
+
