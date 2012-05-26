@@ -8,7 +8,11 @@ class Engine:
 
   gameController = None
 
-  groups = {} # TODO map from group to list of Entities
+  groups = { # dictionary from group to list of Entities
+    'game':   [],
+    'player': [],
+    'UI':     [],
+  }
 
   time = 0
 
