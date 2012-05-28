@@ -3,6 +3,7 @@ from pyglet import clock
 
 from Controller import Controller
 from Vector import Vector
+from Entities.Editor import Editor
 
 from Entities.DebugCross import DebugCross
 
@@ -19,6 +20,7 @@ class Engine:
     'game':     set(), # will draw dependent   on camera movement
     'UI':       set(), # will draw independent of camera movement
     'player':   set(),
+    'editorUI': set(), # entites that are only part of the editor UI
   }
 
   time = 0
@@ -47,6 +49,7 @@ class Engine:
     except: pass
 
     self.addEntity(DebugCross())
+    
 
     clock.schedule(self.run)
 
