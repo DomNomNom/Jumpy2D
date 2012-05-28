@@ -8,7 +8,7 @@ from Entities.DebugCross import DebugCross
 
 
 class Engine:
-
+  trol = None
   gameController = None
 
   # dictionary from group to list of Entities

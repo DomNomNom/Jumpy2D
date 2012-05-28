@@ -1,3 +1,5 @@
+from Engine import Engine
+
 # A simple module to hold global variables
 
-engine = None
+engine = Engine()
