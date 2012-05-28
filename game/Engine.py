@@ -1,17 +1,22 @@
 from pyglet.gl import *
 from pyglet import clock
 
-from game.Controller import Controller
-from game.Vector import Vector
+from Controller import Controller
+from Vector import Vector
+
+from Entities.DebugCross import DebugCross
+
 
 class Engine:
 
   gameController = None
 
-  groups = { # dictionary from group to list of Entities
-    'game':   [],
+  # dictionary from group to list of Entities
+  # don't modify this directly! use addEntity/removeEntity.
+  groups = {
+    'game':   [], # will draw dependent   on camera movement
+    'UI':     [], # will draw independent of camera movement
     'player': [],
-    'UI':     [],
   }
 
   time = 0
@@ -39,6 +44,8 @@ class Engine:
       gameController = Controller()
     except: pass
 
+    self.addEntity(DebugCross())
+
     clock.schedule(self.run)
 
 
@@ -58,8 +65,15 @@ class Engine:
     glClear(GL_COLOR_BUFFER_BIT)
     glLoadIdentity()
 
-    glColor3f(1.0, 0.0, 0.0)
-    self.drawCross(self.mousePos)
+    # UPDATE
+    for entity in self.groups['game']:
+      entity.update(dt)
+
+    # DRAW
+    # TODO: sort entities
+    for entity in self.groups['game']:
+      entity.draw()
+#    glColor3f(1.0, 0.0, 0.0)
 
     if self.gameController: # if we have a controller
       glColor3f(0.0, 1.0, 0.0)
@@ -71,8 +85,10 @@ class Engine:
     self.drawCross(self.windowCenter)
 
 
-  def addEntity(e):
-    pass #TODO
+  def addEntity(self, e):
+    for group in e.groups:
+      self.groups[group].append(e)
 
-  def removeEntity(e):
-    pass # TODO
+  def removeEntity(self, e):
+    for group in e.groups:
+      self.groups[group].remove(e)
