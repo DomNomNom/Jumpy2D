@@ -11,7 +11,7 @@ class DebugCross(Entity):
   def __init__(self):
     #self.super()
     self.size = Vector(8, 8)
-    self.groups.add('game')
+    self.groups.add('UI')
   
   def update(self, dt):
     self.pos = game.globals.engine.mousePos

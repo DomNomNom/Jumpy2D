@@ -14,10 +14,11 @@ class Engine:
   # dictionary from group to list of Entities
   # don't modify this directly! use addEntity/removeEntity.
   groups = {
-    'all':    [], # all entities should be in here
-    'game':   [], # will draw dependent   on camera movement
-    'UI':     [], # will draw independent of camera movement
-    'player': [],
+    'all':      set(), # all entities should be in here
+    'updating': set(), # everything that wants to be updated goes in here
+    'game':     set(), # will draw dependent   on camera movement
+    'UI':       set(), # will draw independent of camera movement
+    'player':   set(),
   }
 
   time = 0
@@ -51,6 +52,7 @@ class Engine:
 
 
   # DEBUG: draw a cross at the position of a vector
+  # note this has been moved to a entity
   def drawCross(self, v):
     r = 8
     glBegin(GL_LINES)
@@ -67,13 +69,16 @@ class Engine:
     glLoadIdentity()
 
     # UPDATE
-    for entity in self.groups['all']:
+    for entity in self.groups['updating']:
       entity.update(dt)
 
     # DRAW
     # TODO: sort entities
     # TODO: camera
     for entity in self.groups['game']:
+      entity.draw()
+
+    for entity in self.groups['UI']:
       entity.draw()
 
     if self.gameController: # if we have a controller
@@ -88,8 +93,8 @@ class Engine:
 
   def addEntity(self, e):
     for group in e.groups:
-      self.groups[group].append(e)
+      self.groups[group].add(e)
 
   def removeEntity(self, e):
     for group in e.groups:
-      self.groups[group].remove(e)
+      self.groups[group].add(e)
