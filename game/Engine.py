@@ -14,6 +14,7 @@ class Engine:
   # dictionary from group to list of Entities
   # don't modify this directly! use addEntity/removeEntity.
   groups = {
+    'all':    [], # all entities should be in here
     'game':   [], # will draw dependent   on camera movement
     'UI':     [], # will draw independent of camera movement
     'player': [],
@@ -66,14 +67,14 @@ class Engine:
     glLoadIdentity()
 
     # UPDATE
-    for entity in self.groups['game']:
+    for entity in self.groups['all']:
       entity.update(dt)
 
     # DRAW
     # TODO: sort entities
+    # TODO: camera
     for entity in self.groups['game']:
       entity.draw()
-#    glColor3f(1.0, 0.0, 0.0)
 
     if self.gameController: # if we have a controller
       glColor3f(0.0, 1.0, 0.0)

@@ -17,6 +17,7 @@ class DebugCross(Entity):
     self.pos = game.globals.engine.mousePos
   
   def draw(self):
+    glColor3f(1.0, 0.0, 0.0)
     glBegin(GL_LINES)
     glVertex2f(self.pos.x            , self.pos.y+self.size.y)
     glVertex2f(self.pos.x            , self.pos.y-self.size.y)
