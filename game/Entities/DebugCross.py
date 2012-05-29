@@ -1,15 +1,13 @@
-from pyglet.gl import *
+import pyglet.gl as gl
 
 from Entity import Entity
 from game.Vector import Vector
 import game.globals
 
-"""
-simple Entity that just draws a cross at the mousePos
-"""
 class DebugCross(Entity):
+  '''A simple Entity that just draws a cross at engine.mousePos'''
+
   def __init__(self):
-    #self.super()
     self.size = Vector(8, 8)
     self.groups.add('UI')
   
@@ -17,10 +15,10 @@ class DebugCross(Entity):
     self.pos = game.globals.engine.mousePos
   
   def draw(self):
-    glColor3f(1.0, 0.0, 0.0)
-    glBegin(GL_LINES)
-    glVertex2f(self.pos.x            , self.pos.y+self.size.y)
-    glVertex2f(self.pos.x            , self.pos.y-self.size.y)
-    glVertex2f(self.pos.x+self.size.x, self.pos.y            )
-    glVertex2f(self.pos.x-self.size.x, self.pos.y            )
-    glEnd()
+    gl.glColor3f(1.0, 0.0, 0.0)
+    gl.glBegin(gl.GL_LINES)
+    gl.glVertex2f(self.pos.x            , self.pos.y+self.size.y)
+    gl.glVertex2f(self.pos.x            , self.pos.y-self.size.y)
+    gl.glVertex2f(self.pos.x+self.size.x, self.pos.y            )
+    gl.glVertex2f(self.pos.x-self.size.x, self.pos.y            )
+    gl.glEnd()

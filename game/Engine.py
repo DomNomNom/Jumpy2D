@@ -49,9 +49,9 @@ class Engine:
     clock.schedule(self.run)
 
 
-  # DEBUG: draw a cross at the position of a vector
   # note this has been moved to a entity
   def drawCross(self, v):
+    '''draw a cross at the position of a vector'''
     r = 8
     glBegin(GL_LINES)
     glVertex2f(v.x  , v.y+r)

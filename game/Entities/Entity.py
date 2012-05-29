@@ -7,7 +7,7 @@ class Entity:
 
   size = Vector(100, 100) # distance from center (pos)
 
-  groups = {'all', 'updating'} # a set of groups we are in (see Enine.groups)
+  groups = {'all', 'updating'} # a set of groups we are in (see Engine.groups)
 
   def update(self, dt):
     pos += vel * dt
