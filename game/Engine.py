@@ -5,8 +5,6 @@ from Controller import Controller
 from Vector import Vector
 from Entities.Editor import Editor
 
-from Entities.DebugCross import DebugCross
-
 
 class Engine:
 
@@ -47,9 +45,6 @@ class Engine:
     try:
       gameController = Controller()
     except: pass
-
-    self.addEntity(DebugCross())
-    
 
     clock.schedule(self.run)
 
