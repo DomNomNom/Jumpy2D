@@ -18,7 +18,7 @@ class Engine:
     'game':     set(), # will draw dependent   on camera movement
     'UI':       set(), # will draw independent of camera movement
     'player':   set(),
-    'editorUI': set(), # entites that are only part of the editor UI
+    'editorUI': set(), # entites that are part of the editor UI
   }
 
   time = 0

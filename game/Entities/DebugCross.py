@@ -10,15 +10,20 @@ class DebugCross(Entity):
   def __init__(self):
     self.size = Vector(8, 8)
     self.groups.add('UI')
-  
+
   def update(self, dt):
     self.pos = game.globals.engine.mousePos
-  
+
   def draw(self):
+    s = self.size # just a shorthand
     gl.glColor3f(1.0, 0.0, 0.0)
+
+    gl.glPushMatrix()
+    gl.glTranslatef(self.pos.x, self.pos.y, 0)
     gl.glBegin(gl.GL_LINES)
-    gl.glVertex2f(self.pos.x            , self.pos.y+self.size.y)
-    gl.glVertex2f(self.pos.x            , self.pos.y-self.size.y)
-    gl.glVertex2f(self.pos.x+self.size.x, self.pos.y            )
-    gl.glVertex2f(self.pos.x-self.size.x, self.pos.y            )
+    gl.glVertex2f(+s.x,    0)
+    gl.glVertex2f(-s.x,    0)
+    gl.glVertex2f(   0, +s.y)
+    gl.glVertex2f(   0, -s.y)
     gl.glEnd()
+    gl.glPopMatrix()
