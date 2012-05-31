@@ -1,5 +1,6 @@
 from pyglet.gl import *
 from pyglet import clock
+import time
 
 from Controller import Controller
 from Vector import Vector
@@ -21,7 +22,7 @@ class Engine:
     'editorUI': set(), # entites that are part of the editor UI
   }
 
-  time = 0
+  levelStartTime = time.time()
 
   window = None
   windowCenter = Vector()
@@ -37,10 +38,11 @@ class Engine:
   def __init__(self):
     # Window
     self.window = pyglet.window.Window()
+    self.windowCenter = Vector(fromTuple=self.window.get_size()) / 2
+
     @self.window.event
     def on_mouse_motion(x, y, dx, dy):
       self.mousePos = Vector(x, y)
-    self.windowCenter = Vector(fromTuple=self.window.get_size()) / 2
 
     try:
       gameController = Controller()
@@ -95,4 +97,4 @@ class Engine:
 
   def removeEntity(self, e):
     for group in e.groups:
-      self.groups[group].add(e)
+      self.groups[group].remove(e)

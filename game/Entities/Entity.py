@@ -10,7 +10,10 @@ class Entity:
   groups = {'all', 'updating'} # a set of groups we are in (see Engine.groups)
 
   def update(self, dt):
-    pos += vel * dt
+    self.move(dt)
+
+  def move(self, dt):
+    self.pos += self.vel * dt
 
   def draw(self):
     pass
