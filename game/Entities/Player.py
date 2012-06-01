@@ -19,8 +19,8 @@ class Player(Entity):
 
     while self.input.actionQueue:
       action = self.input.actionQueue.pop(0)
-      if action[0] == 'move':
-        self.vel.x = action[1] * self.speed # TODO make this safe. (check for positive/0/negative instead of taking value)
+      if action.type == 'move':
+        self.vel.x = action.moveDir * self.speed # TODO make this safe. (check for positive/0/negative instead of taking value)
 
     self.move(dt)
 
