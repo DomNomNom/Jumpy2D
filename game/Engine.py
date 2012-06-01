@@ -44,6 +44,10 @@ class Engine:
     def on_mouse_motion(x, y, dx, dy):
       self.mousePos = Vector(x, y)
 
+    @self.window.event
+    def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
+      self.mousePos = Vector(x, y)
+
     try:
       gameController = Controller()
     except: pass
