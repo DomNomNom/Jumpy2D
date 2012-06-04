@@ -37,7 +37,7 @@ class Engine:
 
   def __init__(self):
     # Window
-    self.window = pyglet.window.Window()
+    self.window = pyglet.window.Window(1920, 1080)
     self.windowCenter = Vector(fromTuple=self.window.get_size()) / 2
 
     @self.window.event
