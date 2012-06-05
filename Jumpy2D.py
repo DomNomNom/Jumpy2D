@@ -8,6 +8,7 @@ from game.Engine import Engine
 # Things we are going to add to the engine
 from game.KeyboardControl import KeyboardControl
 from game.Entities.Player import Player
+from game.Entities.Editor import Editor
 from game.Entities.DebugCross import DebugCross
 
 
@@ -28,7 +29,7 @@ game.engine = Engine()
 if args.editor and args.level:
   print 'lets edit this level:', args.level.name
 elif args.editor:
-  print 'lets make a new level'
+  game.engine.addEntity(Editor())
 elif args.level:
   print 'lets play this level:', args.level.name
 else:
