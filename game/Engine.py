@@ -11,16 +11,33 @@ class Engine:
 
   gameController = None
 
-  # dictionary from group to list of Entities
-  # don't modify this directly! use addEntity/removeEntity.
+  # dictionary from group to list of Entities. they are NOT mutually exclusive
+  # don't manually add to this directly! use addEntity/removeEntity.
   groups = {
     'all':      set(), # all entities should be in here
     'updating': set(), # everything that wants to be updated goes in here
     'game':     set(), # will draw dependent   on camera movement
     'UI':       set(), # will draw independent of camera movement
     'player':   set(),
-    'editorUI': set(), # entites that are part of the editor UI
+    'UI_editor': set(), # entites that are part of the editor UI
   }
+
+
+  # layers specify the order in which they are drawn. (ordered back to front)
+  drawLayerNames = [
+    'background',
+    'game',
+    'player',
+    # UI ones from here on
+    'UI_editor',
+    'UI_pauseMenu',
+    'UI_debug'
+  ]
+
+  # A dict from drawLayerNames to a list of entities. they are mutually exclusive
+  # TODO: would it make sense to have a batch draw for each of these?
+  drawLayers = {}
+
 
   levelStartTime = time.time()
 
@@ -36,14 +53,18 @@ class Engine:
 
 
   def __init__(self):
+    # init draw layers
+    for name in self.drawLayerNames:
+      self.drawLayers[name] = []
+
     # Window
     self.window = pyglet.window.Window()
     self.windowCenter = Vector(fromTuple=self.window.get_size()) / 2
 
+    # update our mousePos on every move event
     @self.window.event
     def on_mouse_motion(x, y, dx, dy):
       self.mousePos = Vector(x, y)
-
     @self.window.event
     def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
       self.mousePos = Vector(x, y)
@@ -52,6 +73,7 @@ class Engine:
       gameController = Controller()
     except: pass
 
+    # shedule our main loop so we don't need to manually deal with time
     clock.schedule(self.run)
 
 
@@ -77,13 +99,10 @@ class Engine:
       entity.update(dt)
 
     # DRAW
-    # TODO: sort entities
     # TODO: camera
-    for entity in self.groups['game']:
-      entity.draw()
-
-    for entity in self.groups['UI']:
-      entity.draw()
+    for name in self.drawLayerNames:
+      for entity in self.drawLayers[name]:  # TODO: batch drawing?
+        entity.draw()
 
     if self.gameController: # if we have a controller
       glColor3f(0.0, 1.0, 0.0)
@@ -98,7 +117,11 @@ class Engine:
   def addEntity(self, e):
     for group in e.groups:
       self.groups[group].add(e)
+    if e.drawLayer is not None:
+      self.drawLayers[e.drawLayer].append(e)
 
   def removeEntity(self, e):
     for group in e.groups:
       self.groups[group].remove(e)
+    if e.drawLayer is not None:
+      self.drawLayers[e.drawLayer].remove(e)

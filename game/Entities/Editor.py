@@ -9,7 +9,8 @@ class Editor(Entity):
   #Constructor
   def __init__(self):
   
-    self.groups.add('UI')
+    self.groups.add('UI_editor')
+    self.drawLayer = 'UI_editor'
     
     #create variable
     self.numTabs = 8 #the number of tabs the editor has

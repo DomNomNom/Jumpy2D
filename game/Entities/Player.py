@@ -12,6 +12,7 @@ class Player(Entity):
   def __init__(self, playerInput):
     self.input = playerInput
     self.groups.update(['game', 'player']) # append to set
+    self.drawLayer = 'player'
 
 
   def update(self, dt):
