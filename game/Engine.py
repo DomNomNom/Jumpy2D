@@ -1,5 +1,6 @@
 from pyglet.gl import *
 from pyglet import clock
+import pymunk
 import time
 
 from Controller import Controller
@@ -8,8 +9,6 @@ from Entities.Editor import Editor
 
 
 class Engine:
-
-  gameController = None
 
   # dictionary from group to list of Entities. they are NOT mutually exclusive
   # don't manually add to this directly! use addEntity/removeEntity.
@@ -39,18 +38,16 @@ class Engine:
   # TODO: would it make sense to have a batch draw for each of these?
   drawLayers = {}
 
-
   levelStartTime = time.time()
 
   window = None
   windowCenter = Vector()
   mousePos = Vector()
 
-  """
-  @window.event
-  def on_draw():
-    pass # draw loop in here maybe?
-  """
+  space = pymunk.Space() # our physics space
+
+  gameController = None
+
 
 
   def __init__(self):
@@ -69,6 +66,9 @@ class Engine:
     @self.window.event
     def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
       self.mousePos = Vector(x, y)
+
+    # physics
+    self.space.gravity = pymunk.Vec2d(0.0, -900.0)
 
     try:
       gameController = Controller()
@@ -99,6 +99,8 @@ class Engine:
     for entity in self.groups['updating']:
       entity.update(dt)
 
+    self.space.step(dt) # update physics
+
     # DRAW
     # TODO: camera
     for name in self.drawLayerNames:
@@ -118,11 +120,15 @@ class Engine:
   def addEntity(self, e):
     for group in e.groups:
       self.groups[group].add(e)
+    if 'physics' in e.groups:
+      self.space.add(e.body)
     if e.drawLayer is not None:
       self.drawLayers[e.drawLayer].append(e)
 
   def removeEntity(self, e):
     for group in e.groups:
       self.groups[group].remove(e)
+    if 'physics' in e.groups:
+      self.space.remove(e.body)
     if e.drawLayer is not None:
       self.drawLayers[e.drawLayer].remove(e)
