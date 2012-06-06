@@ -1,6 +1,6 @@
 from game.Vector import Vector
 
-class Entity:
+class Entity(object):
   pos = Vector(0., 0.)
   vel = Vector(0., 0.)
 

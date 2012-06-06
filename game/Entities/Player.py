@@ -1,17 +1,18 @@
 import pyglet.gl as gl
 
-from Entity import Entity
+from PhysicsEntity import PhysicsEntity
 from game.Vector import Vector
 import game.globals
 
-class Player(Entity):
+class Player(PhysicsEntity):
 
   size = Vector(10., 10.)
   speed = 100 # units per second
 
   def __init__(self, playerInput):
+    super(Player, self).__init__()
     self.input = playerInput
-    self.groups.update(['game', 'player']) # append to set
+    self.groups.add('player')
     self.drawLayer = 'player'
 
 

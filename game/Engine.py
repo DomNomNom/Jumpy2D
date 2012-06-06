@@ -16,9 +16,10 @@ class Engine:
   groups = {
     'all':      set(), # all entities should be in here
     'updating': set(), # everything that wants to be updated goes in here
+    'player':   set(),
+    'physics':  set(),
     'game':     set(), # will draw dependent   on camera movement
     'UI':       set(), # will draw independent of camera movement
-    'player':   set(),
     'UI_editor': set(), # entites that are part of the editor UI
   }
 
@@ -31,7 +32,7 @@ class Engine:
     # UI ones from here on
     'UI_editor',
     'UI_pauseMenu',
-    'UI_debug'
+    'UI_debug',
   ]
 
   # A dict from drawLayerNames to a list of entities. they are mutually exclusive
