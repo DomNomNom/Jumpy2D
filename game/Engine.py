@@ -68,7 +68,7 @@ class Engine:
       self.mousePos = Vector(x, y)
 
     # physics
-    self.space.gravity = pymunk.Vec2d(0.0, -90.0)
+    self.space.gravity = pymunk.Vec2d(0.0, -900.0)
 
     try:
       gameController = Controller()
