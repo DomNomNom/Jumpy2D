@@ -22,7 +22,7 @@ class Player(PhysicsEntity):
     self.pos = self.body.position
     self.vel = self.body.velocity
 #    self.shape = pymunk.Poly.create_box(self.body)
-    
+
     s = self.size # just a shorthand
     verticies = [
       (+s.x, +s.y),

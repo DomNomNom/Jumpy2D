@@ -40,6 +40,9 @@ class Engine:
 
   levelStartTime = time.time()
 
+  accumulatedFrameTime = 0.
+  updateRate = 1/120. # how often our physics will kick in (in seconds)
+
   window = None
   windowCenter = Vector()
   mousePos = Vector()
@@ -91,18 +94,23 @@ class Engine:
 
 
   def run(self, dt):
+    ## UPDATE ##
+    # timestep ala http://gafferongames.com/game-physics/fix-your-timestep/
+    if dt > .25: # avoid spiral of death (updating taking longer than framerate)
+      dt = .25
+    self.accumulatedFrameTime += dt
+    while self.accumulatedFrameTime >= self.updateRate:
+      self.accumulatedFrameTime -= self.updateRate
+      for entity in self.groups['updating']:
+        entity.update(self.updateRate) # update all entities
+      self.space.step(self.updateRate) # update physics
+
+    ## DRAW ##
+    # TODO: camera
     glClearColor(0,0,0, 0)
     glClear(GL_COLOR_BUFFER_BIT)
     glLoadIdentity()
 
-    # UPDATE
-    for entity in self.groups['updating']:
-      entity.update(dt)
-
-    self.space.step(dt) # update physics
-
-    # DRAW
-    # TODO: camera
     for name in self.drawLayerNames:
       for entity in self.drawLayers[name]:  # TODO: batch drawing?
         entity.draw()
@@ -121,10 +129,9 @@ class Engine:
     for group in e.groups:
       self.groups[group].add(e)
     if 'physics' in e.groups:
+      self.space.add(e.shape)
       if e.body is not self.space.static_body:
-        self.space.add(e.body, e.shape)
-      else:
-        self.space.add(e.shape)
+        self.space.add(e.body)
     if e.drawLayer is not None:
       self.drawLayers[e.drawLayer].append(e)
 
@@ -132,6 +139,8 @@ class Engine:
     for group in e.groups:
       self.groups[group].remove(e)
     if 'physics' in e.groups:
-      self.space.remove(e.body, e.shape) #TODO?
+      self.space.remove(e.shape)
+      if e.body is not self.space.static_body:
+        self.space.remove(e.body)
     if e.drawLayer is not None:
       self.drawLayers[e.drawLayer].remove(e)
