@@ -29,7 +29,7 @@ class Player(PhysicsEntity):
       (-s.x, -s.y),
       (-s.x, +s.y),
     ]
-    self.shape = pymunk.Poly(game.engine.space.static_body, verticies)
+    self.shape = pymunk.Poly(self.body, verticies)
     self.shape.friction = 0.5
 
 
