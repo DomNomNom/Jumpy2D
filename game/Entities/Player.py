@@ -1,5 +1,6 @@
 import pyglet.gl as gl
-from pymunk.vec2d import Vec2d
+from pymunk import Vec2d # TODO make nice
+import pymunk
 
 from PhysicsEntity import PhysicsEntity
 from game.Vector import Vector
@@ -11,16 +12,28 @@ class Player(PhysicsEntity):
   speed = 100 # units per second
 
   def __init__(self, playerInput):
+    super(Player, self).__init__()
     self.input = playerInput
     self.groups.add('player')
     self.drawLayer = 'player'
-    self.pos.copyFrom(game.engine.windowCenter)
-    super(Player, self).__init__()
+    self.body = pymunk.Body(self.mass, self.moment)
     self.body.position = Vec2d(game.engine.windowCenter.tuple())
+    self.pos = self.body.position
+    self.vel = self.body.velocity
+#    self.shape = pymunk.Poly.create_box(self.body)
+    
+    s = self.size # just a shorthand
+    verticies = [
+      (+s.x, +s.y),
+      (+s.x, -s.y),
+      (-s.x, -s.y),
+      (-s.x, +s.y),
+    ]
+    self.shape = pymunk.Poly(game.engine.space.static_body, verticies)
+    self.shape.friction = 0.5
 
 
   def update(self, dt):
-    self.pos = self.body.position
     self.input.checkInput()
 
     while self.input.actionQueue:

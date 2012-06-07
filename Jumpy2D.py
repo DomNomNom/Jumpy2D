@@ -7,8 +7,11 @@ from game.Engine import Engine
 
 # Things we are going to add to the engine
 from game.KeyboardControl import KeyboardControl
-from game.Entities.Player import Player
+
+# Entities
 from game.Entities.Editor import Editor
+from game.Entities.Player import Player
+from game.Entities.Platform import Platform
 from game.Entities.DebugCross import DebugCross
 
 
@@ -37,6 +40,7 @@ else:
 
 game.engine.addEntity(DebugCross())
 game.engine.addEntity(Player(KeyboardControl()))
+game.engine.addEntity(Platform())
 
 # 3.2.1. GO!
 app.run()

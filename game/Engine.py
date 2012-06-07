@@ -68,7 +68,7 @@ class Engine:
       self.mousePos = Vector(x, y)
 
     # physics
-    self.space.gravity = pymunk.Vec2d(0.0, -900.0)
+    self.space.gravity = pymunk.Vec2d(0.0, -90.0)
 
     try:
       gameController = Controller()
@@ -121,7 +121,10 @@ class Engine:
     for group in e.groups:
       self.groups[group].add(e)
     if 'physics' in e.groups:
-      self.space.add(e.body)
+      if e.body is not self.space.static_body:
+        self.space.add(e.body, e.shape)
+      else:
+        self.space.add(e.shape)
     if e.drawLayer is not None:
       self.drawLayers[e.drawLayer].append(e)
 
@@ -129,6 +132,6 @@ class Engine:
     for group in e.groups:
       self.groups[group].remove(e)
     if 'physics' in e.groups:
-      self.space.remove(e.body)
+      self.space.remove(e.body, e.shape) #TODO?
     if e.drawLayer is not None:
       self.drawLayers[e.drawLayer].remove(e)
