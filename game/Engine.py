@@ -59,7 +59,11 @@ class Engine:
       self.drawLayers[name] = []
 
     # Window
-    self.window = pyglet.window.Window()
+    self.window = pyglet.window.Window(
+      fullscreen = False,
+      vsync = True,
+      style = pyglet.window.Window.WINDOW_STYLE_BORDERLESS,
+    )
     self.windowCenter = Vector(fromTuple=self.window.get_size()) / 2
 
     # update our mousePos on every move event
@@ -73,9 +77,12 @@ class Engine:
     # physics
     self.space.gravity = pymunk.Vec2d(0.0, -900.0)
 
+    # TODO: update controller to be a playerInput
     try:
       gameController = Controller()
     except: pass
+
+    self.fps_display = pyglet.clock.ClockDisplay()
 
     # shedule our main loop so we don't need to manually deal with time
     clock.schedule(self.run)
@@ -123,7 +130,8 @@ class Engine:
 
     glColor3f(1.0, 1.0, 1.0)
     self.drawCross(self.windowCenter)
-
+    self.fps_display.draw()
+    #self.window.flip()
 
   def addEntity(self, e):
     for group in e.groups:

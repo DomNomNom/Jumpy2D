@@ -43,9 +43,9 @@ class Player(PhysicsEntity):
         # TODO make this safe. (check for positive/0/negative instead of taking value)
         self.vel.x = action.moveDir * self.speed
       elif action.type == 'jump':
+        self.vel.y = 0
         self.body.apply_impulse((0, self.jump_impulse))
-
-    #self.move(dt)
+    #print self.body.angle
 
   def draw(self):
     s = self.size # just a shorthand
@@ -53,6 +53,7 @@ class Player(PhysicsEntity):
 
     gl.glPushMatrix()
     gl.glTranslatef(self.pos.x, self.pos.y, 0)
+    gl.glRotatef(0, self.body.angle, 0, self.body.angle)
     gl.glBegin(gl.GL_QUADS)
     gl.glVertex2f(-s.x, +s.y)
     gl.glVertex2f(+s.x, +s.y)
