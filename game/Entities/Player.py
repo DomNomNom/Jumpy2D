@@ -1,6 +1,7 @@
 import pyglet.gl as gl
 from pymunk import Vec2d # TODO make nice
 import pymunk
+from math import degrees
 
 from PhysicsEntity import PhysicsEntity
 from game.Vector import Vector
@@ -17,7 +18,7 @@ class Player(PhysicsEntity):
     self.input = playerInput
     self.groups.add('player')
     self.drawLayer = 'player'
-    self.body = pymunk.Body(self.mass, self.moment)
+    self.body = pymunk.Body(self.mass, float('inf'))
     self.body.position = Vec2d(game.engine.windowCenter.tuple())
     self.pos = self.body.position
     self.vel = self.body.velocity
@@ -45,7 +46,6 @@ class Player(PhysicsEntity):
       elif action.type == 'jump':
         self.vel.y = 0
         self.body.apply_impulse((0, self.jump_impulse))
-    #print self.body.angle
 
   def draw(self):
     s = self.size # just a shorthand
@@ -53,7 +53,7 @@ class Player(PhysicsEntity):
 
     gl.glPushMatrix()
     gl.glTranslatef(self.pos.x, self.pos.y, 0)
-    gl.glRotatef(0, self.body.angle, 0, self.body.angle)
+    gl.glRotatef(degrees(self.body.angle), 0, 0, 1)
     gl.glBegin(gl.GL_QUADS)
     gl.glVertex2f(-s.x, +s.y)
     gl.glVertex2f(+s.x, +s.y)

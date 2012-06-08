@@ -60,8 +60,8 @@ class Engine:
 
     # Window
     self.window = pyglet.window.Window(
-      fullscreen = False,
-      vsync = True,
+      #fullscreen = True,
+      vsync = False,
       style = pyglet.window.Window.WINDOW_STYLE_BORDERLESS,
     )
     self.windowCenter = Vector(fromTuple=self.window.get_size()) / 2
