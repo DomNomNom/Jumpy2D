@@ -18,7 +18,7 @@ class Player(PhysicsEntity):
     self.groups.add('player')
     self.drawLayer = 'player'
     self.body = pymunk.Body(self.mass, float('inf'))
-    self.body.position = Vec2d(game.engine.windowCenter.tuple())
+    self.body.position = Vec2d(game.engine.windowCenter)
     self.pos = self.body.position
     self.vel = self.body.velocity
 #    self.shape = pymunk.Poly.create_box(self.body)

@@ -1,5 +1,5 @@
 from pyglet import app, clock
-from Vector import Vector
+from pymunk import Vec2d
 import pygame
 
 # init pygame
@@ -12,11 +12,11 @@ class Controller:
   joyID = 0 # note: is used as a static counter
 
   # these are filtered to be at a maximum length of 1
-  stick_l = Vector(0.0, 0.0)
-  stick_r = Vector(0.0, 0.0)
+  stick_l = Vec2d(0.0, 0.0)
+  stick_r = Vec2d(0.0, 0.0)
   # these come straight from the input
-  stick_l_raw = Vector(0.0, 0.0)
-  stick_r_raw = Vector(0.0, 0.0)
+  stick_l_raw = Vec2d(0.0, 0.0)
+  stick_r_raw = Vec2d(0.0, 0.0)
   
   def __init__(self, debug=False): # TODO: store/use debug variable
     if self.joyID >= pygame.joystick.get_count(): # check we have a joystick

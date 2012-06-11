@@ -12,7 +12,7 @@ class Platform(PhysicsEntity):
 
   def __init__(self):
     self.drawLayer = 'game'
-    self.pos = Vec2d(game.engine.windowCenter.tuple())
+    self.pos = Vec2d(game.engine.windowCenter)
     self.pos.y -= 150
 
     # physics
@@ -31,7 +31,7 @@ class Platform(PhysicsEntity):
 
 
   def update(self, dt):
-    pass #self.vel.y = 0
+    pass
 
   def draw(self):
     s = self.size # just a shorthand

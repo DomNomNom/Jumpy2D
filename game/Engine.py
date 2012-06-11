@@ -1,10 +1,9 @@
 from pyglet.gl import *
 from pyglet import clock
-import pymunk
+from pymunk import Vec2d, Space
 import time
 
 from Controller import Controller
-from Vector import Vector
 from Entities.Editor import Editor
 
 
@@ -44,10 +43,10 @@ class Engine:
   updateRate = 1/120. # how often our physics will kick in (in seconds)
 
   window = None
-  windowCenter = Vector()
-  mousePos = Vector()
+  windowCenter = Vec2d()
+  mousePos = Vec2d()
 
-  space = pymunk.Space() # our physics space
+  space = Space() # our physics space
 
   gameController = None
 
@@ -64,18 +63,18 @@ class Engine:
       vsync = False,
       style = pyglet.window.Window.WINDOW_STYLE_BORDERLESS,
     )
-    self.windowCenter = Vector(fromTuple=self.window.get_size()) / 2
+    self.windowCenter = Vec2d(self.window.get_size()) / 2
 
     # update our mousePos on every move event
     @self.window.event
     def on_mouse_motion(x, y, dx, dy):
-      self.mousePos = Vector(x, y)
+      self.mousePos = Vec2d(x, y)
     @self.window.event
     def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
-      self.mousePos = Vector(x, y)
+      self.mousePos = Vec2d(x, y)
 
     # physics
-    self.space.gravity = pymunk.Vec2d(0.0, -900.0)
+    self.space.gravity = Vec2d(0.0, -900.0)
 
     # TODO: update controller to be a playerInput
     try:
