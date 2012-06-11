@@ -10,7 +10,7 @@ import game.globals as game
 class Player(PhysicsEntity):
 
   size = Vector(10., 10.)
-  speed = 300. # units per second
+  speed = 100. # units per second
   jump_impulse = 3000.
 
   def __init__(self, playerInput):
@@ -32,7 +32,7 @@ class Player(PhysicsEntity):
       (-s.x, +s.y),
     ]
     self.shape = pymunk.Poly(self.body, verticies)
-    #self.shape.friction = 0.5
+    self.shape.friction = 1
 
 
   def update(self, dt):
@@ -42,7 +42,7 @@ class Player(PhysicsEntity):
       action = self.input.actionQueue.pop(0)
       if action.type == 'move':
         # TODO make this safe. (check for positive/0/negative instead of taking value)
-        self.vel.x = action.moveDir * self.speed
+        self.shape.surface_velocity = Vec2d(action.moveDir * self.speed, 0)
       elif action.type == 'jump':
         self.vel.y = 0
         self.body.apply_impulse((0, self.jump_impulse))

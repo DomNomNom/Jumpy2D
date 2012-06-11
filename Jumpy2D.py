@@ -1,3 +1,4 @@
+#!/usr/bin/python
 from pyglet import app
 import argparse
 

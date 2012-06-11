@@ -27,7 +27,7 @@ class Platform(PhysicsEntity):
       (p.x-s.x, p.y+s.y),
     ]
     self.shape = pymunk.Poly(pymunk.Body(), verticies)
-    self.shape.friction = 0.5
+    self.shape.friction = 1
 
 
   def update(self, dt):
