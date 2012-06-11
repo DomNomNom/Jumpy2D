@@ -3,7 +3,6 @@ from pyglet import clock
 from pymunk import Vec2d, Space
 import time
 
-from Controller import Controller
 from Entities.Editor import Editor
 
 
@@ -77,9 +76,6 @@ class Engine:
     self.space.gravity = Vec2d(0.0, -900.0)
 
     # TODO: update controller to be a playerInput
-    try:
-      gameController = Controller()
-    except: pass
 
     self.fps_display = pyglet.clock.ClockDisplay()
 
@@ -120,12 +116,6 @@ class Engine:
     for name in self.drawLayerNames:
       for entity in self.drawLayers[name]:  # TODO: batch drawing?
         entity.draw()
-
-    if self.gameController: # if we have a controller
-      glColor3f(0.0, 1.0, 0.0)
-      self.drawCross(self.windowCenter + 100 * c.stick_l_raw)
-      glColor3f(1.0, 1.0, 0.0)
-      self.drawCross(self.windowCenter + 100 * c.stick_r_raw)
 
     glColor3f(1.0, 1.0, 1.0)
     self.drawCross(self.windowCenter)

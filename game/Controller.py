@@ -2,23 +2,26 @@ from pyglet import app, clock
 from pymunk import Vec2d
 import pygame
 
-# init pygame
-pygame.init()
+from PlayerInput import PlayerInput
 
-class Controller:
+
+class Controller(PlayerInput):
+
+  prevDirection = 0
+  prevJump = False
 
   j = None # our pygame.joystick
 
   joyID = 0 # note: is used as a static counter
 
-  # these are filtered to be at a maximum length of 1
+  # these come straight from the input
   stick_l = Vec2d(0.0, 0.0)
   stick_r = Vec2d(0.0, 0.0)
-  # these come straight from the input
-  stick_l_raw = Vec2d(0.0, 0.0)
-  stick_r_raw = Vec2d(0.0, 0.0)
   
-  def __init__(self, debug=False): # TODO: store/use debug variable
+  def __init__(self):
+    # init pygame
+    pygame.init()
+
     if self.joyID >= pygame.joystick.get_count(): # check we have a joystick
       raise Exception("OMG I CAN'T FIND ANY (more) JOYSTICKS!")
 
@@ -32,23 +35,28 @@ class Controller:
       self.printInfo()
       raise Exception("OMG, something is wrong with this joystick")
 
-    clock.schedule(self.checkInput) # maybe this wants to be elsewhere?
     #print "Joystick initialized"
 
 
-  def checkInput(self, dt):
+  def checkInput(self):
     for e in pygame.event.get():
       #print '%s: %s' % (pygame.event.event_name(e.type), e.dict)
       if e.type == pygame.JOYAXISMOTION:
         axis = e.dict['axis']
         val = e.dict['value']
-        if   axis == 0: self.stick_l_raw.x = val
-        elif axis == 1: self.stick_l_raw.y = val
-        elif axis == 2: self.stick_r_raw.x = val
-        elif axis == 3: self.stick_r_raw.y = val
-        self.stick_r.copyFrom(self.stick_r_raw).constrainLength(1.0)
-        self.stick_l.copyFrom(self.stick_l_raw).constrainLength(1.0)
-       # print self.stick_l
+        if   axis == 0: self.stick_l.x = val
+        elif axis == 1: self.stick_l.y = val
+        elif axis == 2: self.stick_r.x = val
+        elif axis == 3: self.stick_r.y = val
+
+        self.currentAim = self.stick_r.angle
+        direction = round(self.stick_l.x)
+        if direction != self.prevDirection:
+          self.recordAction('move', direction)
+          self.prevDirection = direction
+
+        #print self.stick_l
+        #print self.currentAim
         
       elif e.type == pygame.JOYHATMOTION: #TODO: this stuff
         print "d pad"

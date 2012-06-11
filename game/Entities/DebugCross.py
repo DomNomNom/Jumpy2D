@@ -9,7 +9,7 @@ class DebugCross(Entity):
 
   def __init__(self):
     self.size = Vec2d(8, 8)
-    self.groups.add('UI')
+    self.groups = self.groups | {'UI'}
     self.drawLayer = 'UI_debug'
 
   def update(self, dt):

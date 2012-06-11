@@ -8,6 +8,7 @@ from game.Engine import Engine
 
 # Things we are going to add to the engine
 from game.KeyboardControl import KeyboardControl
+from game.Controller import Controller
 
 # Entities
 from game.Entities.Editor import Editor
@@ -39,8 +40,13 @@ elif args.level:
 else:
   pass # go to menu
 
+playerInput = KeyboardControl()
+try:
+  playerInput = Controller() # use game pad input if we have one
+except: pass
+
+game.engine.addEntity(Player(playerInput))
 game.engine.addEntity(DebugCross())
-game.engine.addEntity(Player(KeyboardControl()))
 game.engine.addEntity(Platform())
 
 # 3.2.1. GO!

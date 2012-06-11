@@ -30,4 +30,4 @@ class PlayerInput:
       self.aim = aim
       self.time = time.time()-globals.engine.levelStartTime
       if moveDir != None:
-        self.moveDir = moveDir
+        self.moveDir = max(min(moveDir, 1), -1) # constraint:  -1 <= moveDir <= 1

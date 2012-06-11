@@ -15,7 +15,7 @@ class Player(PhysicsEntity):
   def __init__(self, playerInput):
     super(Player, self).__init__()
     self.input = playerInput
-    self.groups.add('player')
+    self.groups = self.groups | {'player'}
     self.drawLayer = 'player'
     self.body = pymunk.Body(self.mass, float('inf'))
     self.body.position = Vec2d(game.engine.windowCenter)

@@ -8,7 +8,7 @@ class Editor(Entity):
   #Constructor
   def __init__(self):
   
-    self.groups.add('UI_editor')
+    self.groups = self.groups | {'UI_editor'}
     self.drawLayer = 'UI_editor'
     
     #create variable
