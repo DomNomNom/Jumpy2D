@@ -7,7 +7,7 @@ import game.globals as game
 
 class Platform(PhysicsEntity):
 
-  size = Vec2d(1000., 100.)
+  size = Vec2d(100., 100.)
   speed = 100 # units per second
 
   def __init__(self):

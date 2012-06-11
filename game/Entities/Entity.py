@@ -11,10 +11,7 @@ class Entity(object):
   drawLayer = 'game' # None if it shouldn't be drawn; otherwise a string from engine.drawLayerNames
 
   def update(self, dt):
-    self.move(dt)
-
-  def move(self, dt):
-    self.pos += self.vel * dt
+    pass
 
   def draw(self):
     pass
