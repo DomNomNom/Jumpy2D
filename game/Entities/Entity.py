@@ -1,10 +1,9 @@
-from game.Vector import Vector
+from pymunk import Vec2d
 
 class Entity(object):
-  pos = Vector(0., 0.)
-  vel = Vector(0., 0.)
-
-  size = Vector(100, 100) # distance from center (pos)
+  pos = Vec2d(0., 0.)
+  vel = Vec2d(0., 0.)
+  size = Vec2d(100, 100) # distance from center (pos)
 
   groups = {'all', 'updating'} # a set of groups we are in (see Engine.groups)
 

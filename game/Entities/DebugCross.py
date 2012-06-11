@@ -1,14 +1,14 @@
 import pyglet.gl as gl
+from pymunk import Vec2d
 
 from Entity import Entity
-from game.Vector import Vector
 import game.globals
 
 class DebugCross(Entity):
   '''A simple Entity that just draws a cross at engine.mousePos'''
 
   def __init__(self):
-    self.size = Vector(8, 8)
+    self.size = Vec2d(8, 8)
     self.groups.add('UI')
     self.drawLayer = 'UI_debug'
 

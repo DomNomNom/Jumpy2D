@@ -1,7 +1,6 @@
-from pyglet import image
-from pyglet import sprite
+from pyglet import image, sprite
+
 from Entity import Entity
-from game.Vector import Vector
 import game.globals
 
 class Editor(Entity):

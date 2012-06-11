@@ -1,15 +1,14 @@
 import pyglet.gl as gl
-from pymunk import Vec2d # TODO make nice
 import pymunk
+from pymunk import Vec2d
 from math import degrees
 
 from PhysicsEntity import PhysicsEntity
-from game.Vector import Vector
 import game.globals as game
 
 class Player(PhysicsEntity):
 
-  size = Vector(10., 10.)
+  size = Vec2d(10., 10.)
   speed = 100. # units per second
   jump_impulse = 3000.
 
