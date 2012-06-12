@@ -12,17 +12,20 @@ class Player(PhysicsEntity):
   speed = 100. # units per second
   jump_impulse = 3000.
 
-  def __init__(self, playerInput):
+  def __init__(self, playerInput, pos):
     super(Player, self).__init__()
     self.input = playerInput
     self.groups = self.groups | {'player'}
     self.drawLayer = 'player'
     self.body = pymunk.Body(self.mass, float('inf'))
-    self.body.position = Vec2d(game.engine.windowCenter)
+    self.body.position = Vec2d(pos)
     self.pos = self.body.position
     self.vel = self.body.velocity
-#    self.shape = pymunk.Poly.create_box(self.body)
 
+    # init shape
+    # TODO bottom-only surface velocity
+    self.shape = pymunk.Poly.create_box(self.body, 2*self.size)
+    """
     s = self.size # just a shorthand
     verticies = [
       (+s.x, +s.y),
@@ -30,7 +33,8 @@ class Player(PhysicsEntity):
       (-s.x, -s.y),
       (-s.x, +s.y),
     ]
-    self.shape = pymunk.Poly(self.body, verticies)
+    #self.shape = pymunk.Poly(self.body, verticies)
+    """
     self.shape.friction = 1
 
 
@@ -46,7 +50,7 @@ class Player(PhysicsEntity):
         self.vel.y = 0
         self.body.apply_impulse((0, self.jump_impulse))
       elif action.type == 'shoot':
-        print "pew pew!", "trajectory:", action.aim
+        print "pew pew:", action.aim
 
   def draw(self):
     s = self.size # just a shorthand

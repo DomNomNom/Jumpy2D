@@ -7,13 +7,10 @@ import game.globals as game
 
 class Platform(PhysicsEntity):
 
-  size = Vec2d(100., 100.)
-  speed = 100 # units per second
-
-  def __init__(self):
+  def __init__(self, pos, size=Vec2d(100, 100)):
     self.drawLayer = 'game'
-    self.pos = Vec2d(game.engine.windowCenter)
-    self.pos.y -= 150
+    self.pos = Vec2d(pos)
+    self.size = Vec2d(size)
 
     # physics
     super(Platform, self).__init__()
@@ -26,7 +23,7 @@ class Platform(PhysicsEntity):
       (p.x-s.x, p.y-s.y),
       (p.x-s.x, p.y+s.y),
     ]
-    self.shape = pymunk.Poly(pymunk.Body(), verticies)
+    self.shape = pymunk.Poly(self.body, verticies)
     self.shape.friction = 1
 
 

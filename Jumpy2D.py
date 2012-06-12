@@ -1,5 +1,6 @@
 #!/usr/bin/python
 from pyglet import app
+from pymunk import Vec2d
 import argparse
 
 # our engine
@@ -45,9 +46,10 @@ try:
   playerInput = Controller() # use game pad input if we have one
 except: pass
 
-game.engine.addEntity(Player(playerInput))
 game.engine.addEntity(DebugCross())
-game.engine.addEntity(Platform())
+game.engine.addEntity(Player(playerInput, pos=(320, 240)))
+game.engine.addEntity(Platform(pos=(320, 90 )                 )) #TODO: Let the level loader deal with this
+game.engine.addEntity(Platform(pos=(450, 200), size=(100, 40) ))
 
 # 3.2.1. GO!
 app.run()
