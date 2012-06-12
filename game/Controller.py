@@ -8,7 +8,6 @@ from PlayerInput import PlayerInput
 class Controller(PlayerInput):
 
   prevDirection = 0
-  prevJump = False
 
   j = None # our pygame.joystick
 
@@ -18,6 +17,14 @@ class Controller(PlayerInput):
   stick_l = Vec2d(0.0, 0.0)
   stick_r = Vec2d(0.0, 0.0)
   
+  # button bindings
+  bindings = {
+    4 : 'jump',
+    6 : 'shoot',
+    7 : 'shoot2',
+  }
+
+
   def __init__(self):
     # init pygame
     pygame.init()
@@ -49,21 +56,23 @@ class Controller(PlayerInput):
         elif axis == 2: self.stick_r.x = val
         elif axis == 3: self.stick_r.y = val
 
-        self.currentAim = self.stick_r.angle
+        self.currentAim = -self.stick_r.angle
         direction = round(self.stick_l.x)
         if direction != self.prevDirection:
           self.recordAction('move', direction)
           self.prevDirection = direction
-
         #print self.stick_l
         #print self.currentAim
         
-      elif e.type == pygame.JOYHATMOTION: #TODO: this stuff
-        print "d pad"
-      elif e.type == pygame.JOYBUTTONUP:
-        print "buttonUP"
+      elif e.type == pygame.JOYHATMOTION: #TODO
+        print "d pad", e.dict
       elif e.type == pygame.JOYBUTTONDOWN:
-        print "buttonDOWN:", e.dict
+        #print "buttonDOWN:", e.dict
+        button = e.dict['button']
+        if button in self.bindings:
+          self.recordAction(self.bindings[button])
+      elif e.type == pygame.JOYBUTTONUP:
+        pass #print "buttonUP  :", e.dict
   
 
   def printInfo(self):

@@ -45,6 +45,8 @@ class Player(PhysicsEntity):
       elif action.type == 'jump':
         self.vel.y = 0
         self.body.apply_impulse((0, self.jump_impulse))
+      elif action.type == 'shoot':
+        print "pew pew!", "trajectory:", action.aim
 
   def draw(self):
     s = self.size # just a shorthand

@@ -22,7 +22,7 @@ class PlayerInput:
 
   class PlayerAction:
     ''' A small class to hold information about a action '''
-    actionTypes = ['move', 'jump', 'fire', 'fire2']
+    actionTypes = ['move', 'jump', 'shoot', 'shoot2']
 
     def __init__(self, actionType, aim, moveDir=None):
       assert actionType in self.actionTypes, str(actionType) + ' is not a actionType'

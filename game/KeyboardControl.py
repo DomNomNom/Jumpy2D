@@ -8,6 +8,7 @@ class KeyboardControl(PlayerInput):
   prevDirection = 0
   prevJump = False
 
+
   def __init__(self):
     self.keys = key.KeyStateHandler()
     game.engine.window.push_handlers(self.keys)
