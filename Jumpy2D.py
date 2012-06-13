@@ -4,14 +4,17 @@ from pymunk import Vec2d
 import argparse
 
 # our engine
-import game.globals as game
+import game.globals
 from game.Engine import Engine
+
+# game state stuff (should be moved as well)
+from game.LevelLoader import LevelLoader
 
 # Things we are going to add to the engine
 from game.KeyboardControl import KeyboardControl
 from game.Controller import Controller
 
-# Entities
+# Entities (TODO: move to level loader)
 from game.Entities.Editor import Editor
 from game.Entities.Player import Player
 from game.Entities.Platform import Platform
@@ -29,7 +32,7 @@ parser.add_argument('-l', '--level', type=file, help='Loads a level file at the 
 args = parser.parse_args()
 
 # Create the engine
-game.engine = Engine()
+game.globals.engine = Engine()
 
 # Do stuff to the engine using the arguments (TODO)
 if args.editor and args.level:
@@ -46,10 +49,10 @@ try:
   playerInput = Controller() # use game pad input if we have one
 except: pass
 
-game.engine.addEntity(DebugCross())
-game.engine.addEntity(Player(playerInput, pos=(320, 240)))
-game.engine.addEntity(Platform(pos=(320, 90 )                 )) #TODO: Let the level loader deal with this
-game.engine.addEntity(Platform(pos=(450, 200), size=(100, 40) ))
+game.globals.engine.addEntity(DebugCross())
+game.globals.engine.addEntity(Player(playerInput, pos=(320, 240))) #TODO: PlayerSpawn in level Loader
+
+loader = LevelLoader('test')
 
 # 3.2.1. GO!
 app.run()

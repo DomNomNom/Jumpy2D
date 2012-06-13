@@ -1,0 +1,4 @@
+#"PlayerSpawn", (320, 240)
+"Platform", (320, 90 )
+  
+"Platform", (450, 200), (100, 40)
