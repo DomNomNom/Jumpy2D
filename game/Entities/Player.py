@@ -23,19 +23,29 @@ class Player(PhysicsEntity):
     self.vel = self.body.velocity
 
     # init shape
-    # TODO bottom-only surface velocity
-    self.shape = pymunk.Poly.create_box(self.body, 2*self.size)
-    """
-    s = self.size # just a shorthand
+    self.collisionSquare = pymunk.Poly.create_box(self.body, 2*self.size)
+
+    '''
     verticies = [
       (+s.x, +s.y),
       (+s.x, -s.y),
       (-s.x, -s.y),
       (-s.x, +s.y),
     ]
-    #self.shape = pymunk.Poly(self.body, verticies)
-    """
-    self.shape.friction = 1
+    '''
+
+    # legs are the bottom of our shape
+    s = self.size # just a shorthand
+    v = 1.1 # a small vertical offset
+    h = 3  # making the triangle thinner
+    verticies = [
+      (   0, 0),
+      (+s.x - h, -s.y - v),
+      (-s.x + h, -s.y - v),
+    ]
+    self.legs = pymunk.Poly(self.body, verticies)
+    self.legs.friction = 1
+    self.shapes = [self.collisionSquare, self.legs]
 
 
   def update(self, dt):
@@ -45,7 +55,7 @@ class Player(PhysicsEntity):
       action = self.input.actionQueue.pop(0)
       if action.type == 'move':
         # TODO make this safe. (check for positive/0/negative instead of taking value)
-        self.shape.surface_velocity = Vec2d(action.moveDir * self.speed, 0)
+        self.legs.surface_velocity = Vec2d(action.moveDir * self.speed, 0)
       elif action.type == 'jump':
         self.vel.y = 0
         self.body.apply_impulse((0, self.jump_impulse))
@@ -54,15 +64,23 @@ class Player(PhysicsEntity):
 
   def draw(self):
     s = self.size # just a shorthand
-    gl.glColor3f(1.0, 0.0, 0.0)
 
+    #this block does nothing, it's a template for when images come in
     gl.glPushMatrix()
     gl.glTranslatef(self.pos.x, self.pos.y, 0)
     gl.glRotatef(degrees(self.body.angle), 0, 0, 1)
-    gl.glBegin(gl.GL_QUADS)
-    gl.glVertex2f(-s.x, +s.y)
-    gl.glVertex2f(+s.x, +s.y)
-    gl.glVertex2f(+s.x, -s.y)
-    gl.glVertex2f(-s.x, -s.y)
-    gl.glEnd()
+    # blip image
     gl.glPopMatrix()
+
+    # main collision square
+    gl.glColor3f(1.0, 0.0, 0.0)
+    gl.glBegin(gl.GL_POLYGON)
+    for p in self.collisionSquare.get_points():
+      gl.glVertex2f(p.x, p.y)
+    gl.glEnd()
+
+    # "feet" triangle
+    gl.glColor3f(1.0, 0.0, 1.0)
+    gl.glBegin(gl.GL_POLYGON)
+    for p in self.legs.get_points():
+      gl.glVertex2f(p.x, p.y)

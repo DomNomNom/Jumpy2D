@@ -126,7 +126,7 @@ class Engine:
     for group in e.groups:
       self.groups[group].add(e)
     if 'physics' in e.groups:
-      self.space.add(e.shape)
+      self.space.add(e.shapes)
       if e.body is not self.space.static_body:
         self.space.add(e.body)
     if e.drawLayer is not None:
@@ -136,7 +136,7 @@ class Engine:
     for group in e.groups:
       self.groups[group].remove(e)
     if 'physics' in e.groups:
-      self.space.remove(e.shape)
+      self.space.remove(e.shapes)
       if e.body is not self.space.static_body:
         self.space.remove(e.body)
     if e.drawLayer is not None:
