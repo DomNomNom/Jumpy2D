@@ -26,9 +26,13 @@ class Platform(PhysicsEntity):
     self.shapes = [pymunk.Poly(self.body, verticies)]
     self.shapes[0].friction = 1
 
-
-  def update(self, dt):
-    pass
+  def __repr__(self):
+    # return comma separated
+    return repr([
+      'Platform',
+      tuple(self.pos ),
+      tuple(self.size),
+    ])
 
   def draw(self):
     s = self.size # just a shorthand

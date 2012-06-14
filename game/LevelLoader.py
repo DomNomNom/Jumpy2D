@@ -37,6 +37,7 @@ class LevelLoader(object):
 
         if entityType not in self.constructors:
           print lineErr, "This is not a valid entity type:", entityType
+          print lineErr, "Possible types:", self.constructors.keys()
           continue
         constructor = self.constructors[entityType]
 
