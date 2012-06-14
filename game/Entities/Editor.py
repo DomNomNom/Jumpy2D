@@ -36,9 +36,9 @@ class Editor(Entity):
 
     #scaling
     self.scale = float(game.globals.engine.window.height)/1080.0 #find the scale
-    #self.sideBarSprite.scale  = self.scale
-    #for i in self.tabList:
-      #i.scale = self.scale
+    self.sideBarSprite.scale  = self.scale
+    for i in self.tabList:
+      i.scale = self.scale
 
     #set positions
     self.sideBarSprite.position = (0, 0);
@@ -71,14 +71,10 @@ class Editor(Entity):
         gl.glVertex2f(0, i)
         gl.glVertex2f(winWidth, i)
       gl.glEnd()
-      #i = int(self.gridOffset[1]*self.scale)
-      #while i <= winHeight: #draw the horizontal lines
-      #  graphics.draw(2, gl.GL_LINES, ('v2i', (0, i, winWidth, i)))
-      #  i += int(self.gridSize*self.scale)
 
-    #self.sideBarSprite.draw() #draw the side bar
+    self.sideBarSprite.draw() #draw the side bar
 
-    #for i in xrange(self.numTabs): #draw the tabs
+    for i in xrange(self.numTabs): #draw the tabs
       #self.tabList[i].draw()
 
 
