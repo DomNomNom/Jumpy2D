@@ -67,10 +67,12 @@ class Engine:
     # update our mousePos on every move event
     @self.window.event
     def on_mouse_motion(x, y, dx, dy):
-      self.mousePos = Vec2d(x, y)
+      self.mousePos.x = x
+      self.mousePos.y = y
     @self.window.event
     def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
-      self.mousePos = Vec2d(x, y)
+      self.mousePos.x = x
+      self.mousePos.y = y
 
     # physics
     self.space.gravity = Vec2d(0.0, -900.0)
@@ -81,18 +83,6 @@ class Engine:
 
     # shedule our main loop so we don't need to manually deal with time
     clock.schedule(self.run)
-
-
-  # note this has been moved to a entity
-  def drawCross(self, v):
-    '''draw a cross at the position of a vector'''
-    r = 8
-    glBegin(GL_LINES)
-    glVertex2f(v.x  , v.y+r)
-    glVertex2f(v.x  , v.y-r)
-    glVertex2f(v.x+r, v.y  )
-    glVertex2f(v.x-r, v.y  )
-    glEnd()
 
 
   def run(self, dt):
@@ -117,8 +107,6 @@ class Engine:
       for entity in self.drawLayers[name]:  # TODO: batch drawing?
         entity.draw()
 
-    glColor3f(1.0, 1.0, 1.0)
-    self.drawCross(self.windowCenter)
     self.fps_display.draw()
     #self.window.flip()
 

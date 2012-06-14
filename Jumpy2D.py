@@ -33,6 +33,7 @@ args = parser.parse_args()
 
 # Create the engine
 game.globals.engine = Engine()
+engine = game.globals.engine # a shorthand
 
 # Do stuff to the engine using the arguments (TODO)
 if args.editor and args.level:
@@ -49,8 +50,10 @@ try:
   playerInput = Controller() # use game pad input if we have one
 except: pass
 
-game.globals.engine.addEntity(DebugCross())
-game.globals.engine.addEntity(Player(playerInput, pos=(320, 240))) #TODO: PlayerSpawn in level Loader
+player = Player(playerInput, pos=(320, 240))
+engine.addEntity(player) #TODO: PlayerSpawn in level Loader
+engine.addEntity(DebugCross(engine.windowCenter, (1,1,1) ))
+engine.addEntity(DebugCross(engine.mousePos,     (1,0,0) ))
 
 loader = LevelLoader('test')
 
