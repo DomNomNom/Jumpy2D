@@ -84,3 +84,4 @@ class Player(PhysicsEntity):
     gl.glBegin(gl.GL_POLYGON)
     for p in self.legs.get_points():
       gl.glVertex2f(p.x, p.y)
+    gl.glEnd()
