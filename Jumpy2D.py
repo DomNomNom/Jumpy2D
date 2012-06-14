@@ -39,7 +39,7 @@ engine = game.globals.engine # a shorthand
 if args.editor and args.level:
   print 'lets edit this level:', args.level.name
 elif args.editor:
-  game.engine.addEntity(Editor())
+  engine.addEntity(Editor())
 elif args.level:
   print 'lets play this level:', args.level.name
 else:
