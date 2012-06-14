@@ -27,7 +27,6 @@ class Platform(PhysicsEntity):
     self.shapes[0].friction = 1
 
   def __repr__(self):
-    # return comma separated
     return repr([
       'Platform',
       tuple(self.pos ),
