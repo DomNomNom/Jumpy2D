@@ -12,6 +12,7 @@ class Editor(Entity):
     #set groups
     self.groups = self.groups | {'UI_editor'}
     self.drawLayer = 'UI_editor'
+    self.batch = game.globals.engine.drawLayersBatch[self.drawLayer]
 
     #create variables
     self.numTabs = 8 #the number of tabs the editor has
@@ -29,10 +30,10 @@ class Editor(Entity):
     self.tab1Image     = image.load("game/Resources/Graphics/EditorUI/editorTab1.png") #selected tab
 
     #set sprites
-    self.sideBarSprite = sprite.Sprite(self.sideBarImage)
+    self.sideBarSprite = sprite.Sprite(self.sideBarImage, batch = self.batch)
     self.tabList = [] #list that contains all the sprites of the tabs
     for i in xrange(self.numTabs):
-      self.tabList.append(sprite.Sprite(self.tab0Image)) #default load all the tabs to unselected
+      self.tabList.append(sprite.Sprite(self.tab0Image, batch = self.batch)) #default load all the tabs to unselected
 
     #scaling
     self.scale = float(game.globals.engine.window.height)/1080.0 #find the scale
@@ -72,10 +73,10 @@ class Editor(Entity):
         gl.glVertex2f(winWidth, i)
       gl.glEnd()
 
-    self.sideBarSprite.draw() #draw the side bar
+    #self.sideBarSprite.draw() #draw the side bar
 
-    for i in xrange(self.numTabs): #draw the tabs
-      self.tabList[i].draw()
+    #for i in xrange(self.numTabs): #draw the tabs
+      #self.tabList[i].draw()
 
 
   def leftMouseDown(self):

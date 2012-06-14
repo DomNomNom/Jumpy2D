@@ -33,8 +33,8 @@ class Engine:
   ]
 
   # A dict from drawLayerNames to a list of entities. they are mutually exclusive
-  # TODO: would it make sense to have a batch draw for each of these?
   drawLayers = {}
+  drawLayersBatch = {} #a dict from drawLayerNames to a list of batches
 
   levelStartTime = time.time()
 
@@ -55,6 +55,7 @@ class Engine:
     # init draw layers
     for name in self.drawLayerNames:
       self.drawLayers[name] = []
+      self.drawLayersBatch[name] = pyglet.graphics.Batch()
 
     # Window
     self.window = pyglet.window.Window(
@@ -106,6 +107,7 @@ class Engine:
     for name in self.drawLayerNames:
       for entity in self.drawLayers[name]:  # TODO: batch drawing?
         entity.draw()
+      self.drawLayersBatch[name].draw()
 
     self.fps_display.draw()
     #self.window.flip()
