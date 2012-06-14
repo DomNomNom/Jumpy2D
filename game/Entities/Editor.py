@@ -73,11 +73,6 @@ class Editor(Entity):
         gl.glVertex2f(winWidth, i)
       gl.glEnd()
 
-    #self.sideBarSprite.draw() #draw the side bar
-
-    #for i in xrange(self.numTabs): #draw the tabs
-      #self.tabList[i].draw()
-
 
   def leftMouseDown(self):
     leftMouseDown = True
