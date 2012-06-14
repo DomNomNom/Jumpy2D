@@ -8,7 +8,7 @@ import game.globals
 from game.Engine import Engine
 
 # game state stuff (should be moved as well)
-from game.LevelLoader import loadLevel
+from game.LevelLoader import loadLevel, saveLevel #TODO: move load/save to gamestate
 
 # Things we are going to add to the engine
 from game.KeyboardControl import KeyboardControl
@@ -55,8 +55,11 @@ engine.addEntity(player) #TODO: PlayerSpawn in level Loader
 engine.addEntity(DebugCross(engine.windowCenter, (1,1,1) ))
 engine.addEntity(DebugCross(engine.mousePos,     (1,0,0) ))
 
-for entity in loadLevel('test'):
+entities = loadLevel('test')
+for entity in entities:
   engine.addEntity(entity)
+saveLevel('test2', entities)
+
 
 # 3.2.1. GO!
 app.run()

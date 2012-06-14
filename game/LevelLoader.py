@@ -1,4 +1,4 @@
-from os import path
+from os import path, mkdir
 from ast import literal_eval
 
 import game.globals as game
@@ -48,8 +48,15 @@ def loadLevel(levelName):
       newEntities.append(newEntity)
 
   return newEntities
-  
+
+
+
 def saveLevel(levelName, entities):
   levelPath = path.join(path.dirname(__file__), 'Resources', 'Levels', 'uncompressed', levelName, 'level.txt')
+  levelDir = path.dirname(levelPath)
+  if not path.exists(levelDir):
+    mkdir(levelDir)
+
   with open(levelPath, 'w') as levelFile:
-    levelFile.write('hello')
+    for entity in entities:
+      levelFile.write(repr(entity) + '\n')
