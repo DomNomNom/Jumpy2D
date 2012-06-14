@@ -75,7 +75,7 @@ class Editor(Entity):
     self.sideBarSprite.draw() #draw the side bar
 
     for i in xrange(self.numTabs): #draw the tabs
-      #self.tabList[i].draw()
+      self.tabList[i].draw()
 
 
   def leftMouseDown(self):
