@@ -17,21 +17,21 @@ class Platform(PhysicsEntity):
     self.body = game.engine.space.static_body
     s = self.size # just a shorthand
     p = self.pos
-    verticies = [
+    v = [ #verticies (corners of our square)
       (p.x+s.x, p.y+s.y),
       (p.x+s.x, p.y-s.y),
       (p.x-s.x, p.y-s.y),
       (p.x-s.x, p.y+s.y),
     ]
-    self.shapes = [pymunk.Poly(self.body, verticies)]
-    self.shapes[0].friction = 1
+    right  = pymunk.Poly(self.body, [p, v[0], v[1]])
+    bottom = pymunk.Poly(self.body, [p, v[1], v[2]])
+    left   = pymunk.Poly(self.body, [p, v[2], v[3]])
+    top    = pymunk.Poly(self.body, [p, v[3], v[0]])
+    top.friction = 1
+    #bottom.friction = 1
+    self.shapes = [right, left, top, bottom]
+    #self.shapes = [pymunk.Poly(self.body, verticies)]
 
-  def __repr__(self):
-    return repr([
-      'Platform',
-      tuple(self.pos ),
-      tuple(self.size),
-    ])
 
   def draw(self):
     s = self.size # just a shorthand
@@ -46,3 +46,18 @@ class Platform(PhysicsEntity):
     gl.glVertex2f(-s.x, -s.y)
     gl.glEnd()
     gl.glPopMatrix()
+
+
+    gl.glColor3f(1.0, 0.0, 0.0)
+    gl.glBegin(gl.GL_QUADS)
+    for p in self.shapes[0].get_points():
+      gl.glVertex2f(p.x, p.y)
+    gl.glEnd()
+
+
+  def __repr__(self):
+    return repr([
+      'Platform',
+      tuple(self.pos ),
+      tuple(self.size),
+    ])
