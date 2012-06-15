@@ -77,6 +77,7 @@ class Engine:
 
     # physics
     self.space.gravity = Vec2d(0.0, -900.0)
+    self.space.collision_bias = 0
 
     # TODO: update controller to be a playerInput
 

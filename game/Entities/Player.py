@@ -9,7 +9,7 @@ import game.globals as game
 class Player(PhysicsEntity):
 
   size = Vec2d(10, 10)
-  speed = 100. # units per second
+  speed = 200. # units per second
   jump_impulse = 3000.
 
   def __init__(self, playerInput, pos):
