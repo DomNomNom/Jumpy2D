@@ -84,12 +84,12 @@ class Editor(Entity):
         self.dragBoxStart = self.dragBoxStart+Vec2d(0, self.gridSize.x)
 
     #get the mouse position if a drag box is being created
-      if self.leftMouseDown:
-        if self.snapToGrid:
-          self.dragBoxEnd = self.mousePos-(self.mousePos%self.gridSize)
-          if self.mousePos.x >= self.dragBoxStart.x: self.dragBoxEnd = self.dragBoxEnd+Vec2d(self.gridSize.x, 0)
-          if self.mousePos.y >= self.dragBoxStart.y: self.dragBoxEnd = self.dragBoxEnd+Vec2d(0, self.gridSize.x)
-        else: self.dragBoxEnd = Vec2d(self.mousePos.x, self.mousePos.y)
+    if self.leftMouseDown:
+      if self.snapToGrid:
+        self.dragBoxEnd = self.mousePos-(self.mousePos%self.gridSize)
+        if self.mousePos.x >= self.dragBoxStart.x: self.dragBoxEnd = self.dragBoxEnd+Vec2d(self.gridSize.x, 0)
+        if self.mousePos.y >= self.dragBoxStart.y: self.dragBoxEnd = self.dragBoxEnd+Vec2d(0, self.gridSize.x)
+      else: self.dragBoxEnd = Vec2d(self.mousePos.x, self.mousePos.y)
 
 
   #Draw the editor
