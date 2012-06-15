@@ -20,10 +20,12 @@ class Editor(Entity):
     self.rightMouseDown = False #reflects the right mouse button's state
     self.mousePos = game.globals.engine.mousePos
     self.gridOn = True #is the grid on
-    self.snapToGridOn = True #is snap to grid on?
-    self.gridSize = 32 #the size of a grid unit
+    self.snapToGrid = True #is snap to grid on?
+    self.gridSize = Vec2d(32, 32) #the size of a grid unit
     self.gridOffset = Vec2d(0, 0) #the x and y offsets of the grid
     self.dragBoxStart = Vec2d(0, 0) #the start coords of the dragbox
+    self.dragBoxOrigin = Vec2d(0, 0) #the original drag box start point
+    self.dragBoxEnd = Vec2d(0, 0) #the end coords of the dragbox
 
     #until resources is implement the editor currently loads its own images
     self.sideBarImage  = image.load("game/Resources/Graphics/EditorUI/editorUI.png")
@@ -54,9 +56,11 @@ class Editor(Entity):
     #mouse event functions
     @game.globals.engine.window.event
     def on_mouse_press(x, y, button, modifiers):
-      if button == 1: 
+      if button == 1:
         self.leftMouseDown = True
-        self.dragBoxStart = Vec2d(x, y)
+        if self.snapToGrid: self.dragBoxStart = Vec2d(x-(x%self.gridSize.x), y-(y%self.gridSize.x)+self.gridSize.x)
+        else: self.dragBoxStart = Vec2d(x, y)
+        self.dragBoxOrigin = self.dragBoxStart
       elif button == 4: self.rightMouseDown = True
 
     @game.globals.engine.window.event
@@ -68,20 +72,37 @@ class Editor(Entity):
   #FUNCTIONS
   #Updates the editor
   def update(self, dt):
-    pass
+    #when the drag box is snapping to grid make sure a dragged over squares are in the box
+    if self.leftMouseDown and self.snapToGrid:
+      if self.mousePos.x < self.dragBoxStart.x and self.dragBoxStart.x == self.dragBoxOrigin.x:
+        self.dragBoxStart = self.dragBoxStart+Vec2d(self.gridSize.x, 0)
+      elif self.mousePos.x >= self.dragBoxStart.x and self.dragBoxStart.x > self.dragBoxOrigin.x:
+        self.dragBoxStart = self.dragBoxStart-Vec2d(self.gridSize.x, 0)
+      if self.mousePos.y > self.dragBoxStart.y and self.dragBoxStart.y == self.dragBoxOrigin.y:
+        self.dragBoxStart = self.dragBoxStart-Vec2d(0, self.gridSize.x)
+      elif self.mousePos.y <= self.dragBoxStart.y and self.dragBoxStart.y < self.dragBoxOrigin.y:
+        self.dragBoxStart = self.dragBoxStart+Vec2d(0, self.gridSize.x)
+
+    #get the mouse position if a drag box is being created
+      if self.leftMouseDown:
+        if self.snapToGrid:
+          self.dragBoxEnd = self.mousePos-(self.mousePos%self.gridSize)
+          if self.mousePos.x >= self.dragBoxStart.x: self.dragBoxEnd = self.dragBoxEnd+Vec2d(self.gridSize.x, 0)
+          if self.mousePos.y >= self.dragBoxStart.y: self.dragBoxEnd = self.dragBoxEnd+Vec2d(0, self.gridSize.x)
+        else: self.dragBoxEnd = Vec2d(self.mousePos.x, self.mousePos.y)
 
 
   #Draw the editor
   def draw(self):
-    if self.gridOn: #draw the grid if it is on
+    if self.gridOn: #draw the grid if it is onf
       gl.glColor4d(0.5, 0.5, 0.5, 0.5)
       winWidth = game.globals.engine.window.width
       winHeight = game.globals.engine.window.height
       gl.glBegin(gl.GL_LINES)
-      for i in xrange(int(self.gridOffset.x), winWidth, self.gridSize): #draw the vertical lines
+      for i in xrange(int(self.gridOffset.x), winWidth, int(self.gridSize.x)): #draw the vertical lines
         gl.glVertex2f(i, 0)
         gl.glVertex2f(i, winHeight)
-      for i in xrange(int(self.gridOffset.y), winHeight, self.gridSize):
+      for i in xrange(int(self.gridOffset.y), winHeight, int(self.gridSize.x)):
         gl.glVertex2f(0, i)
         gl.glVertex2f(winWidth, i)
       gl.glEnd()
@@ -91,18 +112,17 @@ class Editor(Entity):
       #draw the inner box
       gl.glBegin(gl.GL_QUADS)
       gl.glVertex2f(self.dragBoxStart.x, self.dragBoxStart.y)
-      gl.glVertex2f(self.mousePos.x, self.dragBoxStart.y)
-      gl.glVertex2f(self.mousePos.x, self.mousePos.y)
-      gl.glVertex2f(self.dragBoxStart.x, self.mousePos.y)
+      gl.glVertex2f(self.dragBoxEnd.x, self.dragBoxStart.y)
+      gl.glVertex2f(self.dragBoxEnd.x, self.dragBoxEnd.y)
+      gl.glVertex2f(self.dragBoxStart.x, self.dragBoxEnd.y)
       gl.glEnd()
       #draw the outline
       gl.glColor4f(0.0, 0.0, 1.0, 1.0)
-      gl.glBegin(gl.GL_LINE_STRIP)
+      gl.glBegin(gl.GL_LINE_LOOP)
       gl.glVertex2f(self.dragBoxStart.x, self.dragBoxStart.y)
-      gl.glVertex2f(self.mousePos.x, self.dragBoxStart.y)
-      gl.glVertex2f(self.mousePos.x, self.mousePos.y)
-      gl.glVertex2f(self.dragBoxStart.x, self.mousePos.y)
-      gl.glVertex2f(self.dragBoxStart.x, self.dragBoxStart.y)
+      gl.glVertex2f(self.dragBoxEnd.x, self.dragBoxStart.y)
+      gl.glVertex2f(self.dragBoxEnd.x, self.dragBoxEnd.y)
+      gl.glVertex2f(self.dragBoxStart.x, self.dragBoxEnd.y)
       gl.glEnd()
 
   #set the given tab as the selected tab
