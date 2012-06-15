@@ -13,7 +13,7 @@ class Player(PhysicsEntity):
   jump_impulse = 3000.
 
   def __init__(self, playerInput, pos):
-    super(Player, self).__init__()
+    PhysicsEntity.__init__(self)
     self.input = playerInput
     self.groups = self.groups | {'player'}
     self.drawLayer = 'player'

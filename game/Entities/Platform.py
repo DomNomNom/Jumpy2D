@@ -13,7 +13,7 @@ class Platform(PhysicsEntity):
     self.size = Vec2d(size)
 
     # physics
-    super(Platform, self).__init__()
+    PhysicsEntity.__init__(self)  
     self.body = game.engine.space.static_body
     s = self.size # just a shorthand
     p = self.pos
@@ -28,9 +28,7 @@ class Platform(PhysicsEntity):
     left   = pymunk.Poly(self.body, [p, v[2], v[3]])
     top    = pymunk.Poly(self.body, [p, v[3], v[0]])
     top.friction = 1
-    #bottom.friction = 1
     self.shapes = [right, left, top, bottom]
-    #self.shapes = [pymunk.Poly(self.body, verticies)]
 
 
   def draw(self):
