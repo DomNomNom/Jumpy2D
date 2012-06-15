@@ -22,7 +22,8 @@ class Editor(Entity):
     self.gridOn = True #is the grid on
     self.snapToGridOn = True #is snap to grid on?
     self.gridSize = 32 #the size of a grid unit
-    self.gridOffset = Vec2d(0, 0) # the x and y offsets of the grid
+    self.gridOffset = Vec2d(0, 0) #the x and y offsets of the grid
+    self.dragBoxStart = Vec2d(0, 0) #the start coords of the dragbox
 
     #until resources is implement the editor currently loads its own images
     self.sideBarImage  = image.load("game/Resources/Graphics/EditorUI/editorUI.png")
@@ -50,18 +51,30 @@ class Editor(Entity):
 
     self.selectTab(0) #select the first tab
 
+    #mouse event functions
+    @game.globals.engine.window.event
+    def on_mouse_press(x, y, button, modifiers):
+      if button == 1: 
+        self.leftMouseDown = True
+        self.dragBoxStart = Vec2d(x, y)
+      elif button == 4: self.rightMouseDown = True
+
+    @game.globals.engine.window.event
+    def on_mouse_release(x, y, button, modifiers):
+      if button == 1: self.leftMouseDown = False
+      elif button == 4: self.rightMouseDown = False
+
+
   #FUNCTIONS
   #Updates the editor
   def update(self, dt):
-    #poll the input here
-    #process the input here
     pass
 
 
   #Draw the editor
   def draw(self):
     if self.gridOn: #draw the grid if it is on
-      gl.glColor3f(0.5, 0.5, 0.5)
+      gl.glColor4d(0.5, 0.5, 0.5, 0.5)
       winWidth = game.globals.engine.window.width
       winHeight = game.globals.engine.window.height
       gl.glBegin(gl.GL_LINES)
@@ -73,24 +86,26 @@ class Editor(Entity):
         gl.glVertex2f(winWidth, i)
       gl.glEnd()
 
+    if self.leftMouseDown:
+      gl.glColor4f(0.0, 0.0, 1.0, 0.35)
+      #draw the inner box
+      gl.glBegin(gl.GL_QUADS)
+      gl.glVertex2f(self.dragBoxStart.x, self.dragBoxStart.y)
+      gl.glVertex2f(self.mousePos.x, self.dragBoxStart.y)
+      gl.glVertex2f(self.mousePos.x, self.mousePos.y)
+      gl.glVertex2f(self.dragBoxStart.x, self.mousePos.y)
+      gl.glEnd()
+      #draw the outline
+      gl.glColor4f(0.0, 0.0, 1.0, 1.0)
+      gl.glBegin(gl.GL_LINE_STRIP)
+      gl.glVertex2f(self.dragBoxStart.x, self.dragBoxStart.y)
+      gl.glVertex2f(self.mousePos.x, self.dragBoxStart.y)
+      gl.glVertex2f(self.mousePos.x, self.mousePos.y)
+      gl.glVertex2f(self.dragBoxStart.x, self.mousePos.y)
+      gl.glVertex2f(self.dragBoxStart.x, self.dragBoxStart.y)
+      gl.glEnd()
 
-  def leftMouseDown(self):
-    leftMouseDown = True
-
-
-  def leftMouseUp(self):
-    leftMouseDown = False
-
-
-  def rightMouseDown(self):
-    rightMouseDown = True
-
-
-  def rightMouseUp(self):
-    rightMouseDown = False
-
-
-  #set the given tab as the selected tab  
+  #set the given tab as the selected tab
   def selectTab(self, tabNo):
     for i in range(self.numTabs):
       if i == tabNo: self.tabList[i].image = self.tab1Image
