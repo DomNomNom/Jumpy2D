@@ -64,6 +64,9 @@ class Engine:
       style = pyglet.window.Window.WINDOW_STYLE_BORDERLESS,
     )
     self.windowCenter = Vec2d(self.window.get_size()) / 2
+    
+    # opengl
+    gl.glEnable(GL_BLEND) #enables transparency
 
     # update our mousePos on every move event
     @self.window.event
