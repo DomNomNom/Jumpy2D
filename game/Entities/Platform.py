@@ -3,9 +3,17 @@ from pymunk.vec2d import Vec2d
 import pymunk
 
 from PhysicsEntity import PhysicsEntity
-import game.globals as game
+
+# things we collide with
+from Rocket import Rocket
+from Player import Player
+
+import game.globals as game # engine
+
 
 class Platform(PhysicsEntity):
+
+  collisionLayer = 2**0
 
   def __init__(self, pos, size=Vec2d(100, 100)):
     self.drawLayer = 'game'
@@ -29,6 +37,8 @@ class Platform(PhysicsEntity):
     top    = pymunk.Poly(self.body, [p, v[3], v[0]])
     top.friction = 1
     self.shapes = [right, left, top, bottom]
+    for shape in self.shapes:
+      shape.layers = Player.collisionLayer + Rocket.collisionLayer
 
 
   def draw(self):
