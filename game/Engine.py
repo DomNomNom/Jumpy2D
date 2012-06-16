@@ -32,6 +32,9 @@ class Engine:
     'UI_debug',
   ]
 
+  entityAddQueue = []
+  entityDelQueue = []
+
   # A dict from drawLayerNames to a list of entities. they are mutually exclusive
   drawLayers = {}
   drawLayersBatch = {} #a dict from drawLayerNames to a list of batches
@@ -100,6 +103,8 @@ class Engine:
       self.accumulatedFrameTime -= self.updateRate
       for entity in self.groups['updating']:
         entity.update(self.updateRate) # update all entities
+      self._processRemoving()
+      self._processAdding()
       self.space.step(self.updateRate) # update physics
 
     ## DRAW ##
@@ -116,22 +121,34 @@ class Engine:
     self.fps_display.draw()
     #self.window.flip()
 
+
   def addEntity(self, e):
-    for group in e.groups:
-      self.groups[group].add(e)
-    if 'physics' in e.groups:
-      self.space.add(e.shapes)
-      if e.body is not self.space.static_body:
-        self.space.add(e.body)
-    if e.drawLayer is not None:
-      self.drawLayers[e.drawLayer].append(e)
+    self.entityAddQueue.append(e)
 
   def removeEntity(self, e):
-    for group in e.groups:
-      self.groups[group].remove(e)
-    if 'physics' in e.groups:
-      self.space.remove(e.shapes)
-      if e.body is not self.space.static_body:
-        self.space.remove(e.body)
-    if e.drawLayer is not None:
-      self.drawLayers[e.drawLayer].remove(e)
+    self.entityDelQueue.append(e)
+
+
+  def _processAdding(self):
+    while len(self.entityAddQueue):
+      e = self.entityAddQueue.pop(0)
+      for group in e.groups:
+        self.groups[group].add(e)
+      if 'physics' in e.groups:
+        self.space.add(e.shapes)
+        if e.body is not self.space.static_body:
+          self.space.add(e.body)
+      if e.drawLayer is not None:
+        self.drawLayers[e.drawLayer].append(e)
+
+  def _processRemoving(self):
+    while len(self.entityDelQueue):
+      e = self.entityDelQueue.pop(0)
+      for group in e.groups:
+        self.groups[group].remove(e)
+      if 'physics' in e.groups:
+        self.space.remove(e.shapes)
+        if e.body is not self.space.static_body:
+          self.space.remove(e.body)
+      if e.drawLayer is not None:
+        self.drawLayers[e.drawLayer].remove(e)

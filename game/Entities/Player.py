@@ -4,6 +4,7 @@ from pymunk import Vec2d
 from math import degrees
 
 from PhysicsEntity import PhysicsEntity
+from Rocket import Rocket
 import game.globals as game
 
 class Player(PhysicsEntity):
@@ -19,9 +20,9 @@ class Player(PhysicsEntity):
     self.drawLayer = 'player'
     self.body = pymunk.Body(self.mass, float('inf'))
     self.body.position = Vec2d(pos)
+    self.airControl = Vec2d(0, 0)
     self.pos = self.body.position
     self.vel = self.body.velocity
-    self.airControl = Vec2d(0, 0)
 
     # init shape
     self.collisionSquare = pymunk.Poly.create_box(self.body, 2*self.size)
@@ -43,6 +44,7 @@ class Player(PhysicsEntity):
         self.body.apply_impulse((0, self.jump_impulse))
       elif action.type == 'shoot':
         print "pew pew:", action.aim
+        game.engine.addEntity(Rocket(self.pos, action.aim))
     self.body.apply_impulse((self.airControl.x - self.body.velocity.x, 0))
 
   def draw(self):
@@ -50,8 +52,8 @@ class Player(PhysicsEntity):
     # main collision square
     gl.glColor3f(1.0, 0.0, 0.0)
     gl.glBegin(gl.GL_QUADS)
-    for p in self.collisionSquare.get_points():
-      gl.glVertex2f(*p)
+    for point in self.collisionSquare.get_points():
+      gl.glVertex2f(*point)
     gl.glEnd()
 
 
