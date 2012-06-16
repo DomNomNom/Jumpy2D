@@ -46,18 +46,22 @@ class Player(PhysicsEntity):
     self.body.apply_impulse((self.airControl.x - self.body.velocity.x, 0))
 
   def draw(self):
-    s = self.size # just a shorthand
-
-    #this block does nothing, it's a template for when images come in
-    gl.glPushMatrix()
-    gl.glTranslatef(self.pos.x, self.pos.y, 0)
-    gl.glRotatef(degrees(self.body.angle), 0, 0, 1)
-    # blip image
-    gl.glPopMatrix()
 
     # main collision square
     gl.glColor3f(1.0, 0.0, 0.0)
     gl.glBegin(gl.GL_QUADS)
     for p in self.collisionSquare.get_points():
-      gl.glVertex2f(p.x, p.y)
+      gl.glVertex2f(*p)
     gl.glEnd()
+
+
+    #this push/pop block is for player-relative coordinates
+    gl.glPushMatrix()
+    gl.glTranslatef(self.pos.x, self.pos.y, 0)
+    gl.glRotatef(degrees(self.body.angle), 0, 0, 1)
+    gl.glColor3f(1.0, 0.0, 1.0)
+    gl.glBegin(gl.GL_LINES)
+    gl.glVertex2f(0,0)
+    gl.glVertex2f(*Vec2d(30, 0).rotated(self.input.currentAim))
+    gl.glEnd()
+    gl.glPopMatrix()
