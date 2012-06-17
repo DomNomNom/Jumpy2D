@@ -15,7 +15,7 @@ class Platform(PhysicsEntity):
 
   collisionLayer = 2**0
 
-  def __init__(self, pos, size=Vec2d(100, 100)):
+  def __init__(self, pos, size=Vec2d(100, 100), friction=0):
     self.drawLayer = 'game'
     self.pos = Vec2d(pos)
     self.size = Vec2d(size)
@@ -23,22 +23,19 @@ class Platform(PhysicsEntity):
     # physics
     PhysicsEntity.__init__(self)  
     self.body = game.engine.space.static_body
+
+    # physics shape
     s = self.size # just a shorthand
     p = self.pos
-    v = [ #verticies (corners of our square)
+    self.shape = pymunk.Poly(self.body, (
       (p.x+s.x, p.y+s.y),
       (p.x+s.x, p.y-s.y),
       (p.x-s.x, p.y-s.y),
       (p.x-s.x, p.y+s.y),
-    ]
-    right  = pymunk.Poly(self.body, [p, v[0], v[1]])
-    bottom = pymunk.Poly(self.body, [p, v[1], v[2]])
-    left   = pymunk.Poly(self.body, [p, v[2], v[3]])
-    top    = pymunk.Poly(self.body, [p, v[3], v[0]])
-    top.friction = 1
-    self.shapes = [right, left, top, bottom]
-    for shape in self.shapes:
-      shape.layers = Player.collisionLayer + Rocket.collisionLayer
+    ))
+    self.shape.friction = friction
+    self.shape.layers = Player.collisionLayer + Rocket.collisionLayer
+    self.shapes = [self.shape]
 
 
   def draw(self):
@@ -62,4 +59,5 @@ class Platform(PhysicsEntity):
       'Platform',
       tuple(self.pos ),
       tuple(self.size),
+      self.shape.friction,
     ])
