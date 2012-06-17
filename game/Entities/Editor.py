@@ -2,6 +2,7 @@ from pyglet import image, sprite, graphics, gl
 from pymunk import Vec2d
 
 from Entity import Entity
+from Platform import Platform
 import game.globals
 
 class Editor(Entity):
@@ -19,6 +20,7 @@ class Editor(Entity):
     self.leftMouseDown = False #reflects the left mouse button's state
     self.rightMouseDown = False #reflects the right mouse button's state
     self.mousePos = game.globals.engine.mousePos
+    self.selected = "platform" # the current slected object
     self.gridOn = True #is the grid on
     self.snapToGrid = True #is snap to grid on?
     self.gridSize = Vec2d(32, 32) #the size of a grid unit
@@ -65,7 +67,9 @@ class Editor(Entity):
 
     @game.globals.engine.window.event
     def on_mouse_release(x, y, button, modifiers):
-      if button == 1: self.leftMouseDown = False
+      if button == 1:
+        self.leftMouseDown = False
+        self.place()
       elif button == 4: self.rightMouseDown = False
 
 
@@ -130,3 +134,10 @@ class Editor(Entity):
     for i in range(self.numTabs):
       if i == tabNo: self.tabList[i].image = self.tab1Image
       else: self.tabList[i].image = self.tab0Image
+      
+  #place an object into the level
+  def place(self):
+    s = self.dragBoxStart
+    e = self.dragBoxEnd
+    size = Vec2d((e.x-s.x)/2, (s.y-e.y)/2)
+    game.globals.engine.addEntity(Platform(Vec2d(s.x+size.x, s.y-size.y), size))
