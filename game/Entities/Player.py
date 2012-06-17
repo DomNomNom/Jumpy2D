@@ -46,7 +46,6 @@ class Player(PhysicsEntity):
         self.vel.y = 0
         self.body.apply_impulse((0, self.jump_impulse))
       elif action.type == 'shoot':
-        print "pew pew:", action.aim
         game.engine.addEntity(Rocket(self.pos, action.aim))
     self.body.apply_impulse((self.airControl.x - self.body.velocity.x, 0))
 
