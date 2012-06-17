@@ -25,7 +25,7 @@ from game.Entities.DebugCross import DebugCross
 #TODO: arguments: nographics, windowed, resolution, nosound, demo (conflicts with editor)
 parser = argparse.ArgumentParser(description='A 2D rocket jumping game. :D')
 parser.add_argument('-e', '--editor', action="store_true", help='Starts the game in editor mode')
-parser.add_argument('-l', '--level', type=file, help='Loads a level file at the start')
+parser.add_argument('-l', '--level', help='Loads a level file at the start')
 
 
 # parse command line arguments (note: this can fail and it will exit)
@@ -35,30 +35,26 @@ args = parser.parse_args()
 game.globals.engine = Engine()
 engine = game.globals.engine # a shorthand
 
-# Do stuff to the engine using the arguments (TODO)
-if args.editor and args.level:
-  print 'lets edit this level:', args.level.name
-elif args.editor:
+# load a level when specified
+if args.level:
+  for entity in loadLevel(args.level):
+    engine.addEntity(entity)
+
+if args.editor:
   engine.addEntity(Editor())
-elif args.level:
-  print 'lets play this level:', args.level.name
-else:
-  pass # go to menu
+else: # play a level
+  if not args.level: # if no level is specified, load a default level
+    for entity in loadLevel('test2'):
+      engine.addEntity(entity)
+  playerInput = KeyboardControl()
+  try:
+    playerInput = Controller() # use game pad input if we have one
+  except: pass
+  player = Player(playerInput, pos=(320, 240))
+  engine.addEntity(player) #TODO: PlayerSpawn in level Loader
 
-playerInput = KeyboardControl()
-try:
-  playerInput = Controller() # use game pad input if we have one
-except: pass
-
-player = Player(playerInput, pos=(320, 240))
-engine.addEntity(player) #TODO: PlayerSpawn in level Loader
 engine.addEntity(DebugCross(engine.windowCenter, (1,1,1) ))
 engine.addEntity(DebugCross(engine.mousePos,     (1,0,0) ))
-
-entities = loadLevel('test')
-for entity in entities:
-  engine.addEntity(entity)
-saveLevel('test2', entities)
 
 
 # 3.2.1. GO!
