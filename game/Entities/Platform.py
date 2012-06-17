@@ -56,12 +56,6 @@ class Platform(PhysicsEntity):
     gl.glPopMatrix()
 
 
-    gl.glColor3f(1.0, 0.0, 0.0)
-    gl.glBegin(gl.GL_QUADS)
-    for p in self.shapes[0].get_points():
-      gl.glVertex2f(p.x, p.y)
-    gl.glEnd()
-
 
   def __repr__(self):
     return repr([
