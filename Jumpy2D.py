@@ -3,9 +3,10 @@ from pyglet import app
 from pymunk import Vec2d
 import argparse
 
-# our engine
+# our globals
 import game.globals
 from game.Engine import Engine
+from game.GameState import GameState
 
 # game state stuff (should be moved as well)
 from game.LevelLoader import loadLevel, saveLevel #TODO: move load/save to gamestate
@@ -25,14 +26,15 @@ from game.Entities.DebugCross import DebugCross
 #TODO: arguments: nographics, windowed, resolution, nosound, demo (conflicts with editor)
 parser = argparse.ArgumentParser(description='A 2D rocket jumping game. :D')
 parser.add_argument('-e', '--editor', action="store_true", help='Starts the game in editor mode')
-parser.add_argument('-l', '--level', help='Loads a level file at the start')
-
+parser.add_argument('-l', '--level', help='Loads a level at the start')
 
 # parse command line arguments (note: this can fail and it will exit)
 args = parser.parse_args()
 
-# Create the engine
+
+# Create global variables
 game.globals.engine = Engine()
+game.globals.gameState = GameState()
 engine = game.globals.engine # a shorthand
 
 # load a level when specified

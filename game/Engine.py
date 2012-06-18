@@ -3,8 +3,6 @@ from pyglet import clock
 from pymunk import Vec2d, Space
 import time
 
-from Entities.Editor import Editor
-
 
 class Engine:
 
@@ -61,7 +59,11 @@ class Engine:
       self.drawLayersBatch[name] = pyglet.graphics.Batch()
 
     # Window
+    config = pyglet.gl.Config(
+      #sample_buffers=1, samples=4   # antialiasing
+    )
     self.window = pyglet.window.Window(
+      config = config,
       #fullscreen = True,
       vsync = False,
       style = pyglet.window.Window.WINDOW_STYLE_BORDERLESS,
@@ -84,8 +86,6 @@ class Engine:
     # physics
     self.space.gravity = Vec2d(0.0, -900.0)
     self.space.collision_bias = 0
-
-    # TODO: update controller to be a playerInput
 
     self.fps_display = pyglet.clock.ClockDisplay()
 
