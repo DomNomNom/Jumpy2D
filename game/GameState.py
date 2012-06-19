@@ -1,7 +1,16 @@
+# Things for PlayCurrentLevel
+from game.KeyboardControl import KeyboardControl
+from game.Controller import Controller
+from game.Entities.Player import Player
+
 import game.globals as game
 
 class GameState(object):
-  ''' A class to manage state transitions '''
+  '''
+  A class to manage state transitions.
+
+  it involves a lot of "glue" that just ties the game together
+  '''
   
   def __init__(self):
     # our states are in a stack, 
@@ -16,14 +25,30 @@ class GameState(object):
     # TODO: do stuff
 
   def popState(self):
-    self.stateStack.pop().end()
+    toEnd = self.stateStack.pop()
+    toEnd.unfocus()
+    toEnd.end()
     self.stateStack[-1].focus()
 
 
   ## States from here on
 
   class BaseState(object):
-    def start(self):    pass
-    def focus(self):    pass
-    def unfocus(self):  pass
-    def end(self):      pass
+    def start(self):    pass # does things like creating entities
+    def focus(self):    pass # does things like setting up mouse listeners
+    def unfocus(self):  pass # undoes focus()
+    def end(self):      pass # undoes start()
+
+  class PlayCurrentLevel(BaseState):
+    def start(self):
+      playerInput = KeyboardControl()
+      try: playerInput = Controller() # use game pad input if we have one
+      except: pass
+      self.player = Player(playerInput, pos=(320, 240))
+      game.engine.addEntity(self.player)
+    def focus(self):   self.player.input.currentlyRecording = True
+    def unfocus(self): self.player.input.currentlyRecording = False
+    def end(self):
+      self.player
+      #for entity in game.engine.groups['game']:
+      #  game.engine.removeEntity(entity)

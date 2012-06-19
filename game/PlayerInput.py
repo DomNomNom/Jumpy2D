@@ -8,7 +8,10 @@ class PlayerInput:
 
   currentAim = 0.0  # should only be used for cosmetics (not for rocket firing direction)
   
+  currentlyRecording = False
+
   def recordAction(self, actionType, moveDir=None):
+    if not self.currentlyRecording: return
     action = self.PlayerAction(actionType, self.currentAim, moveDir)
     self.actionQueue.append(action)
     self.actionLog.append(action)
