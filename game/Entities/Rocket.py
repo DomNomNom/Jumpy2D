@@ -9,11 +9,13 @@ import game.globals as game
 class Rocket(PhysicsEntity):
 
   collisionLayer = 2**2
+  collisionType = 3
 
   size = Vec2d(10, 4)
   speed = 300. # units per second
 
   def __init__(self, pos, angle):
+    self.groups = self.groups | {'rockets'}
     PhysicsEntity.__init__(self)
     self.body = pymunk.Body(self.mass, self.moment)
     self.body.position = Vec2d(pos)
@@ -23,6 +25,7 @@ class Rocket(PhysicsEntity):
     
     self.shape = pymunk.Poly.create_box(self.body, 2*self.size)
     self.shape.layers = self.collisionLayer
+    self.shape.collision_type = self.collisionType
     self.shapes = [self.shape]
     #self.shape.sensor = True #TODO: sensing
 

@@ -9,4 +9,4 @@ class PhysicsEntity(Entity):
   # please call this when you create a instance of a subclass of this
   def __init__(self):
     #self.body = game.engine.space.static_body
-    self.groups = Entity.groups | {'game', 'physics'} # append to set
+    self.groups = self.groups | {'game', 'physics'} # append to set

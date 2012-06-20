@@ -13,6 +13,7 @@ class Engine:
     'updating': set(), # everything that wants to be updated goes in here
     'player':   set(),
     'physics':  set(),
+    'rockets':  set(),
     'game':     set(), # will draw dependent   on camera movement
     'UI':       set(), # will draw independent of camera movement
     'UI_editor': set(), # entites that are part of the editor UI

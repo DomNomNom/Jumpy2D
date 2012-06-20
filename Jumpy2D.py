@@ -15,7 +15,8 @@ from game.LevelLoader import loadLevel, saveLevel #TODO: move load/save to games
 from game.Entities.Editor import Editor
 from game.Entities.Platform import Platform
 from game.Entities.DebugCross import DebugCross
-
+from game.Entities.Player  import Player
+from game.Entities.Rocket  import Rocket
 
 # set command line arguments
 #TODO: arguments: nographics, windowed, resolution, nosound, demo (conflicts with editor)
@@ -47,6 +48,17 @@ else: # play a level
 
 engine.addEntity(DebugCross(engine.windowCenter, (1,1,1) ))
 engine.addEntity(DebugCross(engine.mousePos,     (1,0,0) ))
+
+# TODO: move this
+def rocketHandler(space, arbiter, *args, **kwargs):
+  print "KABLAAAM!"
+  rocketShape = arbiter.shapes[0]
+  for rocket in engine.groups['rockets']:
+    if rocketShape in rocket.shapes:
+      engine.removeEntity(rocket)
+      break
+  return False
+engine.space.add_collision_handler(Rocket.collisionType, Platform.collisionType, begin=rocketHandler)
 
 
 # 3.2.1. GO!
