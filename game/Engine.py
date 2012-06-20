@@ -3,6 +3,8 @@ from pyglet import clock
 from pymunk import Vec2d, Space
 import time
 
+import physics
+
 
 class Engine:
 
@@ -47,7 +49,7 @@ class Engine:
   windowCenter = Vec2d()
   mousePos = Vec2d()
 
-  space = Space() # our physics space
+  space = None # our physics space
 
   gameController = None
 
@@ -85,8 +87,7 @@ class Engine:
       self.mousePos.y = y
 
     # physics
-    self.space.gravity = Vec2d(0.0, -900.0)
-    self.space.collision_bias = 0
+    physics.initPhysics(self)
 
     self.fps_display = pyglet.clock.ClockDisplay()
 

@@ -9,9 +9,6 @@ import game.globals as game
 
 class Player(PhysicsEntity):
 
-  collisionLayer = 2**1
-  collisionType = 2
-
   size = Vec2d(10, 10)
   speed = 200. # units per second
   jump_impulse = 3000.
@@ -29,8 +26,10 @@ class Player(PhysicsEntity):
 
     # init shape
     self.collisionSquare = pymunk.Poly.create_box(self.body, 2*self.size)
+    # note: collisionLayers and collisionType get created by physics.py
     self.collisionSquare.friction = 1
-    self.collisionSquare.layers = self.collisionLayer
+    # note: collisionLayers and collisionType get created by physics.py
+    self.collisionSquare.layers = self.collisionLayers
     self.collisionSquare.collision_type = self.collisionType
     self.shapes = [self.collisionSquare]
 

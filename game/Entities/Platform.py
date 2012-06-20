@@ -13,9 +13,6 @@ import game.globals as game # engine
 
 class Platform(PhysicsEntity):
 
-  collisionLayer = 2**0
-  collisionType = 1
-
   def __init__(self, pos, size=Vec2d(100, 100), friction=0):
     self.drawLayer = 'game'
     self.pos = Vec2d(pos)
@@ -35,7 +32,8 @@ class Platform(PhysicsEntity):
       (p.x-s.x, p.y+s.y),
     ))
     self.shape.friction = friction
-    self.shape.layers = Player.collisionLayer + Rocket.collisionLayer
+    # note: collisionLayers and collisionType get created by physics.py
+    self.shape.layers = self.collisionLayers
     self.shape.collision_type = self.collisionType
     self.shapes = [self.shape]
 

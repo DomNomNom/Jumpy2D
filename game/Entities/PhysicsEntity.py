@@ -2,6 +2,10 @@ from Entity import Entity
 import pymunk
 import game.globals as game
 
+#
+# PLEASE NOTE: every PhysicsEntity should be listed in game.physics.py ==> physicsEntities
+#
+
 class PhysicsEntity(Entity):
   mass = 10.
   moment = 30. # pymunk.moment_for_poly(mass, verticies)
