@@ -1,6 +1,6 @@
 from pyglet.gl import *
 from pyglet import clock
-from pymunk import Vec2d, Space
+from pymunk import Vec2d
 import time
 
 import physics

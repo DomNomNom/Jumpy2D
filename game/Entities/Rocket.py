@@ -25,7 +25,7 @@ class Rocket(PhysicsEntity):
     self.shape.layers = self.collisionLayers
     self.shape.collision_type = self.collisionType
     self.shapes = [self.shape]
-    #self.shape.sensor = True #TODO: sensing
+    self.shape.sensor = True
 
   def draw(self):
     # main collision square

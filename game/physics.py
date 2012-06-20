@@ -25,7 +25,6 @@ def initPhysics(engine):
   # assign a unique collision type to each entity
   for entity, collisionType in zip(physicsEntities, range(len(physicsEntities))):
     entity.collisionType = collisionType
-    print collisionType
 
   # put collision layers into entities so they can initialize their shapes with them
   for entity in physicsEntities:

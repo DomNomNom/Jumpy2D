@@ -4,10 +4,6 @@ import pymunk
 
 from PhysicsEntity import PhysicsEntity
 
-# things we collide with
-from Rocket import Rocket
-from Player import Player
-
 import game.globals as game # engine
 
 

@@ -8,15 +8,10 @@ import game.globals
 from game.Engine import Engine
 from game.GameState import GameState
 
-# game state stuff (should be moved as well)
 from game.LevelLoader import loadLevel, saveLevel #TODO: move load/save to gamestate
 
-# Entities (TODO: move to level loader)
-from game.Entities.Editor import Editor
-from game.Entities.Platform import Platform
+from game.Entities.Editor import Editor # TODO: move to gameState
 from game.Entities.DebugCross import DebugCross
-from game.Entities.Player  import Player
-from game.Entities.Rocket  import Rocket
 
 
 # set command line arguments
