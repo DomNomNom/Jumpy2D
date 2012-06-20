@@ -49,6 +49,6 @@ class GameState(object):
     def focus(self):   self.player.input.currentlyRecording = True
     def unfocus(self): self.player.input.currentlyRecording = False
     def end(self):
-      self.player
+      game.engine.removeEntity(self.player)
       #for entity in game.engine.groups['game']:
       #  game.engine.removeEntity(entity)
