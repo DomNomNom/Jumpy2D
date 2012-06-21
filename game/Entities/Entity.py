@@ -15,3 +15,16 @@ class Entity(object):
   def draw(self):
     pass
 
+
+
+class PhysicsEntity(Entity):
+
+  # PLEASE NOTE: every PhysicsEntity should be listed in game.physics.py ==> physicsEntities
+
+  mass = 10.
+  moment = 30. # pymunk.moment_for_poly(mass, verticies)
+
+  # please call this when you create a instance of a subclass of this
+  def __init__(self):
+    #self.body = game.engine.space.static_body
+    self.groups = self.groups | {'game', 'physics'} # append to set

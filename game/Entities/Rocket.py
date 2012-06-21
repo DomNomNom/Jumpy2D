@@ -2,7 +2,7 @@ import pyglet.gl as gl
 import pymunk
 from pymunk import Vec2d
 
-from PhysicsEntity import PhysicsEntity
+from Entity import PhysicsEntity
 import game.globals as game
 
 

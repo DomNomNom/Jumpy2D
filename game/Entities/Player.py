@@ -3,7 +3,7 @@ import pymunk
 from pymunk import Vec2d
 from math import degrees
 
-from PhysicsEntity import PhysicsEntity
+from Entity import PhysicsEntity
 from Rocket import Rocket
 import game.globals as game
 
