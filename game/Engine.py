@@ -4,6 +4,7 @@ from pymunk import Vec2d
 import time
 
 import physics
+from Camera import Camera
 
 
 class Engine:
@@ -21,6 +22,8 @@ class Engine:
     'UI_editor': set(), # entites that are part of the editor UI
   }
 
+  entityAddQueue = set()
+  entityDelQueue = set()
 
   # layers specify the order in which they are drawn. (ordered back to front)
   drawLayerNames = [
@@ -32,9 +35,6 @@ class Engine:
     'UI_pauseMenu',
     'UI_debug',
   ]
-
-  entityAddQueue = []
-  entityDelQueue = []
 
   # A dict from drawLayerNames to a list of entities. they are mutually exclusive
   drawLayers = {}
@@ -76,6 +76,9 @@ class Engine:
     # opengl
     gl.glEnable(GL_BLEND) #enables transparency
 
+    # camera
+    self.camera = Camera()
+
     # update our mousePos on every move event
     @self.window.event
     def on_mouse_motion(x, y, dx, dy):
@@ -110,30 +113,30 @@ class Engine:
       self.space.step(self.updateRate) # update physics
 
     ## DRAW ##
-    # TODO: camera
     glClearColor(0,0,0, 0)
     glClear(GL_COLOR_BUFFER_BIT)
     glLoadIdentity()
 
     for name in self.drawLayerNames:
-      for entity in self.drawLayers[name]:  # TODO: batch drawing?
-        entity.draw()
-      self.drawLayersBatch[name].draw()
+      with self.camera.shiftView():# TODO
+        for entity in self.drawLayers[name]:  # TODO: batch drawing?
+          entity.draw()
+        self.drawLayersBatch[name].draw()
 
     self.fps_display.draw()
     #self.window.flip()
 
 
   def addEntity(self, e):
-    self.entityAddQueue.append(e)
+    self.entityAddQueue.add(e)
 
   def removeEntity(self, e):
-    self.entityDelQueue.append(e)
+    self.entityDelQueue.add(e)
 
 
   def _processAdding(self):
     while len(self.entityAddQueue):
-      e = self.entityAddQueue.pop(0)
+      e = self.entityAddQueue.pop()
       for group in e.groups:
         self.groups[group].add(e)
       if 'physics' in e.groups:
@@ -145,7 +148,7 @@ class Engine:
 
   def _processRemoving(self):
     while len(self.entityDelQueue):
-      e = self.entityDelQueue.pop(0)
+      e = self.entityDelQueue.pop()
       for group in e.groups:
         self.groups[group].remove(e)
       if 'physics' in e.groups:
