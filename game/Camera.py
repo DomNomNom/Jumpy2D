@@ -1,8 +1,6 @@
 import pyglet.gl as gl
 from pymunk import Vec2d
 
-from random import randint
-
 class Camera(object):
 
   def __init__(self):
@@ -12,7 +10,6 @@ class Camera(object):
   def shiftView(self, pos=None):
     if pos is None:
       pos = self.pos
-    pos = Vec2d(randint(-5,5), randint(-2,2))
     shift = self.ViewShift(pos)
     return shift
 
