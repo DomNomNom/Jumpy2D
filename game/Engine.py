@@ -72,14 +72,13 @@ class Engine:
       style = pyglet.window.Window.WINDOW_STYLE_BORDERLESS,
     )
     self.windowCenter = Vec2d(self.window.get_size()) / 2
-    
+
     # opengl
     gl.glEnable(GL_BLEND) #enables transparency
 
     # camera
     self.camera = Camera()
 
-    # update our mousePos on every move event
     @self.window.event
     def on_mouse_motion(x, y, dx, dy):
       self.mousePos.x = x
@@ -118,7 +117,8 @@ class Engine:
     glLoadIdentity()
 
     for name in self.drawLayerNames:
-      with self.camera.shiftView():# TODO
+      shift = Vec2d() if name.startswith('UI') else None
+      with self.camera.shiftView(shift):
         for entity in self.drawLayers[name]:  # TODO: batch drawing?
           entity.draw()
         self.drawLayersBatch[name].draw()

@@ -50,4 +50,6 @@ class KeyboardControl(PlayerInput):
       if p.input is self:
         controlledPlayer = p
     if controlledPlayer:
-      self.currentAim = (game.engine.mousePos - controlledPlayer.pos).angle
+      with game.engine.camera.shiftView():
+        gameMousePos = game.engine.camera.toScreenView(game.engine.mousePos)
+      self.currentAim = (gameMousePos - controlledPlayer.pos).angle
