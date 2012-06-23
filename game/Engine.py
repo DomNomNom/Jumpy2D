@@ -116,6 +116,7 @@ class Engine:
     glClear(GL_COLOR_BUFFER_BIT)
     glLoadIdentity()
 
+    self.camera.gameFocus = (self.windowCenter - self.mousePos) / 2
     for name in self.drawLayerNames:
       shift = Vec2d() if name.startswith('UI') else None
       with self.camera.shiftView(shift):

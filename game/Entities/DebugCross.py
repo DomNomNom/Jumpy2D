@@ -17,7 +17,6 @@ class DebugCross(Entity):
 
   def draw(self):
     s = self.size # just a shorthand
-    #gl.glColor3f(1.0, 0.0, 0.0)
     gl.glColor3f(*self.colour)
     gl.glPushMatrix()
     gl.glTranslatef(self.pos.x, self.pos.y, 0)
