@@ -19,7 +19,8 @@ class Entity(object):
 
 class PhysicsEntity(Entity):
 
-  # PLEASE NOTE: every PhysicsEntity should be listed in game.physics.py ==> physicsEntities
+  # PLEASE NOTE: every PhysicsEntity should be listed in 
+  #              game/physics.py ==> physicsEntities
 
   mass = 10.
   moment = 30. # pymunk.moment_for_poly(mass, verticies)

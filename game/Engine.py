@@ -41,6 +41,7 @@ class Engine:
   drawLayersBatch = {} #a dict from drawLayerNames to a list of batches
 
   levelStartTime = time.time()
+  levelTime = 0. # TODO proper pausing (maybe move to gameState or some level class)
 
   accumulatedFrameTime = 0.
   updateRate = 1/120. # how often our physics will kick in (in seconds)
@@ -97,6 +98,7 @@ class Engine:
     clock.schedule(self.run)
 
 
+  # our main game loop
   def run(self, dt):
     ## UPDATE ##
     # timestep ala http://gafferongames.com/game-physics/fix-your-timestep/
@@ -105,6 +107,7 @@ class Engine:
     self.accumulatedFrameTime += dt
     while self.accumulatedFrameTime >= self.updateRate:
       self.accumulatedFrameTime -= self.updateRate
+      self.levelTime = time.time() - self.levelStartTime
       for entity in self.groups['updating']:
         entity.update(self.updateRate) # update all entities
       self._processRemoving()

@@ -3,6 +3,7 @@ import pymunk
 from pymunk import Vec2d
 
 from Entity import PhysicsEntity
+from Explosion import Explosion
 import game.globals as game
 
 
@@ -34,3 +35,7 @@ class Rocket(PhysicsEntity):
     for point in self.shape.get_points():
       gl.glVertex2f(*point)
     gl.glEnd()
+
+  def explode(self):
+    print 'kaboom'
+    game.engine.addEntity(Explosion(self.body.position))

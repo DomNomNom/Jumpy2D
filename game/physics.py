@@ -47,10 +47,10 @@ def initPhysics(engine):
 
 # this class only groups collision handler functions together
 def rocketHandler(space, arbiter, *args, **kwargs):
-  print "KABLAAAM!"
   rocketShape = arbiter.shapes[0]
   for rocket in game.engine.groups['rockets']:
     if rocketShape in rocket.shapes:
+      rocket.explode()
       game.engine.removeEntity(rocket)
       break
   return False
