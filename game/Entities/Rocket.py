@@ -12,7 +12,7 @@ class Rocket(PhysicsEntity):
   size = Vec2d(10, 4)
   speed = 300. # units per second
 
-  def __init__(self, pos, angle):
+  def __init__(self, pos, angle, player):
     self.groups = self.groups | {'rockets'}
     PhysicsEntity.__init__(self)
     self.body = pymunk.Body(self.mass, self.moment)
@@ -20,13 +20,16 @@ class Rocket(PhysicsEntity):
     self.body.angle = angle
     self.body.velocity = Vec2d(self.speed, 0).rotated(angle)
     self.body.apply_force(-self.mass*game.engine.space.gravity) # make it not be affected by gravity
-    
+
+    # TODO: change hitbox to a line
     self.shape = pymunk.Poly.create_box(self.body, 2*self.size)
     # note: collisionLayers and collisionType get created by physics.py
     self.shape.layers = self.collisionLayers
     self.shape.collision_type = self.collisionType
     self.shapes = [self.shape]
     self.shape.sensor = True
+
+    self.player = player
 
   def draw(self):
     # main collision square
@@ -37,5 +40,4 @@ class Rocket(PhysicsEntity):
     gl.glEnd()
 
   def explode(self):
-    print 'kaboom'
-    game.engine.addEntity(Explosion(self.body.position))
+    game.engine.addEntity(Explosion(self.body.position, self.player))

@@ -19,7 +19,7 @@ class Entity(object):
 
 class PhysicsEntity(Entity):
 
-  # PLEASE NOTE: every PhysicsEntity should be listed in 
+  # PLEASE NOTE: every PhysicsEntity should be listed in
   #              game/physics.py ==> physicsEntities
 
   mass = 10.
