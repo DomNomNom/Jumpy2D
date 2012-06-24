@@ -20,7 +20,7 @@ class Player(PhysicsEntity):
     self.drawLayer = 'player'
     self.body = pymunk.Body(self.mass, float('inf'))
     self.body.position = Vec2d(pos)
-    self.airControl = Vec2d(0, 0)
+    self.targetVel = Vec2d(0, 0) # target velocity
     self.pos = self.body.position
     self.vel = self.body.velocity
 
@@ -28,7 +28,6 @@ class Player(PhysicsEntity):
     self.collisionSquare = pymunk.Poly.create_box(self.body, 2*self.size)
     # note: collisionLayers and collisionType get created by physics.py
     self.collisionSquare.friction = 1
-    # note: collisionLayers and collisionType get created by physics.py
     self.collisionSquare.layers = self.collisionLayers
     self.collisionSquare.collision_type = self.collisionType
     self.shapes = [self.collisionSquare]
@@ -40,15 +39,27 @@ class Player(PhysicsEntity):
     while self.input.actionQueue:
       action = self.input.actionQueue.pop(0)
       if action.type == 'move':
-        # TODO make this safe. (check for positive/0/negative instead of taking value)
-        self.collisionSquare.surface_velocity = Vec2d(action.moveDir * self.speed, 0)
-        self.airControl.x = action.moveDir * self.speed
+        if action.moveDir == 0:
+          self.targetVel.x = 0
+        else:
+          self.targetVel.x = self.speed * (action.moveDir/abs(action.moveDir))
+        self.collisionSquare.surface_velocity = Vec2d(self.targetVel.x, 0)
       elif action.type == 'jump':
         self.vel.y = 0
         self.body.apply_impulse((0, self.jump_impulse))
       elif action.type == 'shoot':
         game.engine.addEntity(Rocket(self.pos, action.aim, self))
-    self.body.apply_impulse((self.airControl.x - self.body.velocity.x, 0))
+
+    # movement Control
+    # increase our velocity iff our target velocity is 'faster'
+    # (faster is in quotes as going the opposite direction means 'faster')
+    # a target velocity of 0 will not change the velocity.
+    vel = self.targetVel.x # shorhand
+    if (
+      (vel < 0 and vel < self.body.velocity.x) or
+      (vel > 0 and vel > self.body.velocity.x)
+    ): # and here's a happy face to make up for it:  :)
+      self.body.apply_impulse((self.targetVel.x - self.body.velocity.x, 0))
 
 
   def draw(self):
