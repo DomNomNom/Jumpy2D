@@ -42,8 +42,16 @@ class Controller(PlayerInput):
       self.printInfo()
       raise Exception("OMG, something is wrong with this joystick")
 
-    #print "Joystick initialized"
+    # TODO: move this to a config file
+    if "PLAYSTATION(R)3" in self.j.get_name():
+      self.bindings = {
+        10 : 'jump',
+        11 : 'shoot',
+        9  : 'shoot2',
+      }
 
+    #self.printInfo()
+    #print "Joystick initialized"
 
   def checkInput(self):
     for e in pygame.event.get():
@@ -56,7 +64,11 @@ class Controller(PlayerInput):
         elif axis == 2: self.stick_r.x = val
         elif axis == 3: self.stick_r.y = val
 
-        self.currentAim = -self.stick_r.angle
+        if self.stick_r == Vec2d(0,0):
+          self.currentAim = Vec2d(0,-1).angle
+        else:
+          self.currentAim = -self.stick_r.angle
+
         direction = round(self.stick_l.x)
         if direction != self.prevDirection:
           self.recordAction('move', direction)
