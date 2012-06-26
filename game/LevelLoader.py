@@ -4,12 +4,13 @@ from ast import literal_eval
 import game.globals as game
 
 from Entities.Platform import Platform
+from Entities.SpawnPoint import SpawnPoint
 #TODO: more entities
 
 
 constructors = {
   'Platform' : Platform,
-  #'PlayerSpawn' : TODO
+  'SpawnPoint' : SpawnPoint
 }
 
 

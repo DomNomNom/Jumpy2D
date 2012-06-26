@@ -3,6 +3,10 @@ from pymunk import Vec2d
 
 from matrixMath import inverse
 
+# convenience method to shift the view without needing an instance of a camera
+def shiftView(pos):
+  return Camera.ViewShift(pos)
+
 class Camera(object):
 
   def __init__(self):
