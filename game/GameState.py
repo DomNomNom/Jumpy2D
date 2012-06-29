@@ -2,6 +2,7 @@
 from game.KeyboardControl import KeyboardControl
 from game.Controller import Controller
 from game.Entities.Player import Player
+from game.Entities.Editor import Editor
 
 import game.globals as game
 
@@ -11,9 +12,9 @@ class GameState(object):
 
   it involves a lot of "glue" that just ties the game together
   '''
-  
+
   def __init__(self):
-    # our states are in a stack, 
+    # our states are in a stack,
     # eg. we know that we are in the pauseMenu, while playing, while editing
     self.stateStack = [GameState.BaseState()] # always have one base state.
 
@@ -52,3 +53,15 @@ class GameState(object):
       game.engine.removeEntity(self.player)
       #for entity in game.engine.groups['game']:
       #  game.engine.removeEntity(entity)
+
+  class editLevel(BaseState):
+    def __init__(self):
+      self.editor = Editor()
+    def start(self):
+      game.engine.addEntity(self.editor)
+    def focus(self):
+      self.editor.focus = True
+    def unfocus(self):
+      self.editor.focus = False
+    def end(self):
+      game.engine.removeEntity(self.editor)

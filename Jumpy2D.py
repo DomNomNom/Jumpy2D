@@ -35,7 +35,7 @@ if args.level:
     engine.addEntity(entity)
 
 if args.editor:
-  engine.addEntity(Editor())
+  game.globals.gameState.pushState(GameState.editLevel())
 else: # play a level
   if not args.level: # if no level is specified, load a default level
     for entity in loadLevel('test2'):
