@@ -1,5 +1,6 @@
 # Things for PlayCurrentLevel
 from game.Entities.Player import Player
+from game.Entities.Editor import Editor
 
 from Entities.Level import Level
 
@@ -11,9 +12,9 @@ class GameState(object):
 
   it involves a lot of "glue" that just ties the game together
   '''
-  
+
   def __init__(self):
-    # our states are in a stack, 
+    # our states are in a stack,
     # eg. we know that we are in the pauseMenu, while playing, while editing
     self.stateStack = [GameState.BaseState()] # always have one base state.
 
@@ -51,7 +52,19 @@ class GameState(object):
     def unfocus(self): self.setRecording(False)
     def end(self):
       for level in self.levels: game.engine.removeEntity(level.player)
-      #for entity in game.engine.groups['game']:
+      #for entity in game.engine.groups['game']: #TODO: remove all them entities
       #  game.engine.removeEntity(entity)
     def setRecording(self, recording):
       for level in self.levels: level.player.input.currentlyRecording = recording
+
+  class editLevel(BaseState):
+    def __init__(self):
+      self.editor = Editor()
+    def start(self):
+      game.engine.addEntity(self.editor)
+    def focus(self):
+      self.editor.focus = True
+    def unfocus(self):
+      self.editor.focus = False
+    def end(self):
+      game.engine.removeEntity(self.editor)

@@ -33,7 +33,7 @@ engine = game.globals.engine # a shorthand
 
 
 if args.editor:
-  engine.addEntity(Editor())
+  game.globals.gameState.pushState(GameState.editLevel())
 else: # play a level
   # load a level when specified
   levelName = args.level

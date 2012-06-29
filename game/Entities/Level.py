@@ -77,10 +77,7 @@ class Level(Entity):
           except:
             print lineErr, "Constructing", entityType, "failed. probably weird arguments:", args
             continue
-        self.addEntity(entityID, newEntity) # TODO
-        #newEntities.append(newEntity)
-
-    #return newEntities
+        self.addEntity(entityID, newEntity)
 
 
   def addEntity(self, entityID, entity):

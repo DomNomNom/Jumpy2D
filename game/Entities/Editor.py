@@ -1,3 +1,4 @@
+import math
 from pyglet import image, sprite, graphics, gl
 from pymunk import Vec2d
 
@@ -10,6 +11,8 @@ class Editor(Entity):
   #CONSTRUCTOR
   def __init__(self):
 
+    self.focus = False
+
     #set groups
     self.groups = self.groups | {'UI_editor'}
     self.drawLayer = 'UI_editor'
@@ -20,10 +23,11 @@ class Editor(Entity):
     self.leftMouseDown = False #reflects the left mouse button's state
     self.rightMouseDown = False #reflects the right mouse button's state
     self.mousePos = game.globals.engine.mousePos
-    self.selected = "platform" # the current slected object
+    self.selected = "platform" #the current slected object
+    self.brushShape = "circle" #the current brush shape
     self.gridOn = True #is the grid on
     self.snapToGrid = True #is snap to grid on?
-    self.gridSize = Vec2d(32, 32) #the size of a grid unit
+    self.gridSize = Vec2d(16, 16) #the size of a grid unit
     self.gridOffset = Vec2d(0, 0) #the x and y offsets of the grid
     self.dragBoxStart = Vec2d(0, 0) #the start coords of the dragbox
     self.dragBoxOrigin = Vec2d(0, 0) #the original drag box start point
@@ -47,7 +51,7 @@ class Editor(Entity):
       i.scale = self.scale
 
     #set positions
-    self.sideBarSprite.position = (0, 0);
+    self.sideBarSprite.position = (0, 0)
     j = 0
     for i in self.tabList:
       i.position = ((38.0*self.scale)+(i.width*j), 1004.0*self.scale)
@@ -64,6 +68,7 @@ class Editor(Entity):
         else: self.dragBoxStart = Vec2d(x, y)
         self.dragBoxOrigin = self.dragBoxStart
       elif button == 4: self.rightMouseDown = True
+      self.dragBoxEnd = self.dragBoxStart
 
     @game.globals.engine.window.event
     def on_mouse_release(x, y, button, modifiers):
@@ -98,7 +103,8 @@ class Editor(Entity):
 
   #Draw the editor
   def draw(self):
-    if self.gridOn: #draw the grid if it is onf
+    #draw grid
+    if self.gridOn:
       gl.glColor4d(0.5, 0.5, 0.5, 0.5)
       winWidth = game.globals.engine.window.width
       winHeight = game.globals.engine.window.height
@@ -111,30 +117,54 @@ class Editor(Entity):
         gl.glVertex2f(winWidth, i)
       gl.glEnd()
 
+    #draw the left mouse drag box
     if self.leftMouseDown:
       gl.glColor4f(0.0, 0.0, 1.0, 0.35)
-      #draw the inner box
-      gl.glBegin(gl.GL_QUADS)
-      gl.glVertex2f(self.dragBoxStart.x, self.dragBoxStart.y)
-      gl.glVertex2f(self.dragBoxEnd.x, self.dragBoxStart.y)
-      gl.glVertex2f(self.dragBoxEnd.x, self.dragBoxEnd.y)
-      gl.glVertex2f(self.dragBoxStart.x, self.dragBoxEnd.y)
-      gl.glEnd()
-      #draw the outline
-      gl.glColor4f(0.0, 0.0, 1.0, 1.0)
-      gl.glBegin(gl.GL_LINE_LOOP)
-      gl.glVertex2f(self.dragBoxStart.x, self.dragBoxStart.y)
-      gl.glVertex2f(self.dragBoxEnd.x, self.dragBoxStart.y)
-      gl.glVertex2f(self.dragBoxEnd.x, self.dragBoxEnd.y)
-      gl.glVertex2f(self.dragBoxStart.x, self.dragBoxEnd.y)
-      gl.glEnd()
+
+      if self.brushShape == "circle": #draw a circle
+        #Find the dimensions of the circle
+        centreCircle = Vec2d(((self.dragBoxEnd.x-self.dragBoxStart.x)/2.0+self.dragBoxStart.x), ((self.dragBoxEnd.y-self.dragBoxStart.y)/2.0+self.dragBoxStart.y))
+        circleWidth = (self.dragBoxEnd.x-self.dragBoxStart.x)/2.0
+        circleHeight = (self.dragBoxEnd.y-self.dragBoxStart.y)/2.0
+        #draw the inner circle
+        gl.glBegin(gl.GL_TRIANGLE_FAN)
+        gl.glVertex2f(centreCircle.x, centreCircle.y)
+        for i in xrange(0, 365, 5):
+          rad = (i*math.pi)/180.0 #converts to raidians
+          gl.glVertex2f(centreCircle.x+math.sin(rad)*circleWidth, centreCircle.y+math.cos(rad)*circleHeight)
+        gl.glEnd()
+        #draw the circle outline
+        gl.glColor4f(0.0, 0.0, 1.0, 1.0)
+        gl.glBegin(gl.GL_LINE_LOOP)
+        for i in xrange(0, 360, 5):
+          rad = (i*math.pi)/180.0 #converts to raidians
+          gl.glVertex2f(centreCircle.x+math.sin(rad)*circleWidth, centreCircle.y+math.cos(rad)*circleHeight)
+        gl.glEnd()
+
+      else: #draw a rectangle or a triangle
+        if self.brushShape == "rectangle": gl.glBegin(gl.GL_QUADS) #draw a rectangle
+        elif self.brushShape == "triangle": gl.glBegin(gl.GL_TRIANGLES) #draw a triangle
+        #draw the inner box
+        gl.glVertex2f(self.dragBoxStart.x, self.dragBoxStart.y)
+        if self.brushShape == "rectangle": gl.glVertex2f(self.dragBoxEnd.x, self.dragBoxStart.y)
+        gl.glVertex2f(self.dragBoxEnd.x, self.dragBoxEnd.y)
+        gl.glVertex2f(self.dragBoxStart.x, self.dragBoxEnd.y)
+        gl.glEnd()
+        #draw the outline
+        gl.glColor4f(0.0, 0.0, 1.0, 1.0)
+        gl.glBegin(gl.GL_LINE_LOOP)
+        gl.glVertex2f(self.dragBoxStart.x, self.dragBoxStart.y)
+        if self.brushShape == "rectangle": gl.glVertex2f(self.dragBoxEnd.x, self.dragBoxStart.y)
+        gl.glVertex2f(self.dragBoxEnd.x, self.dragBoxEnd.y)
+        gl.glVertex2f(self.dragBoxStart.x, self.dragBoxEnd.y)
+        gl.glEnd()
 
   #set the given tab as the selected tab
   def selectTab(self, tabNo):
     for i in range(self.numTabs):
       if i == tabNo: self.tabList[i].image = self.tab1Image
       else: self.tabList[i].image = self.tab0Image
-      
+
   #place an object into the level
   def place(self):
     s = self.dragBoxStart
