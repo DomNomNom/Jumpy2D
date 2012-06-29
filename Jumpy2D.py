@@ -8,8 +8,7 @@ import game.globals
 from game.Engine import Engine
 from game.GameState import GameState
 
-from game.KeyboardControl import KeyboardControl
-from game.Controller import Controller
+from game.PlayerInput import KeyboardControl, Controller
 
 
 from game.Entities.Editor import Editor # TODO: move to gameState
