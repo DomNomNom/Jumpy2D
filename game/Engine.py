@@ -14,6 +14,7 @@ class Engine:
   groups = {
     'all':      set(), # all entities should be in here
     'updating': set(), # everything that wants to be updated goes in here
+    'level':    set(),
     'player':   set(),
     'physics':  set(),
     'rockets':  set(),
@@ -49,8 +50,6 @@ class Engine:
   window = None
   windowCenter = Vec2d()
   mousePos = Vec2d()
-
-  space = None # our physics space
 
   gameController = None
 
@@ -89,9 +88,6 @@ class Engine:
       self.mousePos.x = x
       self.mousePos.y = y
 
-    # physics
-    physics.initPhysics(self)
-
     self.fps_display = pyglet.clock.ClockDisplay()
 
     # shedule our main loop so we don't need to manually deal with time
@@ -112,7 +108,8 @@ class Engine:
         entity.update(self.updateRate) # update all entities
       self._processRemoving()
       self._processAdding()
-      self.space.step(self.updateRate) # update physics
+      for level in self.groups['level']:
+        level.space.step(self.updateRate) # update physics
 
     ## DRAW ##
     glClearColor(0,0,0, 0)
@@ -141,23 +138,25 @@ class Engine:
   def _processAdding(self):
     while len(self.entityAddQueue):
       e = self.entityAddQueue.pop()
+      assert 'all' in e.groups
       for group in e.groups:
         self.groups[group].add(e)
       if 'physics' in e.groups:
-        self.space.add(e.shapes)
-        if e.body is not self.space.static_body:
-          self.space.add(e.body)
+        e.level.space.add(e.shapes)
+        if e.body is not e.level.space.static_body:
+          e.level.space.add(e.body)
       if e.drawLayer is not None:
         self.drawLayers[e.drawLayer].append(e)
 
   def _processRemoving(self):
     while len(self.entityDelQueue):
       e = self.entityDelQueue.pop()
+      assert 'all' in e.groups
       for group in e.groups:
         self.groups[group].remove(e)
       if 'physics' in e.groups:
-        self.space.remove(e.shapes)
-        if e.body is not self.space.static_body:
-          self.space.remove(e.body)
+        e.level.space.remove(e.shapes)
+        if e.body is not e.level.space.static_body:
+          e.level.space.remove(e.body)
       if e.drawLayer is not None:
         self.drawLayers[e.drawLayer].remove(e)

@@ -9,16 +9,16 @@ import game.globals as game # engine
 
 class Platform(PhysicsEntity):
 
-  def __init__(self, pos, size=Vec2d(100, 100), friction=0):
+  def __init__(self, level, pos, size=Vec2d(100, 100), friction=0):
     self.drawLayer = 'game'
     self.pos = Vec2d(pos)
     self.size = Vec2d(size)
 
-    # physics
-    PhysicsEntity.__init__(self)  
-    self.body = game.engine.space.static_body
+    # physics from here on, but we'll only have a body if we have a level
+    self.level = level
+    PhysicsEntity.__init__(self)
+    self.body = level.space.static_body
 
-    # physics shape
     s = self.size # just a shorthand
     p = self.pos
     self.shape = pymunk.Poly(self.body, (
@@ -28,6 +28,7 @@ class Platform(PhysicsEntity):
       (p.x-s.x, p.y+s.y),
     ))
     self.shape.friction = friction
+
     # note: collisionLayers and collisionType get created by physics.py
     self.shape.layers = self.collisionLayers
     self.shape.collision_type = self.collisionType

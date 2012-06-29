@@ -1,7 +1,7 @@
 # Things for PlayCurrentLevel
-from game.KeyboardControl import KeyboardControl
-from game.Controller import Controller
 from game.Entities.Player import Player
+
+from Entities.Level import Level
 
 import game.globals as game
 
@@ -39,16 +39,19 @@ class GameState(object):
     def unfocus(self):  pass # undoes focus()
     def end(self):      pass # undoes start()
 
-  class PlayCurrentLevel(BaseState):
+  class Play(BaseState):
+    def __init__(self, playerInputs, levelName):
+      self.levels = []
+      for playerInput in playerInputs:
+        self.levels.append(Level(playerInput, levelName))
     def start(self):
-      playerInput = KeyboardControl()
-      try: playerInput = Controller() # use game pad input if we have one
-      except: pass
-      self.player = Player(playerInput, pos=(320, 240))
-      game.engine.addEntity(self.player)
-    def focus(self):   self.player.input.currentlyRecording = True
-    def unfocus(self): self.player.input.currentlyRecording = False
+      for level in self.levels:
+        game.engine.addEntity(level)
+    def focus(self):   self.setRecording(True )
+    def unfocus(self): self.setRecording(False)
     def end(self):
-      game.engine.removeEntity(self.player)
+      for level in self.levels: game.engine.removeEntity(level.player)
       #for entity in game.engine.groups['game']:
       #  game.engine.removeEntity(entity)
+    def setRecording(self, recording):
+      for level in self.levels: level.player.input.currentlyRecording = recording

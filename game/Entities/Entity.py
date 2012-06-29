@@ -19,13 +19,14 @@ class Entity(object):
 
 class PhysicsEntity(Entity):
 
+  # note: some PhysicsEntities can be "partial" physics entities. eg:
+  #       the editor shoud be able to create a platform without a physicsSpace
+
   # PLEASE NOTE: every PhysicsEntity should be listed in
   #              game/physics.py ==> physicsEntities
 
+  groups = {'all', 'updating', 'game', 'physics'}
+
   mass = 10.
   moment = 30. # pymunk.moment_for_poly(mass, verticies)
-
-  # please call this when you create a instance of a subclass of this
-  def __init__(self):
-    #self.body = game.engine.space.static_body
-    self.groups = self.groups | {'game', 'physics'} # append to set
+  level = None # The level that contains the physics Space

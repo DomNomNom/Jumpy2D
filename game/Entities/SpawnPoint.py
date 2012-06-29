@@ -4,13 +4,17 @@ from pymunk import Vec2d
 from game.Camera import shiftView
 from Entity import Entity
 
+
 class SpawnPoint(Entity):
   ''' A small class that only holds a spawn position for the player '''
 
   size = Vec2d(5, 5)
 
-  def __init__(self, pos):
+  def __init__(self, level, pos):
+    self.level = level
     self.pos = Vec2d(pos)
+    self.groups = {'game', 'all'}
+    self.drawLayer = 'game'
 
   def __repr__(self):
     return repr([

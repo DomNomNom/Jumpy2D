@@ -8,7 +8,9 @@ import game.globals
 from game.Engine import Engine
 from game.GameState import GameState
 
-from game.LevelLoader import loadLevel, saveLevel #TODO: move load/save to gamestate
+from game.KeyboardControl import KeyboardControl
+from game.Controller import Controller
+
 
 from game.Entities.Editor import Editor # TODO: move to gameState
 from game.Entities.DebugCross import DebugCross
@@ -29,18 +31,19 @@ game.globals.engine = Engine()
 game.globals.gameState = GameState()
 engine = game.globals.engine # a shorthand
 
-# load a level when specified
-if args.level:
-  for entity in loadLevel(args.level):
-    engine.addEntity(entity)
 
 if args.editor:
   engine.addEntity(Editor())
 else: # play a level
-  if not args.level: # if no level is specified, load a default level
-    for entity in loadLevel('test2'):
-      engine.addEntity(entity)
-  game.globals.gameState.pushState(GameState.PlayCurrentLevel())
+  # load a level when specified
+  levelName = args.level
+  if not levelName:
+    levelName = 'test2'
+  try:
+    playerInput = Controller() # use game pad input if we have one
+  except:
+    playerInput = KeyboardControl()
+  game.globals.gameState.pushState(GameState.Play([playerInput], levelName))
 
 engine.addEntity(DebugCross(engine.windowCenter, (1,1,1) ))
 engine.addEntity(DebugCross(engine.mousePos,     (1,0,0) ))

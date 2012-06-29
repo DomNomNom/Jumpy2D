@@ -13,7 +13,7 @@ class Player(PhysicsEntity):
   speed = 200. # units per second
   jump_impulse = 3000.
 
-  def __init__(self, playerInput, pos):
+  def __init__(self, level, playerInput, pos):
     PhysicsEntity.__init__(self)
     self.input = playerInput
     self.groups = self.groups | {'player'}
@@ -23,6 +23,7 @@ class Player(PhysicsEntity):
     self.targetVel = Vec2d(0, 0) # target velocity
     self.pos = self.body.position
     self.vel = self.body.velocity
+    self.level = level
 
     # init shape
     self.collisionSquare = pymunk.Poly.create_box(self.body, 2*self.size)
@@ -48,7 +49,7 @@ class Player(PhysicsEntity):
         self.vel.y = 0
         self.body.apply_impulse((0, self.jump_impulse))
       elif action.type == 'shoot':
-        game.engine.addEntity(Rocket(self.pos, action.aim, self))
+        game.engine.addEntity(Rocket(self.level, self.pos, action.aim, self))
 
     # movement Control
     # increase our velocity iff our target velocity is 'faster'
