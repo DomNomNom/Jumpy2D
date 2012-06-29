@@ -4,12 +4,13 @@ from pymunk import Vec2d, Space
 from os import path, mkdir, pardir
 from ast import literal_eval
 
-from Entity import Entity
 from game.physics import rocketHandler
 
+# Entities
+from Entity import Entity
 from Rocket import Rocket
 from Player import Player
-from Platform import Platform
+from Platform import Platform, TrianglePlatform
 from SpawnPoint import SpawnPoint
 
 import game.globals as game
@@ -18,7 +19,8 @@ import game.globals as game
 class Level(Entity):
   constructors = {
     'Platform' : Platform,
-    'SpawnPoint' : SpawnPoint
+    'SpawnPoint' : SpawnPoint,
+    'TrianglePlatform': TrianglePlatform,
   }
 
   chrashOnConstructorFail = True # TODO: move this to a config

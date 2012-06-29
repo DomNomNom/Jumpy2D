@@ -39,7 +39,7 @@ else: # play a level
   if not levelName:
     levelName = 'test2'
   try:
-    playerInput = Controller() # use game pad input if we have one
+    playerInput = Controller() # use a game pad input if we have one
   except:
     playerInput = KeyboardControl()
   game.globals.gameState.pushState(GameState.Play([playerInput], levelName))

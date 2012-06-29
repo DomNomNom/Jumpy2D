@@ -15,7 +15,6 @@ class Rocket(PhysicsEntity):
   def __init__(self, level, pos, angle, player):
     self.level = level
     self.groups = self.groups | {'rockets'}
-    PhysicsEntity.__init__(self)
     self.body = pymunk.Body(self.mass, self.moment)
     self.body.position = Vec2d(pos)
     self.body.angle = angle
