@@ -17,10 +17,10 @@ class SpawnPoint(Entity):
     self.drawLayer = 'game'
 
   def __repr__(self):
-    return repr([
+    return repr((
       'SpawnPoint',
       tuple(self.pos),
-    ])
+    ))
 
   def draw(self):
     s = self.size # shorthand

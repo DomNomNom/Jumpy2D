@@ -52,12 +52,12 @@ class Platform(PhysicsEntity):
 
 
   def __repr__(self):
-    return repr([
+    return repr((
       'Platform',
       tuple(self.pos ),
       tuple(self.size),
       self.shape.friction,
-    ])
+    ))
 
 
 
@@ -67,8 +67,6 @@ class Platform(PhysicsEntity):
 class TrianglePlatform(Platform):
   def __init__(self, level, a,b,c, friction=0): # a,b,c are our corners
     a,b,c = map(Vec2d, (a,b,c)) # convert a,b,c to vectors
-    if not is_clockwise([a,b,c]):
-      a,b,c = a,c,b
     self.a = a
     self.b = b
     self.c = c
@@ -81,13 +79,13 @@ class TrianglePlatform(Platform):
     self.shapes = [self.shape]
 
   def __repr__(self):
-    return repr([
+    return repr((
       'TrianglePlatform',
       tuple(self.a),
       tuple(self.b),
       tuple(self.c),
       self.shape.friction,
-    ])
+    ))
 
   def draw(self):
     gl.glColor3f(0.0, 1.0, int(self.shape.friction==0)/3.)
