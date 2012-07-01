@@ -1,7 +1,6 @@
 import pyglet.gl as gl
-from pymunk.vec2d import Vec2d
+from pymunk import Vec2d, Poly
 from pymunk.util import is_clockwise
-import pymunk
 
 from Entity import PhysicsEntity
 
@@ -21,7 +20,7 @@ class Platform(PhysicsEntity):
 
     s = self.size # just a shorthand
     p = self.pos
-    self.shape = pymunk.Poly(self.body, (
+    self.shape = Poly(self.body, (
       (p.x+s.x, p.y+s.y),
       (p.x+s.x, p.y-s.y),
       (p.x-s.x, p.y-s.y),
@@ -72,7 +71,7 @@ class TrianglePlatform(Platform):
     self.c = c
     self.level = level
     self.body = level.space.static_body
-    self.shape = pymunk.Poly(self.body, (a, b, c))
+    self.shape = Poly(self.body, (a, b, c))
     self.shape.friction = friction
     self.shape.layers = self.collisionLayers
     self.shape.collision_type = self.collisionType

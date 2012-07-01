@@ -3,7 +3,6 @@ from pyglet import clock
 from pymunk import Vec2d
 import time
 
-import physics
 from Camera import Camera
 
 

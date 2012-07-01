@@ -21,7 +21,7 @@ class Camera(object):
 
   # This class defines a "with" statement
   class ViewShift(object):
-    def __init__(self, pos):
+    def __init__(self, pos): # takes a Vec2d position
       self.pos = pos
     def __enter__(self):
       gl.glPushMatrix()

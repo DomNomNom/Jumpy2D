@@ -6,17 +6,19 @@ Therefore it's in here
 
 from Entities.Rocket import Rocket
 from Entities.Player import Player
+from Entities.Trigger import Trigger
 from Entities.Platform import Platform
 
 import game.globals as game
 
 
-physicsEntities = [Platform, Player, Rocket]
+physicsEntities = [Platform, Player, Rocket, Trigger]
 
 # a dict from a unique power of 2 (the layer number) to the entities that are in the layer
 collisionLayers = {
   2**0 : [Platform, Player],
   2**1 : [Platform, Rocket],
+  2**2 : [Player,  Trigger],
 }
 
 
@@ -32,7 +34,8 @@ for entity in physicsEntities:
       entity.collisionLayers += layerNumber
 
 
-# Collision handlers from here on
+## Collision handlers from here on
+
 def rocketHandler(space, arbiter, *args, **kwargs):
   rocketShape = arbiter.shapes[0]
   for rocket in game.engine.groups['rockets']:
@@ -40,4 +43,11 @@ def rocketHandler(space, arbiter, *args, **kwargs):
       rocket.explode()
       game.engine.removeEntity(rocket)
       break
+  return False
+
+def triggerOn(space, arbiter, *args, **kwargs):
+  print 'Trigger On'
+  return False
+def triggerOff(space, arbiter, *args, **kwargs):
+  print "Trigger Off"
   return False

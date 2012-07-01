@@ -23,7 +23,6 @@ class GameState(object):
     state.start()
     state.focus()
     self.stateStack.append(state)
-    # TODO: do stuff
 
   def popState(self):
     toEnd = self.stateStack.pop()

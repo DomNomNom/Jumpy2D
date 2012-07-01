@@ -4,12 +4,13 @@ from pymunk import Vec2d, Space
 from os import path, mkdir, pardir
 from ast import literal_eval
 
-from game.physics import rocketHandler
+import game.physics as physics
 
 # Entities
 from Entity import Entity
 from Rocket import Rocket
 from Player import Player
+from Trigger import Trigger
 from Platform import Platform, TrianglePlatform
 from SpawnPoint import SpawnPoint
 
@@ -18,6 +19,7 @@ import game.globals as game
 
 class Level(Entity):
   constructors = {
+    'Trigger' : Trigger,
     'Platform' : Platform,
     'SpawnPoint' : SpawnPoint,
     'TrianglePlatform': TrianglePlatform,
@@ -36,7 +38,13 @@ class Level(Entity):
     self.space.add_collision_handler(
       Rocket.collisionType,
       Platform.collisionType,
-      begin=rocketHandler
+      begin = physics.rocketHandler
+    )
+    self.space.add_collision_handler(
+      Player.collisionType,
+      Trigger.collisionType,
+      begin    = physics.triggerOn,
+      separate = physics.triggerOff
     )
 
     self.ids = {} # a dict for IDs to entities
@@ -44,6 +52,7 @@ class Level(Entity):
     self.player = Player(self, playerInput, pos=(320, 240))
     self.addEntity(0, self.player)
     self.loadEntities(levelName)
+
 
   def loadEntities(self, levelName):
     # TODO: uncompression
@@ -83,7 +92,7 @@ class Level(Entity):
 
 
   def addEntity(self, entityID, entity):
-    assert entityID not in self.ids
+    assert entityID not in self.ids, "Every entity needs a unique ID (start of line)"
     self.ids[entityID] = entity
     game.engine.addEntity(entity)
 
