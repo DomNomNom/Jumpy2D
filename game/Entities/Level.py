@@ -1,16 +1,16 @@
-from pymunk import Vec2d, Space
+
 
 # for saving loading
 from os import path, mkdir, pardir
 from ast import literal_eval
 
-import game.physics as physics
+from game.physics import initSpace
 
 # Entities
 from Entity import Entity
 from Rocket import Rocket
 from Player import Player
-from Trigger import Trigger
+from Trigger import LevelEnd #, Trigger
 from Platform import Platform, TrianglePlatform
 from SpawnPoint import SpawnPoint
 
@@ -19,7 +19,8 @@ import game.globals as game
 
 class Level(Entity):
   constructors = {
-    'Trigger' : Trigger,
+    #'Trigger' : Trigger,
+    'LevelEnd' : LevelEnd,
     'Platform' : Platform,
     'SpawnPoint' : SpawnPoint,
     'TrianglePlatform': TrianglePlatform,
@@ -30,22 +31,8 @@ class Level(Entity):
 
   def __init__(self, playerInput, levelName):
     self.groups = {'all', 'level'}
-    # create our physics space
-    self.space = Space()
-    self.space.gravity = Vec2d(0.0, -900.0)
-    self.space.collision_bias = 0
 
-    self.space.add_collision_handler(
-      Rocket.collisionType,
-      Platform.collisionType,
-      begin = physics.rocketHandler
-    )
-    self.space.add_collision_handler(
-      Player.collisionType,
-      Trigger.collisionType,
-      begin    = physics.triggerOn,
-      separate = physics.triggerOff
-    )
+    self.space = initSpace()   # create our physics space
 
     self.ids = {} # a dict for IDs to entities
 

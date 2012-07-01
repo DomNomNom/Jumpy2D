@@ -50,8 +50,7 @@ class Engine:
   windowCenter = Vec2d()
   mousePos = Vec2d()
 
-  gameController = None
-
+  shapeToEntity = {} # a dict that gives the entity that contains the keyed shape
 
 
   def __init__(self):
@@ -142,6 +141,8 @@ class Engine:
         self.groups[group].add(e)
       if 'physics' in e.groups:
         e.level.space.add(e.shapes)
+        for shape in e.shapes:
+          self.shapeToEntity[shape] = e
         if e.body is not e.level.space.static_body:
           e.level.space.add(e.body)
       if e.drawLayer is not None:
@@ -155,6 +156,8 @@ class Engine:
         self.groups[group].remove(e)
       if 'physics' in e.groups:
         e.level.space.remove(e.shapes)
+        for shape in e.shapes:
+          del self.shapeToEntity[shape]
         if e.body is not e.level.space.static_body:
           e.level.space.remove(e.body)
       if e.drawLayer is not None:

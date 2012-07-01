@@ -51,8 +51,8 @@ class GameState(object):
     def unfocus(self): self.setRecording(False)
     def end(self):
       for level in self.levels: game.engine.removeEntity(level.player)
-      #for entity in game.engine.groups['game']: #TODO: remove all them entities
-      #  game.engine.removeEntity(entity)
+      for entity in game.engine.groups['game']: # note: this seems a bit wrong :/
+        game.engine.removeEntity(entity)
     def setRecording(self, recording):
       for level in self.levels: level.player.input.currentlyRecording = recording
 

@@ -5,10 +5,13 @@ from Entity import PhysicsEntity
 
 from game.Camera import shiftView
 
+import game.globals as game
+
+
 class Trigger(PhysicsEntity):
   drawLayer = 'game'
 
-  def __init__(self, level, pos, size): # TODO: triggerable thing
+  def __init__(self, level, pos, size, startState=False): # TODO: triggerable thing
     self.pos = Vec2d(pos)
     self.size = Vec2d(size)
 
@@ -31,9 +34,12 @@ class Trigger(PhysicsEntity):
     self.shape.sensor = True
     self.shapes = [self.shape]
 
-  def draw(self):
+    self.triggered(startState)
+
+
+  def draw(self, colour=(0., 0., 1.)):
     s = self.size # just a shorthand
-    gl.glColor3f(0.0, 0.0, 1.0)
+    gl.glColor3f(*colour)
 
     with shiftView(self.pos):
       gl.glBegin(gl.GL_LINE_LOOP)
@@ -43,10 +49,30 @@ class Trigger(PhysicsEntity):
       gl.glVertex2f(-s.x, -s.y)
       gl.glEnd()
 
-  def __repr__(self):
+  def triggered(self, state):
+    self.state = state
+    if state == True:
+      print 'state ON'
+    else:
+      print 'state OFF'
+
+  def __repr__(self, className='Trigger'):
     return repr((
-      'Trigger',
+      className,
       tuple(self.pos ),
       tuple(self.size),
-      # TODO: triggerable thing
     ))
+
+
+
+class LevelEnd(Trigger):
+  def triggered(self, state):
+    if state == True:
+      game.gameState.popState()
+
+  def __repr__(self):
+    return Trigger.__repr__(self, 'LevelEnd')
+
+
+
+# TODO: A triggere that activates something generic

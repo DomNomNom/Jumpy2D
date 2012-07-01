@@ -1,6 +1,6 @@
 #0, Reserved for player
 1, 'SpawnPoint', (320, 240)          # Level Start
-2, 'Trigger', (100, 450), (20, 20)   # Level End
+2, 'LevelEnd', (100, 450), (20, 20)   # Level End
 
 
 3, 'Platform', (320.0, 90.0), (200.0, 100.0), 1.0

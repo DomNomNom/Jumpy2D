@@ -4,6 +4,8 @@ Things about the interaction between 2 entities should not really be in engine, 
 Therefore it's in here
 '''
 
+from pymunk import Vec2d, Space
+
 from Entities.Rocket import Rocket
 from Entities.Player import Player
 from Entities.Trigger import Trigger
@@ -34,20 +36,47 @@ for entity in physicsEntities:
       entity.collisionLayers += layerNumber
 
 
+# creates and initializes a physics space
+def initSpace():
+  space = Space()
+  space.gravity = Vec2d(0.0, -900.0)
+  space.collision_bias = 0
+
+  space.add_collision_handler(
+    Rocket.collisionType,
+    Platform.collisionType,
+    begin = rocketHandler
+  )
+  space.add_collision_handler(
+    Player.collisionType,
+    Trigger.collisionType,
+    begin    = triggerOn,
+    separate = triggerOff
+  )
+
+  return space
+
+
+
 ## Collision handlers from here on
 
 def rocketHandler(space, arbiter, *args, **kwargs):
-  rocketShape = arbiter.shapes[0]
-  for rocket in game.engine.groups['rockets']:
-    if rocketShape in rocket.shapes:
-      rocket.explode()
-      game.engine.removeEntity(rocket)
-      break
+  rocket = game.engine.shapeToEntity[arbiter.shapes[0]]
+  rocket.explode()
+  game.engine.removeEntity(rocket)
   return False
 
 def triggerOn(space, arbiter, *args, **kwargs):
-  print 'Trigger On'
+  trigger = game.engine.shapeToEntity[arbiter.shapes[1]]
+  trigger.triggered(True)
   return False
+
 def triggerOff(space, arbiter, *args, **kwargs):
-  print "Trigger Off"
+  try:
+    triggerShape = arbiter.shapes[1]
+  except:
+    #print "OMG, pyglet shat itself."
+    return False
+  trigger = game.engine.shapeToEntity[triggerShape]
+  trigger.triggered(False)
   return False
