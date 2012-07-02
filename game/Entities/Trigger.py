@@ -10,13 +10,14 @@ import game.globals as game
 
 class Trigger(PhysicsEntity):
   drawLayer = 'game'
+  triggerables = {}
 
   def __init__(self, level, pos, size, thingsToTrigger={}, startState=False):
     self.level = level
     self.pos = Vec2d(pos)
     self.size = Vec2d(size)
 
-    self.thingsToTrigger=thingsToTrigger # TODO
+    self.thingsToTrigger = thingsToTrigger
 
     # physics from here on
     self.body = level.space.static_body
@@ -42,7 +43,6 @@ class Trigger(PhysicsEntity):
   def draw(self, colour=(0., 0., 1.)):
     s = self.size # just a shorthand
     gl.glColor3f(*colour)
-
     with shiftView(self.pos):
       gl.glBegin(gl.GL_LINE_LOOP)
       gl.glVertex2f(-s.x, +s.y)
@@ -57,16 +57,13 @@ class Trigger(PhysicsEntity):
       entity = self.level.ids[entityID]
       method = entity.triggerables[methodName]
       method(entity, state)
-    if state == True:
-      print 'state ON'
-    else:
-      print 'state OFF'
 
   def __repr__(self, className='Trigger'):
     return repr((
       className,
       tuple(self.pos ),
       tuple(self.size),
+      thingsToTrigger,
     ))
 
 

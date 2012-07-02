@@ -7,6 +7,7 @@ from ast import literal_eval
 from game.physics import initSpace
 
 # Entities
+from Gates import NotGate
 from Entity import Entity
 from Rocket import Rocket
 from Player import Player
@@ -19,6 +20,7 @@ import game.globals as game
 
 class Level(Entity):
   constructors = {
+    'NotGate' : NotGate,
     'Trigger' : Trigger,
     'LevelEnd' : LevelEnd,
     'Platform' : Platform,
