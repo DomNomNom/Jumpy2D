@@ -56,7 +56,7 @@ class Engine:
   def __init__(self):
     # init draw layers
     for name in self.drawLayerNames:
-      self.drawLayers[name] = []
+      self.drawLayers[name] = set()
       self.drawLayersBatch[name] = pyglet.graphics.Batch()
 
     # Window
@@ -126,6 +126,7 @@ class Engine:
     #self.window.flip()
 
 
+
   def addEntity(self, e):
     self.entityAddQueue.add(e)
 
@@ -146,14 +147,15 @@ class Engine:
         if e.body is not e.level.space.static_body:
           e.level.space.add(e.body)
       if e.drawLayer is not None:
-        self.drawLayers[e.drawLayer].append(e)
+        self.drawLayers[e.drawLayer].add(e)
 
   def _processRemoving(self):
     while len(self.entityDelQueue):
       e = self.entityDelQueue.pop()
       assert 'all' in e.groups
       for group in e.groups:
-        self.groups[group].remove(e)
+        if e in self.groups[group]:
+          self.groups[group].remove(e)
       if 'physics' in e.groups:
         e.level.space.remove(e.shapes)
         for shape in e.shapes:

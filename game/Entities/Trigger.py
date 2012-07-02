@@ -11,12 +11,14 @@ import game.globals as game
 class Trigger(PhysicsEntity):
   drawLayer = 'game'
 
-  def __init__(self, level, pos, size, startState=False): # TODO: triggerable thing
+  def __init__(self, level, pos, size, thingsToTrigger={}, startState=False):
+    self.level = level
     self.pos = Vec2d(pos)
     self.size = Vec2d(size)
 
+    self.thingsToTrigger=thingsToTrigger # TODO
+
     # physics from here on
-    self.level = level
     self.body = level.space.static_body
 
     s = self.size # just a shorthand
@@ -51,6 +53,10 @@ class Trigger(PhysicsEntity):
 
   def triggered(self, state):
     self.state = state
+    for entityID, methodName in self.thingsToTrigger.items():
+      entity = self.level.ids[entityID]
+      method = entity.triggerables[methodName]
+      method(entity, state)
     if state == True:
       print 'state ON'
     else:
@@ -72,7 +78,3 @@ class LevelEnd(Trigger):
 
   def __repr__(self):
     return Trigger.__repr__(self, 'LevelEnd')
-
-
-
-# TODO: A triggere that activates something generic

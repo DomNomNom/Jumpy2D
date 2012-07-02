@@ -1,5 +1,7 @@
 from pymunk import Vec2d
 
+import game.globals as game
+
 class Entity(object):
   pos = Vec2d(0., 0.)
   vel = Vec2d(0., 0.)
@@ -15,12 +17,22 @@ class Entity(object):
   def draw(self):
     pass
 
+  def visible(self, state):
+    # TODO: do something about sprites
+    # TODO: set the draw-layer of the entity to None or type(self).drawLayer
+    drawLayer = game.engine.drawLayers[self.drawLayer]
+    if state:
+      drawLayer.add(self)
+    else:
+      if self in drawLayer:
+        drawLayer.remove(self)
+      
+  triggerables = {
+    'visible' : visible,
+  }
 
 
 class PhysicsEntity(Entity):
-
-  # note: some PhysicsEntities can be "partial" physics entities. eg:
-  #       the editor shoud be able to create a platform without a physicsSpace
 
   # PLEASE NOTE: every PhysicsEntity should be listed in
   #              game/physics.py ==> physicsEntities

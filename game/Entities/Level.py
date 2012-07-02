@@ -10,7 +10,7 @@ from game.physics import initSpace
 from Entity import Entity
 from Rocket import Rocket
 from Player import Player
-from Trigger import LevelEnd #, Trigger
+from Trigger import Trigger, LevelEnd
 from Platform import Platform, TrianglePlatform
 from SpawnPoint import SpawnPoint
 
@@ -19,7 +19,7 @@ import game.globals as game
 
 class Level(Entity):
   constructors = {
-    #'Trigger' : Trigger,
+    'Trigger' : Trigger,
     'LevelEnd' : LevelEnd,
     'Platform' : Platform,
     'SpawnPoint' : SpawnPoint,
