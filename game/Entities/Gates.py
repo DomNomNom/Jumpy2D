@@ -1,11 +1,11 @@
 import pyglet.gl as gl
 from pymunk import Vec2d
 
-from Entity import Entity
+from Entity import GameEntity
 
 from game.Camera import shiftView
 
-class NotGate(Entity):
+class NotGate(GameEntity):
   size = Vec2d(20, 20)
   groups = {'all', 'updating', 'game'}
 

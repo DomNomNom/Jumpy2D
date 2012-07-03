@@ -1,11 +1,11 @@
 import pyglet.gl as gl
 from pymunk import Vec2d
 
-from Entity import Entity
+from Entity import GameEntity
 
 import game.globals as game
 
-class Explosion(Entity):
+class Explosion(GameEntity):
 
   radius = 20
   size = Vec2d(radius, 0) # size.x is our radius

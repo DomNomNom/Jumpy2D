@@ -1,4 +1,6 @@
-from pyglet.gl import *
+import pyglet.gl as gl
+from pyglet.graphics import Batch
+from pyglet.window import Window
 from pyglet import clock
 from pymunk import Vec2d
 import time
@@ -57,22 +59,22 @@ class Engine:
     # init draw layers
     for name in self.drawLayerNames:
       self.drawLayers[name] = set()
-      self.drawLayersBatch[name] = pyglet.graphics.Batch()
+      self.drawLayersBatch[name] = Batch()
 
     # Window
-    config = pyglet.gl.Config(
+    config = gl.Config(
       #sample_buffers=1, samples=4   # antialiasing
     )
-    self.window = pyglet.window.Window(
+    self.window = Window(
       config = config,
       #fullscreen = True,
       vsync = False,
-      style = pyglet.window.Window.WINDOW_STYLE_BORDERLESS,
+      style = Window.WINDOW_STYLE_BORDERLESS,
     )
     self.windowCenter = Vec2d(self.window.get_size()) / 2
 
     # opengl
-    gl.glEnable(GL_BLEND) #enables transparency
+    gl.glEnable(gl.GL_BLEND) #enables transparency
 
     # camera
     self.camera = Camera()
@@ -86,7 +88,7 @@ class Engine:
       self.mousePos.x = x
       self.mousePos.y = y
 
-    self.fps_display = pyglet.clock.ClockDisplay()
+    self.fps_display = clock.ClockDisplay()
 
     # shedule our main loop so we don't need to manually deal with time
     clock.schedule(self.run)
@@ -110,9 +112,9 @@ class Engine:
         level.space.step(self.updateRate) # update physics
 
     ## DRAW ##
-    glClearColor(0,0,0, 0)
-    glClear(GL_COLOR_BUFFER_BIT)
-    glLoadIdentity()
+    gl.glClearColor(0,0,0, 0)
+    gl.glClear(gl.GL_COLOR_BUFFER_BIT)
+    gl.glLoadIdentity()
 
     #self.camera.gameFocus = (self.windowCenter - self.mousePos) / 2
     for name in self.drawLayerNames:

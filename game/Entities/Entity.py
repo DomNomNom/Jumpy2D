@@ -17,6 +17,10 @@ class Entity(object):
   def draw(self):
     pass
 
+
+class GameEntity(Entity):
+  groups = {'all', 'updating', 'game'}
+  
   def visible(self, state):
     # TODO: do something about sprites
     # TODO: set the draw-layer of the entity to None or type(self).drawLayer
@@ -31,8 +35,7 @@ class Entity(object):
     'visible' : visible,
   }
 
-
-class PhysicsEntity(Entity):
+class PhysicsEntity(GameEntity):
 
   # PLEASE NOTE: every PhysicsEntity should be listed in
   #              game/physics.py ==> physicsEntities

@@ -2,10 +2,10 @@ import pyglet.gl as gl
 from pymunk import Vec2d
 
 from game.Camera import shiftView
-from Entity import Entity
+from Entity import GameEntity
 
 
-class SpawnPoint(Entity):
+class SpawnPoint(GameEntity):
   ''' A small class that only holds a spawn position for the player '''
 
   size = Vec2d(5, 5)
