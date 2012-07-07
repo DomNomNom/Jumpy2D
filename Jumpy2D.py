@@ -7,6 +7,7 @@ import argparse
 import game.globals
 from game.Engine import Engine
 from game.GameState import GameState
+from game.Resources import Resources
 
 from game.PlayerInput import KeyboardControl, Controller
 
@@ -28,6 +29,9 @@ args = parser.parse_args()
 # Create global variables
 game.globals.engine = Engine()
 game.globals.gameState = GameState()
+game.globals.resources = Resources()
+game.globals.resources.load()
+
 engine = game.globals.engine # a shorthand
 
 

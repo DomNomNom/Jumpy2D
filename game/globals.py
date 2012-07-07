@@ -4,3 +4,5 @@
 engine = None
 
 gameState = None
+
+resources = None

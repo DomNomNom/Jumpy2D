@@ -4,7 +4,8 @@ from pymunk.util import is_clockwise
 
 from Entity import PhysicsEntity
 
-import game.globals as game # engine
+from game.Camera import shiftView
+import game.globals as game # engine, resources
 
 
 class Platform(PhysicsEntity):
@@ -38,6 +39,7 @@ class Platform(PhysicsEntity):
     s = self.size # just a shorthand
     gl.glColor3f(0.0, 1.0, int(self.shape.friction==0)/3.) # make it a slightly different colour when frictionless
 
+    '''
     gl.glPushMatrix()
     gl.glTranslatef(self.pos.x, self.pos.y, 0)
     gl.glBegin(gl.GL_QUADS)
@@ -47,6 +49,11 @@ class Platform(PhysicsEntity):
     gl.glVertex2f(-s.x, -s.y)
     gl.glEnd()
     gl.glPopMatrix()
+    '''
+
+    with shiftView(self.pos - self.size):
+      tex = game.resources.textures['platform']
+      tex.blit_tiled(0,0, 0, *(self.size*2))
 
 
 
