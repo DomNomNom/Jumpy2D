@@ -3,13 +3,14 @@ from pyglet import image, sprite, graphics, gl
 from pymunk import Vec2d
 
 from Entity import Entity
+from Level import Level
 from Platform import Platform
 import game.globals
 
 class Editor(Entity):
 
   #CONSTRUCTOR
-  def __init__(self):
+  def __init__(self, levelName=None):
 
     self.focus = False
 
@@ -32,6 +33,7 @@ class Editor(Entity):
     self.dragBoxStart = Vec2d(0, 0) #the start coords of the dragbox
     self.dragBoxOrigin = Vec2d(0, 0) #the original drag box start point
     self.dragBoxEnd = Vec2d(0, 0) #the end coords of the dragbox
+    self.level = Level(levelName=levelName)  # The level that will store our entities
 
     #until resources is implement the editor currently loads its own images
     self.sideBarImage  = image.load("game/Resources/Graphics/EditorUI/editorUI.png")
@@ -170,4 +172,4 @@ class Editor(Entity):
     s = self.dragBoxStart
     e = self.dragBoxEnd
     size = Vec2d((e.x-s.x)/2, (s.y-e.y)/2)
-    game.globals.engine.addEntity(Platform(Vec2d(s.x+size.x, s.y-size.y), size))
+    game.globals.engine.addEntity(Platform(self.level, Vec2d(s.x+size.x, s.y-size.y), size))
