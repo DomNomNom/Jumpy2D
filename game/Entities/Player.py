@@ -5,11 +5,12 @@ from math import degrees
 
 from Entity import PhysicsEntity
 from Rocket import Rocket
+from game.Camera import shiftView
 import game.globals as game
 
 class Player(PhysicsEntity):
 
-  size = Vec2d(10, 10)
+  size = Vec2d(10, 0)
   speed = 200. # units per second
   jump_impulse = 3000.
 
@@ -26,7 +27,7 @@ class Player(PhysicsEntity):
     self.level = level
 
     # init shape
-    self.collisionSquare = pymunk.Poly.create_box(self.body, 2*self.size)
+    self.collisionSquare = pymunk.Circle(self.body, self.size.x)
     # note: collisionLayers and collisionType get created by physics.py
     self.collisionSquare.friction = 1
     self.collisionSquare.layers = self.collisionLayers
@@ -65,21 +66,25 @@ class Player(PhysicsEntity):
 
   def draw(self):
 
+    '''
     # main collision square
-    gl.glColor3f(1.0, 0.0, 0.0)
     gl.glBegin(gl.GL_QUADS)
     for point in self.collisionSquare.get_points():
       gl.glVertex2f(*point)
     gl.glEnd()
+    '''
 
-
-    #this push/pop block is for player-relative coordinates
-    gl.glPushMatrix()
-    gl.glTranslatef(self.pos.x, self.pos.y, 0)
-    gl.glRotatef(degrees(self.body.angle), 0, 0, 1)
-    gl.glColor3f(1.0, 0.0, 1.0)
-    gl.glBegin(gl.GL_LINES)
-    gl.glVertex2f(0,0)
-    gl.glVertex2f(*Vec2d(30, 0).rotated(self.input.currentAim))
-    gl.glEnd()
-    gl.glPopMatrix()
+    with shiftView(self.pos):
+      gl.glColor3f(1.0, 0.0, 0.0)
+      gl.glBegin(gl.GL_TRIANGLE_FAN)
+      gl.glVertex2f(0, 0)
+      for i in xrange(0, 365, 5):
+        gl.glVertex2f(*self.size.rotated_degrees(i))
+      gl.glEnd()
+    
+      gl.glRotatef(degrees(self.body.angle), 0, 0, 1)
+      gl.glColor3f(1.0, 0.0, 1.0)
+      gl.glBegin(gl.GL_LINES)
+      gl.glVertex2f(0,0)
+      gl.glVertex2f(*Vec2d(30, 0).rotated(self.input.currentAim))
+      gl.glEnd()

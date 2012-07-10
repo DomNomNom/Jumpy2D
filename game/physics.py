@@ -10,17 +10,19 @@ from Entities.Rocket import Rocket
 from Entities.Player import Player
 from Entities.Trigger import Trigger
 from Entities.Platform import Platform
+from Entities.Explosion import Explosion
 
 import game.globals as game
 
 
-physicsEntities = [Platform, Player, Rocket, Trigger]
+physicsEntities = [Platform, Player, Rocket, Trigger, Explosion]
 
 # a dict from a unique power of 2 (the layer number) to the entities that are in the layer
 collisionLayers = {
   2**0 : [Platform, Player],
   2**1 : [Platform, Rocket],
   2**2 : [Player,  Trigger],
+  2**3 : [Player,  Explosion],
 }
 
 
@@ -49,6 +51,11 @@ def initSpace():
   )
   space.add_collision_handler(
     Player.collisionType,
+    Explosion.collisionType,
+    begin = explosionHandler
+  )
+  space.add_collision_handler(
+    Player.collisionType,
     Trigger.collisionType,
     begin    = triggerOn,
     separate = triggerOff
@@ -64,6 +71,12 @@ def rocketHandler(space, arbiter, *args, **kwargs):
   rocket = game.engine.shapeToEntity[arbiter.shapes[0]]
   rocket.explode()
   game.engine.removeEntity(rocket)
+  return False
+
+def explosionHandler(space, arbiter, *args, **kwargs):
+  player    = game.engine.shapeToEntity[arbiter.shapes[0]]
+  explosion = game.engine.shapeToEntity[arbiter.shapes[1]]
+  explosion.onPlayerCollide(player)
   return False
 
 def triggerOn(space, arbiter, *args, **kwargs):

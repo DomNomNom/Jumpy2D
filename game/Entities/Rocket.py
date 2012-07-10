@@ -43,4 +43,4 @@ class Rocket(PhysicsEntity):
     gl.glEnd()
 
   def explode(self):
-    game.engine.addEntity(Explosion(self.body.position, self.player))
+    game.engine.addEntity(Explosion(self.level, self.body.position, self.player))
