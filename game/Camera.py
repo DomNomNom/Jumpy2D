@@ -32,7 +32,7 @@ class Camera(object):
       gl.glPopMatrix()
 
 
-  def toModelView(self, v):
+  def toScreenSpace(self, v):
     """ Returns a point that had the current camera translation applied to it """
     p = Vec2d(v)
     a = (gl.GLfloat * 16)() # our transformation matrix
@@ -44,8 +44,8 @@ class Camera(object):
       p.x*a[1] + p.y*a[5] + 0*a[9] + 1*a[13],
     )
 
-  def toScreenView(self, v):
-    """ Returns a point at screenspace that would give v after camera translation """
+  def toModelSpace(self, v):
+    """ Returns a point in modelspace that would be displayed at v """
     p = Vec2d(v)
     a = (gl.GLfloat * 16)() # our transformation matrix
     gl.glGetFloatv(gl.GL_MODELVIEW_MATRIX, a)

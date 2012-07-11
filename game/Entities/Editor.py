@@ -182,7 +182,9 @@ class Editor(Entity):
 
   #place an object into the level
   def place(self):
-    s = self.dragBoxStart
-    e = self.dragBoxEnd
+    cam = game.globals.engine.camera
+    with cam.shiftView():
+      s = cam.toModelSpace(self.dragBoxStart)
+      e = cam.toModelSpace(self.dragBoxEnd)
     size = Vec2d((e.x-s.x)/2, (s.y-e.y)/2)
     game.globals.engine.addEntity(Platform(self.level, Vec2d(s.x+size.x, s.y-size.y), size))
