@@ -186,5 +186,5 @@ class Editor(Entity):
     with cam.shiftView():
       s = cam.toModelSpace(self.dragBoxStart)
       e = cam.toModelSpace(self.dragBoxEnd)
-    size = Vec2d((e.x-s.x)/2, (s.y-e.y)/2)
-    game.globals.engine.addEntity(Platform(self.level, Vec2d(s.x+size.x, s.y-size.y), size))
+    size = (e-s) / 2
+    game.globals.engine.addEntity(Platform(self.level, s+size, size))
