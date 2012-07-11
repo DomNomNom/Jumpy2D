@@ -24,8 +24,9 @@ class Editor(Entity):
     self.leftMouseDown = False #reflects the left mouse button's state
     self.rightMouseDown = False #reflects the right mouse button's state
     self.mousePos = game.globals.engine.mousePos
+    self.windowSize = Vec2d(game.globals.engine.window.get_size()) #gets the window size as a vector
     self.selected = "platform" #the current slected object
-    self.brushShape = "circle" #the current brush shape
+    self.brushShape = "rectangle" #the current brush shape
     self.gridOn = True #is the grid on
     self.snapToGrid = True #is snap to grid on?
     self.gridSize = Vec2d(16, 16) #the size of a grid unit
@@ -83,6 +84,18 @@ class Editor(Entity):
   #FUNCTIONS
   #Updates the editor
   def update(self, dt):
+    #checks to see if the mouse is at the edge of the screen and moves camera accordingly
+    if self.mousePos.x >= self.windowSize.x*0.95: #move the camera to the right
+        game.globals.engine.camera.gameFocus = game.globals.engine.camera.gameFocus-Vec2d(2, 0)
+    elif self.mousePos.x <= self.windowSize.x*0.05: #move the camera to the left
+        game.globals.engine.camera.gameFocus = game.globals.engine.camera.gameFocus+Vec2d(2, 0)
+    if self.mousePos.y >= self.windowSize.y*0.95: #move the camera up
+        game.globals.engine.camera.gameFocus = game.globals.engine.camera.gameFocus-Vec2d(0, 2)
+    elif self.mousePos.y <= self.windowSize.y*0.05: #move the camera down
+        game.globals.engine.camera.gameFocus = game.globals.engine.camera.gameFocus+Vec2d(0, 2)
+        
+    
+    
     #when the drag box is snapping to grid make sure a dragged over squares are in the box
     if self.leftMouseDown and self.snapToGrid:
       if self.mousePos.x < self.dragBoxStart.x and self.dragBoxStart.x == self.dragBoxOrigin.x:
