@@ -67,7 +67,7 @@ class Editor(Entity):
     def on_mouse_press(x, y, button, modifiers):
       if button == 1:
         self.leftMouseDown = True
-        if self.snapToGrid: self.dragBoxStart = Vec2d(x-(x%self.gridSize.x), y-(y%self.gridSize.x)+self.gridSize.x)
+        if self.snapToGrid: self.dragBoxStart = Vec2d(x-(x%self.gridSize.x), y-(y%self.gridSize.x)+self.gridSize.x)+self.gridOffset
         else: self.dragBoxStart = Vec2d(x, y)
         self.dragBoxOrigin = self.dragBoxStart
       elif button == 4: self.rightMouseDown = True
@@ -87,14 +87,21 @@ class Editor(Entity):
     #checks to see if the mouse is at the edge of the screen and moves camera accordingly
     if self.mousePos.x >= self.windowSize.x*0.95: #move the camera to the right
         game.globals.engine.camera.gameFocus = game.globals.engine.camera.gameFocus-Vec2d(2, 0)
+        self.gridOffset -= Vec2d(2, 0)
     elif self.mousePos.x <= self.windowSize.x*0.05: #move the camera to the left
         game.globals.engine.camera.gameFocus = game.globals.engine.camera.gameFocus+Vec2d(2, 0)
+        self.gridOffset += Vec2d(2, 0)
     if self.mousePos.y >= self.windowSize.y*0.95: #move the camera up
         game.globals.engine.camera.gameFocus = game.globals.engine.camera.gameFocus-Vec2d(0, 2)
+        self.gridOffset -= Vec2d(0, 2)
     elif self.mousePos.y <= self.windowSize.y*0.05: #move the camera down
         game.globals.engine.camera.gameFocus = game.globals.engine.camera.gameFocus+Vec2d(0, 2)
+        self.gridOffset += Vec2d(0, 2)
         
-    
+    #insures the grid's offset is smaller than the grid size
+    if abs(self.gridOffset.x) >= self.gridSize.x or abs(self.gridOffset.y) >= self.gridSize.y:
+        self.gridOffset.x = self.gridOffset.x%self.gridSize.x
+        self.gridOffset.y = self.gridOffset.y%self.gridSize.y
     
     #when the drag box is snapping to grid make sure a dragged over squares are in the box
     if self.leftMouseDown and self.snapToGrid:
@@ -113,7 +120,9 @@ class Editor(Entity):
         self.dragBoxEnd = self.mousePos-(self.mousePos%self.gridSize)
         if self.mousePos.x >= self.dragBoxStart.x: self.dragBoxEnd = self.dragBoxEnd+Vec2d(self.gridSize.x, 0)
         if self.mousePos.y >= self.dragBoxStart.y: self.dragBoxEnd = self.dragBoxEnd+Vec2d(0, self.gridSize.x)
+        self.dragBoxEnd += self.gridOffset #offset the dragbox end
       else: self.dragBoxEnd = Vec2d(self.mousePos.x, self.mousePos.y)
+
 
 
   #Draw the editor
