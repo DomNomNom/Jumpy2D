@@ -109,7 +109,7 @@ class Engine:
       self._processRemoving()
       self._processAdding()
       for level in self.groups['level']:
-        level.space.step(self.updateRate) # update physics
+        level.update(self.updateRate) # this will do the physics
 
     ## DRAW ##
     gl.glClearColor(0,0,0, 0)

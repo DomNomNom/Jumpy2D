@@ -47,14 +47,16 @@ class GameState(object):
     def start(self):
       for level in self.levels:
         game.engine.addEntity(level)
-    def focus(self):   self.setRecording(True )
-    def unfocus(self): self.setRecording(False)
+    def focus(self):   
+      for level in self.levels: level.setPaused(False)
+    def unfocus(self): 
+      for level in self.levels: level.setPaused(True )
     def end(self):
-      for level in self.levels: game.engine.removeEntity(level.player)
+      for level in self.levels: 
+        level.player.input.saveReplay()
+        game.engine.removeEntity(level.player)
       for entity in game.engine.groups['game']: # note: this seems a bit wrong :/
         game.engine.removeEntity(entity)
-    def setRecording(self, recording):
-      for level in self.levels: level.player.input.currentlyRecording = recording
 
   class editLevel(BaseState):
     def __init__(self):

@@ -1,7 +1,7 @@
 # for saving and loading
 from os import path, mkdir, pardir
 from ast import literal_eval
-from pyglet.resource import file as pygletLoad
+from pyglet.resource import file as resourceOpen
 
 from game.physics import initSpace
 
@@ -20,7 +20,7 @@ import game.globals as game
 
 
 class Level(Entity):
-  constructors = {
+  constructors = { # To construct the entities when we load a level from a file
     'NotGate' : NotGate,
     'Trigger' : Trigger,
     'LevelEnd' : LevelEnd,
@@ -33,12 +33,14 @@ class Level(Entity):
 
 
   def __init__(self, playerInput=PlayerInput, levelName=None):
-    self.groups = {'all', 'level'}
+    self.groups = {'all', 'level'} # note: updating is not in this as we're special
 
     self.space = initSpace()   # create our physics space
+    self.levelTime = 0
 
     self.ids = {} # a dict for IDs to entities
 
+    playerInput.level = self
     self.player = Player(self, playerInput, pos=(320, 240))
     if levelName:
       self.addEntity(0, self.player)
@@ -46,41 +48,53 @@ class Level(Entity):
     else:
       self.ids[0] = self.player
 
+  # note: This will NOT be called from the loop though the 'updating' groups,
+  #       It'll be from the 'level' group.
+  def update(self, dt):
+    if self.isPaused: return
+    self.levelTime += dt
+    self.space.step(dt)
+    
+
+  def setPaused(self, isPaused):
+    self.isPaused = isPaused
+    self.player.input.currentlyRecording = not isPaused
+  
 
   def loadEntities(self, levelName):
     # TODO: uncompression
 
     lineCount = 0
-    levelFile = pygletLoad('game/Resources/Levels/uncompressed/' +levelName+ '/level.txt')
-    for line in levelFile:
-      lineCount += 1
-      lineErr = "(line " + str(lineCount) + ")"
-      if len(line.strip()) == 0:       continue # skip blank lines
-      if line.strip().startswith('#'): continue # skip comment lines
+    with resourceOpen('Levels/uncompressed/'+levelName+'/level.txt') as levelFile:
+      for line in levelFile:
+        lineCount += 1
+        lineErr = "(line " + str(lineCount) + ")"
+        if len(line.strip()) == 0:       continue # skip blank lines
+        if line.strip().startswith('#'): continue # skip comment lines
 
-      try:
-        data = literal_eval(line)
-      except:
-        print lineErr, "This line could not be parsed:", line
-        continue
-
-      entityID, entityType, args = data[0], data[1], data[2:]
-
-      if entityType not in Level.constructors:
-        print lineErr, "This is not a valid entity type:", entityType
-        print lineErr, "Possible types:", Level.constructors.keys()
-        continue
-      constructor = self.constructors[entityType]
-
-      if self.chrashOnConstructorFail:
-        newEntity = constructor(self, *args)
-      else:
         try:
-          newEntity = constructor(self, *args)
+          data = literal_eval(line)
         except:
-          print lineErr, "Constructing", entityType, "failed. probably weird arguments:", args
+          print lineErr, "This line could not be parsed:", line
           continue
-      self.addEntity(entityID, newEntity)
+
+        entityID, entityType, args = data[0], data[1], data[2:]
+
+        if entityType not in Level.constructors:
+          print lineErr, "This is not a valid entity type:", entityType
+          print lineErr, "Possible types:", Level.constructors.keys()
+          continue
+        constructor = self.constructors[entityType]
+
+        if self.chrashOnConstructorFail:
+          newEntity = constructor(self, *args)
+        else:
+          try:
+            newEntity = constructor(self, *args)
+          except:
+            print lineErr, "Constructing", entityType, "failed. probably weird arguments:", args
+            continue
+        self.addEntity(entityID, newEntity)
 
 
   def addEntity(self, entityID, entity):
@@ -90,11 +104,13 @@ class Level(Entity):
 
 
   def saveEntities(self, levelName, entities):
+    '''
     levelPath = path.join(path.dirname(__file__), pardir, 'Resources', 'Levels', 'uncompressed', levelName, 'level.txt')
     levelDir = path.dirname(levelPath)
     if not path.exists(levelDir):
       mkdir(levelDir)
-
-    with open(levelPath, 'w') as levelFile:
+    '''
+    # TODO: test whether this will create folders
+    with resourceOpen('Levels/uncompressed/'+levelName+'/level.txt', 'w') as f:
       for entity in entities:
-        levelFile.write(repr(entity) + '\n')
+        f.write(repr(entity) + '\n')

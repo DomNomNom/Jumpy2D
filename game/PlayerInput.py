@@ -4,6 +4,7 @@ import globals as game
 import pygame # for controller
 
 from pyglet.window import key # for keyboard
+from pyglet.resource import file as resourceOpen
 
 from pymunk import Vec2d
 
@@ -15,33 +16,46 @@ class PlayerInput:
   currentAim = 0.0  # should only be used for cosmetics (not for rocket firing direction)
 
   currentlyRecording = False
+  
+  level = None # For recording levelTime and level. This gets initialized be Level
 
   def recordAction(self, actionType, moveDir=None):
     if not self.currentlyRecording: return
-    action = self.PlayerAction(actionType, self.currentAim, moveDir)
+    action = self.PlayerAction(self.level, actionType, self.currentAim, moveDir)
     self.actionQueue.append(action)
-    self.actionLog.append(action)
+    self.actionLog.append(repr(action))
     #print "Action:", action
 
   def checkInput(self, dt):
     # do recordAction when you have corresponding input
     pass
 
-
+  def saveReplay(self):
+    levelName = str(int(time.time()*10000)) + '.replay'
+    with resourceOpen('Replays', 'w') as f: # FIXME
+      for action in self.actionLog:
+        f.write(action)
 
   class PlayerAction:
     ''' A small class to hold information about a action '''
     actionTypes = ['move', 'jump', 'shoot', 'shoot2']
 
-    def __init__(self, actionType, aim, moveDir=None):
+    def __init__(self, level, actionType, aim, moveDir=None):
       assert actionType in self.actionTypes, str(actionType) + ' is not a actionType'
       self.type = actionType
       self.aim = aim
-      self.time = time.time()-game.engine.levelStartTime
+      self.time = level.levelTime
+      self.moveDir = moveDir
       if moveDir != None:
         self.moveDir = max(min(moveDir, 1), -1) # constraint:  -1 <= moveDir <= 1
 
-
+    def __repr__(self):
+      return repr((
+        self.type,
+        self.aim,
+        self.time,
+        self.moveDir,
+      ))
 
 
 class Controller(PlayerInput):

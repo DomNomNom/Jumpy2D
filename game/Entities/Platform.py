@@ -1,4 +1,5 @@
 import pyglet.gl as gl
+from pyglet.sprite import Sprite
 from pymunk import Vec2d, Poly
 from pymunk.util import is_clockwise
 
@@ -53,6 +54,7 @@ class Platform(PhysicsEntity):
 
     with shiftView(self.pos - self.size):
       tex = game.resources.textures['platform']
+      Sprite(tex)
       tex.blit_tiled(0,0, 0, *(self.size*2))
 
 
