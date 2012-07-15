@@ -42,6 +42,7 @@ class Level(Entity):
 
     playerInput.level = self
     self.player = Player(self, playerInput, pos=(320, 240))
+    self.levelName = levelName
     if levelName:
       self.addEntity(0, self.player)
       self.loadEntities(levelName)

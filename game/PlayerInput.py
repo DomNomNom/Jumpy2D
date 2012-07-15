@@ -6,6 +6,8 @@ import pygame # for controller
 from pyglet.window import key # for keyboard
 from pyglet.resource import file as resourceOpen
 
+from game.Resources import createFile # for saving replays
+
 from pymunk import Vec2d
 
 class PlayerInput:
@@ -31,10 +33,11 @@ class PlayerInput:
     pass
 
   def saveReplay(self):
-    levelName = str(int(time.time()*10000)) + '.replay'
-    with resourceOpen('Replays', 'w') as f: # FIXME
+    replayName = str(int(time.time()*10000)) + '.replay'
+    with createFile('Replays/'+self.level.levelName, replayName) as f:
       for action in self.actionLog:
-        f.write(action)
+        f.write(action + '\n')
+
 
   class PlayerAction:
     ''' A small class to hold information about a action '''
