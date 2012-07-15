@@ -86,7 +86,6 @@ class Editor(Entity):
   def update(self, dt):
     #checks to see if the mouse is at the edge of the screen and moves camera accordingly
     if self.mousePos.x >= self.windowSize.x*0.95: #move the camera to the right
-<<<<<<< Updated upstream
         game.globals.engine.camera.gameFocus = game.globals.engine.camera.gameFocus-Vec2d(2, 0)
         self.gridOffset -= Vec2d(2, 0)
     elif self.mousePos.x <= self.windowSize.x*0.05: #move the camera to the left
@@ -98,15 +97,6 @@ class Editor(Entity):
     elif self.mousePos.y <= self.windowSize.y*0.05: #move the camera down
         game.globals.engine.camera.gameFocus = game.globals.engine.camera.gameFocus+Vec2d(0, 2)
         self.gridOffset += Vec2d(0, 2)
-=======
-        game.globals.engine.camera.gameFocus -= Vec2d(2, 0)
-    elif self.mousePos.x <= self.windowSize.x*0.05: #move the camera to the left
-        game.globals.engine.camera.gameFocus += Vec2d(2, 0)
-    if self.mousePos.y >= self.windowSize.y*0.95: #move the camera up
-        game.globals.engine.camera.gameFocus -= Vec2d(0, 2)
-    elif self.mousePos.y <= self.windowSize.y*0.05: #move the camera down
-        game.globals.engine.camera.gameFocus += Vec2d(0, 2)
->>>>>>> Stashed changes
         
     #insures the grid's offset is smaller than the grid size
     if abs(self.gridOffset.x) >= self.gridSize.x or abs(self.gridOffset.y) >= self.gridSize.y:
@@ -116,13 +106,11 @@ class Editor(Entity):
     #when the drag box is snapping to grid make sure a dragged over squares are in the box
     if self.leftMouseDown and self.snapToGrid:
       if self.mousePos.x < self.dragBoxStart.x and self.dragBoxStart.x == self.dragBoxOrigin.x:
-        self.dragBoxStart += Vec2d(self.gridSize.x, 0)
+        self.dragBoxStart = self.dragBoxStart+Vec2d(self.gridSize.x, 0)
       elif self.mousePos.x >= self.dragBoxStart.x and self.dragBoxStart.x > self.dragBoxOrigin.x:
-        self.dragBoxStart -= Vec2d(self.gridSize.x, 0)
+        self.dragBoxStart = self.dragBoxStart-Vec2d(self.gridSize.x, 0)
       if self.mousePos.y > self.dragBoxStart.y and self.dragBoxStart.y == self.dragBoxOrigin.y:
-        self.dragBoxStart -= Vec2d(0, self.gridSize.x)
-        
-        print 'ding:', self.dragBoxStart, self.dragBoxStart - Vec2d(0, self.gridSize.x)
+        self.dragBoxStart = self.dragBoxStart-Vec2d(0, self.gridSize.x)
       elif self.mousePos.y <= self.dragBoxStart.y and self.dragBoxStart.y < self.dragBoxOrigin.y:
         self.dragBoxStart = self.dragBoxStart+Vec2d(0, self.gridSize.x)
 
