@@ -24,13 +24,9 @@ class PlayerInput:
 
   def recordAction(self, actionType, moveDir=None):
     if not self.currentlyRecording: return
-    action = self.PlayerAction(self.level, actionType, self.currentAim, moveDir)
+    action = self.PlayerAction(self.level.levelTime, actionType, self.currentAim, moveDir)
     self.actionQueue.append(action)
-    self.actionLog.append(
-      '  {0} : {1}, \n'.format(self.level.levelTime, repr(action))
-      #'  ' + str(self.level.levelTime) + ' : ' + repr(action) + ',\n'
-    )
-    #print "Action:", action
+    self.actionLog.append(repr(action) + '\n')
 
   def checkInput(self, dt):
     # call recordAction() when you have player input
@@ -39,25 +35,24 @@ class PlayerInput:
   def saveReplay(self):
     replayName = str(int(time.time()*10000)) + '.replay'
     with createFile('Replays/'+self.level.levelName, replayName) as f:
-      f.write('{\n')
       f.writelines(self.actionLog)
-      f.write('}\n')
 
   class PlayerAction:
     ''' A small class to hold information about a action '''
     actionTypes = ['move', 'jump', 'shoot', 'shoot2']
 
-    def __init__(self, level, actionType, aim, moveDir=None):
+    def __init__(self, levelTime, actionType, aim, moveDir=None):
       assert actionType in self.actionTypes, str(actionType) + ' is not a actionType'
+      self.time = levelTime
       self.type = actionType
       self.aim = aim
-      self.time = level.levelTime
       self.moveDir = moveDir
       if moveDir != None:
         self.moveDir = max(min(moveDir, 1), -1) # constraint:  -1 <= moveDir <= 1
 
     def __repr__(self):
       return repr((
+        self.time,
         self.type,
         self.aim,
         self.moveDir,
@@ -210,11 +205,14 @@ class KeyboardControl(PlayerInput):
 
 
 
-# TODO: create a replay input :D
 class Replay(PlayerInput):
   
   def __init__(self, inFile):
-    self.history = literal_eval(inFile.read())
+    self.history = {}
+    for line in inFile:
+      # TODO: make it safe (try/except)
+      actionArgs = literal_eval(line)
+      self.history[actionArgs[0]] = self.PlayerAction(*actionArgs)
     self.times = sorted(self.history.keys())
     self.nextTime = 0
 
@@ -223,10 +221,10 @@ class Replay(PlayerInput):
 
     time = self.level.levelTime
     
-    while self.nextTime < len(self.times) and self.times[self.nextTime] <= time:
-      self.actionQueue.append(
-        self.PlayerAction(self.level, *self.history[self.times[self.nextTime]])
-      )
+    while self.nextTime < len(self.times) and self.times[self.nextTime] < time:
+      currentAction = self.history[self.times[self.nextTime]]
+      self.actionQueue.append(currentAction)
+      self.currentAim = currentAction.aim #TODO: interpolate this
       self.nextTime += 1
     '''
     if time > self.prevTime:
