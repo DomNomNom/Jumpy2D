@@ -19,7 +19,7 @@ class PlayerInput:
   currentAim = 0.0  # should only be used for cosmetics (not for rocket firing direction)
 
   currentlyRecording = False
-  
+
   level = None # For recording levelTime and level. This gets initialized be Level
 
   def recordAction(self, actionType, moveDir=None):
@@ -206,13 +206,16 @@ class KeyboardControl(PlayerInput):
 
 
 class Replay(PlayerInput):
-  
+
   def __init__(self, inFile):
     self.history = {}
     for line in inFile:
-      # TODO: make it safe (try/except)
+      # TODO: make parsing safe (try/except)
       actionArgs = literal_eval(line)
-      self.history[actionArgs[0]] = self.PlayerAction(*actionArgs)
+      time = actionArgs[0]
+      if time not in self.history:
+        self.history[time] = []
+      self.history[time].append(self.PlayerAction(*actionArgs))
     self.times = sorted(self.history.keys())
     self.nextTime = 0
 
@@ -220,19 +223,12 @@ class Replay(PlayerInput):
     if len(self.times) == 0 or not self.currentlyRecording: return
 
     time = self.level.levelTime
-    
-    while self.nextTime < len(self.times) and self.times[self.nextTime] < time:
-      currentAction = self.history[self.times[self.nextTime]]
-      self.actionQueue.append(currentAction)
-      self.currentAim = currentAction.aim #TODO: interpolate this
+
+    while self.nextTime < len(self.times) and self.times[self.nextTime] <= time:
+      for action in self.history[self.times[self.nextTime]]:
+        self.actionQueue.append(action)
+        self.currentAim = action.aim  #TODO: interpolate this
       self.nextTime += 1
-    '''
-    if time > self.prevTime:
-      if self.times[self.nextTime]
-    elif time < self.prevTime:
-    # note about 'else': if the times are equal, there is nothing to do.
-    self.prevTime = time
-    '''
 
   # replays should not generate more replays
   def saveReplay(self):

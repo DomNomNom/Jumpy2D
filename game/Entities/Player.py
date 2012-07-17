@@ -56,7 +56,7 @@ class Player(PhysicsEntity):
     # increase our velocity iff our target velocity is 'faster'
     # (faster is in quotes as going the opposite direction means 'faster')
     # a target velocity of 0 will not change the velocity.
-    vel = self.targetVel.x # shorhand
+    vel = self.targetVel.x # shorthand
     if (
       (vel < 0 and vel < self.body.velocity.x) or
       (vel > 0 and vel > self.body.velocity.x)
