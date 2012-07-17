@@ -21,6 +21,8 @@ def createFile(path, fileName):
   
   return open(fullPath, 'w')
 
+
+
 class Resources(object):
   
   basePath = 'game/Resources/'

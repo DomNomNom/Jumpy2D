@@ -7,6 +7,7 @@ from pyglet.window import key # for keyboard
 from pyglet.resource import file as resourceOpen
 
 from game.Resources import createFile # for saving replays
+from ast import literal_eval # for parsing replays
 
 from pymunk import Vec2d
 
@@ -25,19 +26,22 @@ class PlayerInput:
     if not self.currentlyRecording: return
     action = self.PlayerAction(self.level, actionType, self.currentAim, moveDir)
     self.actionQueue.append(action)
-    self.actionLog.append(repr(action))
+    self.actionLog.append(
+      '  {0} : {1}, \n'.format(self.level.levelTime, repr(action))
+      #'  ' + str(self.level.levelTime) + ' : ' + repr(action) + ',\n'
+    )
     #print "Action:", action
 
   def checkInput(self, dt):
-    # do recordAction when you have corresponding input
+    # call recordAction() when you have player input
     pass
 
   def saveReplay(self):
     replayName = str(int(time.time()*10000)) + '.replay'
     with createFile('Replays/'+self.level.levelName, replayName) as f:
-      for action in self.actionLog:
-        f.write(action + '\n')
-
+      f.write('{\n')
+      f.writelines(self.actionLog)
+      f.write('}\n')
 
   class PlayerAction:
     ''' A small class to hold information about a action '''
@@ -56,7 +60,6 @@ class PlayerInput:
       return repr((
         self.type,
         self.aim,
-        self.time,
         self.moveDir,
       ))
 
@@ -204,3 +207,35 @@ class KeyboardControl(PlayerInput):
       with game.engine.camera.shiftView():
         gameMousePos = game.engine.camera.toModelSpace(game.engine.mousePos)
       self.currentAim = (gameMousePos - controlledPlayer.pos).angle
+
+
+
+# TODO: create a replay input :D
+class Replay(PlayerInput):
+  
+  def __init__(self, inFile):
+    self.history = literal_eval(inFile.read())
+    self.times = sorted(self.history.keys())
+    self.nextTime = 0
+
+  def checkInput(self):
+    if len(self.times) == 0 or not self.currentlyRecording: return
+
+    time = self.level.levelTime
+    
+    while self.nextTime < len(self.times) and self.times[self.nextTime] <= time:
+      self.actionQueue.append(
+        self.PlayerAction(self.level, *self.history[self.times[self.nextTime]])
+      )
+      self.nextTime += 1
+    '''
+    if time > self.prevTime:
+      if self.times[self.nextTime]
+    elif time < self.prevTime:
+    # note about 'else': if the times are equal, there is nothing to do.
+    self.prevTime = time
+    '''
+
+  # replays should not generate more replays
+  def saveReplay(self):
+    pass

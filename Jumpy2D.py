@@ -9,7 +9,7 @@ from game.Engine import Engine
 from game.GameState import GameState
 from game.Resources import Resources
 
-from game.PlayerInput import KeyboardControl, Controller
+from game.PlayerInput import KeyboardControl, Controller, Replay
 
 
 from game.Entities.Editor import Editor # TODO: move to gameState
@@ -21,6 +21,7 @@ from game.Entities.DebugCross import DebugCross
 parser = argparse.ArgumentParser(description='A 2D rocket jumping game. :D')
 parser.add_argument('-e', '--editor', action="store_true", help='Starts the game in editor mode')
 parser.add_argument('-l', '--level', help='Loads a level at the start')
+parser.add_argument('-r', '--replay', help='Plays a replay') # TODO: more than 1
 
 # parse command line arguments (note: this can fail and it will exit)
 args = parser.parse_args()
@@ -38,14 +39,18 @@ engine = game.globals.engine # a shorthand
 if args.editor:
   game.globals.gameState.pushState(GameState.editLevel())
 else: # play a level
+  if args.replay:
+    with open(args.replay) as inFile:
+      playerInput = Replay(inFile) # TODO
+  else:
+    try:
+      playerInput = Controller() # use a game pad input if we have one
+    except:
+      playerInput = KeyboardControl()
   # load a level when specified
   levelName = args.level
   if not levelName:
     levelName = 'test2'
-  try:
-    playerInput = Controller() # use a game pad input if we have one
-  except:
-    playerInput = KeyboardControl()
   game.globals.gameState.pushState(GameState.Play([playerInput], levelName))
 
 engine.addEntity(DebugCross(engine.windowCenter, (1,1,1) ))
