@@ -25,6 +25,7 @@ class Player(PhysicsEntity):
     self.pos = self.body.position
     self.vel = self.body.velocity
     self.level = level
+    self.isTouchingGround = False
 
     # init shape
     self.collisionSquare = pymunk.Circle(self.body, self.size.x)
@@ -47,10 +48,12 @@ class Player(PhysicsEntity):
           self.targetVel.x = self.speed * (action.moveDir/abs(action.moveDir))
         self.collisionSquare.surface_velocity = Vec2d(self.targetVel.x, 0)
       elif action.type == 'jump':
-        self.vel.y = 0
-        self.body.apply_impulse((0, self.jump_impulse))
+        if self.isTouchingGround:
+          self.vel.y = 0
+          self.body.apply_impulse((0, self.jump_impulse))
       elif action.type == 'shoot':
         game.engine.addEntity(Rocket(self.level, self.pos, action.aim, self))
+
 
     # movement Control
     # increase our velocity iff our target velocity is 'faster'
@@ -63,17 +66,9 @@ class Player(PhysicsEntity):
     ): # and here's a happy face to make up for it:  :)
       self.body.apply_impulse((self.targetVel.x - self.body.velocity.x, 0))
 
+    self.isTouchingGround = False
 
   def draw(self):
-
-    '''
-    # main collision square
-    gl.glBegin(gl.GL_QUADS)
-    for point in self.collisionSquare.get_points():
-      gl.glVertex2f(*point)
-    gl.glEnd()
-    '''
-
     with shiftView(self.pos):
       gl.glColor3f(1.0, 0.0, 0.0)
       gl.glBegin(gl.GL_TRIANGLE_FAN)

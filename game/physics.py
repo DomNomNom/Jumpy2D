@@ -60,6 +60,11 @@ def initSpace():
     begin    = triggerOn,
     separate = triggerOff
   )
+  space.add_collision_handler(
+    Player.collisionType,
+    Platform.collisionType,
+    post_solve = notifyPlayer
+  )
 
   return space
 
@@ -93,3 +98,9 @@ def triggerOff(space, arbiter, *args, **kwargs):
   trigger = game.engine.shapeToEntity[triggerShape]
   trigger.triggered(False)
   return False
+
+def notifyPlayer(space, arbiter, *args, **kwargs):
+  player = game.engine.shapeToEntity[arbiter.shapes[0]]
+  if arbiter.total_impulse.y > abs(arbiter.total_impulse.x):
+    player.isTouchingGround = True
+  return True
