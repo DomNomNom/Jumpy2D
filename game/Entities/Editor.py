@@ -1,5 +1,6 @@
 import math
 from pyglet import image, sprite, graphics, gl
+from pyglet.window import key
 from pymunk import Vec2d
 
 from Entity import Entity
@@ -14,6 +15,11 @@ class Editor(Entity):
 
     self.focus = False
 
+    #keyboard input
+    self.keys = key.KeyStateHandler()
+    game.globals.engine.window.push_handlers(self.keys)
+    self.prevChange = False
+
     #set groups
     self.groups = self.groups | {'UI_editor'}
     self.drawLayer = 'UI_editor'
@@ -25,7 +31,7 @@ class Editor(Entity):
     self.rightMouseDown = False #reflects the right mouse button's state
     self.mousePos = game.globals.engine.mousePos
     self.windowSize = Vec2d(game.globals.engine.window.get_size()) #gets the window size as a vector
-    self.selected = "platform" #the current slected object
+    self.selected = "rectPlatform" #the current slected object
     self.brushShape = "rectangle" #the current brush shape
     self.gridOn = True #is the grid on
     self.snapToGrid = True #is snap to grid on?
@@ -67,7 +73,15 @@ class Editor(Entity):
     def on_mouse_press(x, y, button, modifiers):
       if button == 1:
         self.leftMouseDown = True
-        if self.snapToGrid: self.dragBoxStart = Vec2d(x-(x%self.gridSize.x), y-(y%self.gridSize.x)+self.gridSize.x)+self.gridOffset
+        pos = Vec2d(x, y) # stores x and y in vector
+        #define drag box start
+        if self.snapToGrid:
+          self.dragBoxStart = pos-(pos%self.gridSize)+Vec2d(0, self.gridSize.x)
+          if abs(self.gridOffset.x) < self.gridSize.x/2: self.dragBoxStart = self.dragBoxStart+Vec2d(self.gridOffset.x, 0)
+          else: self.dragBoxStart = self.dragBoxStart+Vec2d(self.gridSize.x+self.gridOffset.x, 0)
+          if abs(self.gridOffset.y) < self.gridSize.x/2: self.dragBoxStart = self.dragBoxStart+Vec2d(0, self.gridOffset.y)
+          else: self.dragBoxStart = self.dragBoxStart+Vec2d(0, self.gridSize.y+self.gridOffset.y)
+
         else: self.dragBoxStart = Vec2d(x, y)
         self.dragBoxOrigin = self.dragBoxStart
       elif button == 4: self.rightMouseDown = True
@@ -78,12 +92,26 @@ class Editor(Entity):
       if button == 1:
         self.leftMouseDown = False
         self.place()
-      elif button == 4: self.rightMouseDown = False
+      elif button == 4:
+        self.rightMouseDown = False
 
 
   #FUNCTIONS
   #Updates the editor
   def update(self, dt):
+
+    #TODO: REMOVE THIS
+    change = self.keys[key.UP]
+    if not change and self.prevChange:
+      if self.selected == "rectPlatform": self.selected = "triPlatform"
+      else: self.selected = "rectPlatform"
+    self.prevChange = change
+
+    #TODO: Create a function for this
+    if self.selected == "triPlatform": self.brushShape = "triangle"
+    else: self.brushShape = "rectangle"
+
+
     #checks to see if the mouse is at the edge of the screen and moves camera accordingly
     if self.mousePos.x >= self.windowSize.x*0.95: #move the camera to the right
         game.globals.engine.camera.gameFocus = game.globals.engine.camera.gameFocus-Vec2d(2, 0)
@@ -97,12 +125,12 @@ class Editor(Entity):
     elif self.mousePos.y <= self.windowSize.y*0.05: #move the camera down
         game.globals.engine.camera.gameFocus = game.globals.engine.camera.gameFocus+Vec2d(0, 2)
         self.gridOffset += Vec2d(0, 2)
-        
+
     #insures the grid's offset is smaller than the grid size
     if abs(self.gridOffset.x) >= self.gridSize.x or abs(self.gridOffset.y) >= self.gridSize.y:
         self.gridOffset.x = self.gridOffset.x%self.gridSize.x
         self.gridOffset.y = self.gridOffset.y%self.gridSize.y
-    
+
     #when the drag box is snapping to grid make sure a dragged over squares are in the box
     if self.leftMouseDown and self.snapToGrid:
       if self.mousePos.x < self.dragBoxStart.x and self.dragBoxStart.x == self.dragBoxOrigin.x:
@@ -196,4 +224,13 @@ class Editor(Entity):
       s = cam.toModelSpace(self.dragBoxStart)
       e = cam.toModelSpace(self.dragBoxEnd)
     size = (e-s) / 2
-    game.globals.engine.addEntity(Platform(self.level, s+size, size))
+
+    #find the approiate object to add to the level
+    if self.selected == "rectPlatform": #place a rectangle platoform
+      corners = [s, s+Vec2d(0, e.y-s.y), e, s+Vec2d(e.x-s.x, 0)]
+      game.globals.engine.addEntity(Platform(self.level, corners))
+    elif self.selected == "triPlatform": #place a triangle platform
+      corners = [s, s+Vec2d(0, e.y-s.y),e]
+      game.globals.engine.addEntity(Platform(self.level, corners))
+
+
