@@ -68,4 +68,5 @@ class GameState(object):
     def unfocus(self):
       self.editor.focus = False
     def end(self):
+      self.editor.level.save()
       game.engine.removeEntity(self.editor)

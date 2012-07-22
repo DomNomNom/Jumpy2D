@@ -50,7 +50,6 @@ class Engine:
 
   window = None
   windowCenter = Vec2d()
-  mousePos = Vec2d()
 
   shapeToEntity = {} # a dict that gives the entity that contains the keyed shape
 
@@ -72,6 +71,7 @@ class Engine:
       style = Window.WINDOW_STYLE_BORDERLESS,
     )
     self.windowCenter = Vec2d(self.window.get_size()) / 2
+    self.mousePos = Vec2d(self.windowCenter)
 
     # opengl
     gl.glEnable(gl.GL_BLEND) #enables transparency

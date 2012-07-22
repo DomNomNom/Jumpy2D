@@ -27,18 +27,21 @@ class Level(Entity):
     'Platform' : Platform,
     'SpawnPoint' : SpawnPoint,
   }
+  
+  groups = {'all', 'level'} # note: updating is not in this as we're special
 
   chrashOnConstructorFail = True # TODO: move this to a config
 
 
-  def __init__(self, playerInput=PlayerInput, levelName=None):
-    self.groups = {'all', 'level'} # note: updating is not in this as we're special
+  def __init__(self, playerInput=None, levelName=None):
 
     self.space = initSpace()   # create our physics space
     self.levelTime = 0
 
     self.ids = {} # a dict for IDs to entities
 
+    if not playerInput:
+      playerInput = PlayerInput()
     playerInput.level = self
     self.player = Player(self, playerInput, pos=(320, 240))
     self.levelName = levelName
@@ -103,7 +106,8 @@ class Level(Entity):
     game.engine.addEntity(entity)
 
 
-  def saveEntities(self, levelName, entities):
+  def save(self):
+    assert self.levelName
     '''
     levelPath = path.join(path.dirname(__file__), pardir, 'Resources', 'Levels', 'uncompressed', levelName, 'level.txt')
     levelDir = path.dirname(levelPath)
@@ -111,6 +115,9 @@ class Level(Entity):
       mkdir(levelDir)
     '''
     # TODO: test whether this will create folders
-    with resourceOpen('Levels/uncompressed/'+levelName+'/level.txt', 'w') as f:
-      for entity in entities:
-        f.write(repr(entity) + '\n')
+    with resourceOpen('Levels/uncompressed/'+self.levelName+'/level.txt', 'w') as f:
+      for entityID, entity in self.ids.iteritems():
+        if entityID == 0:
+          f.write('# 0 reserved for player\n')
+        else:
+          f.write('{0}, {1}\n'.format(entityID, repr(entity)))

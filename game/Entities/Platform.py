@@ -61,9 +61,8 @@ class Platform(PhysicsEntity):
 
 
   def __repr__(self):
-    return repr((
+    return ', '.join(map(repr, [
       'Platform',
-      tuple(self.pos ),
-      tuple(self.size),
+      map(tuple, self.verticies),
       self.shape.friction,
-    ))
+    ]))

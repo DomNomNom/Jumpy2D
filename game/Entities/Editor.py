@@ -40,7 +40,11 @@ class Editor(Entity):
     self.dragBoxStart = Vec2d(0, 0) #the start coords of the dragbox
     self.dragBoxOrigin = Vec2d(0, 0) #the original drag box start point
     self.dragBoxEnd = Vec2d(0, 0) #the end coords of the dragbox
-    self.level = Level(levelName=levelName)  # The level that will store our entities
+
+    self.level = Level(levelName)  # The level that will store our entities
+    if not levelName:
+      levelName = 'test'
+    self.level.levelName = levelName # having this after the constructor will avoid the level trying to load the file
 
     #until resources is implement the editor currently loads its own images
     self.sideBarImage  = image.load("game/Resources/Graphics/EditorUI/editorUI.png")
@@ -99,6 +103,10 @@ class Editor(Entity):
   #FUNCTIONS
   #Updates the editor
   def update(self, dt):
+
+    # This will exit the editor, saving the level
+    if self.keys[key.F5]:
+      game.globals.gameState.popState()
 
     #TODO: REMOVE THIS
     change = self.keys[key.UP]
@@ -228,9 +236,10 @@ class Editor(Entity):
     #find the approiate object to add to the level
     if self.selected == "rectPlatform": #place a rectangle platoform
       corners = [s, s+Vec2d(0, e.y-s.y), e, s+Vec2d(e.x-s.x, 0)]
-      game.globals.engine.addEntity(Platform(self.level, corners))
     elif self.selected == "triPlatform": #place a triangle platform
       corners = [s, s+Vec2d(0, e.y-s.y),e]
-      game.globals.engine.addEntity(Platform(self.level, corners))
+    newEntity = Platform(self.level, corners)
+    newID = max(self.level.ids) + 1 # TODO: do something smarter in case of triggers
+    self.level.addEntity(newID, newEntity)
 
 
