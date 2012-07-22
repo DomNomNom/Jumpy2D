@@ -26,8 +26,8 @@ class Platform(PhysicsEntity):
 
     assert len(verticies) >= 2
     verticies = self.verticies = map(Vec2d, verticies)
-    if len(verticies) in specialPolyTypes:
-      self.polyType = specialPolyTypes[len(verticies)]
+    if len(verticies) in self.specialPolyTypes:
+      self.polyType = self.specialPolyTypes[len(verticies)]
     else:
       self.polyType = pg.GL_POLYGON
     #self.pos = sum(verticies) / len(verticies) # Average of verticies
