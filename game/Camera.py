@@ -46,6 +46,7 @@ class Camera(object):
 
   def toModelSpace(self, v):
     """ Returns a point in modelspace that would be displayed at v """
+    # note: don't call this too often, it's not that efficient.
     p = Vec2d(v)
     a = (gl.GLfloat * 16)() # our transformation matrix
     gl.glGetFloatv(gl.GL_MODELVIEW_MATRIX, a)

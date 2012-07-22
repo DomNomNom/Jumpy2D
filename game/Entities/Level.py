@@ -13,7 +13,7 @@ from Entity import Entity
 from Rocket import Rocket
 from Player import Player
 from Trigger import Trigger, LevelEnd
-from Platform import Platform, TrianglePlatform
+from Platform import Platform
 from SpawnPoint import SpawnPoint
 
 import game.globals as game
