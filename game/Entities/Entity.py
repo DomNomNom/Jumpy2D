@@ -1,4 +1,5 @@
-from pymunk import Vec2d
+from pymunk import Vec2d, Poly
+import pyglet.gl as gl
 
 import game.globals as game
 
@@ -30,6 +31,16 @@ class GameEntity(Entity):
     else:
       if self in drawLayer:
         drawLayer.remove(self)
+
+  # This function should return a list like ('ClassName', constructorArguments...)
+  # This is used by __repr__() and therefore for saving/re-creating a GameEntity
+  # See Platform.py for an example
+  def reconstructionArgs(self):
+    return ["This should not happen"]
+
+  # Returns a string of the following format: "'ClassName', constructorArg1, arg2"
+  def __repr__(self, className='Trigger'):
+    return ', '.join(map(repr, self.reconstructionArgs()))
       
   triggerables = {
     'visible' : visible,
@@ -45,3 +56,27 @@ class PhysicsEntity(GameEntity):
   mass = 10.
   moment = 30. # pymunk.moment_for_poly(mass, verticies)
   level = None # The level that contains the physics Space
+  
+  # this is for the following funciton
+  specialPolyTypes = {
+    2 : gl.GL_LINES,
+    3 : gl.GL_TRIANGLES,
+    4 : gl.GL_QUADS,
+  }
+
+  # creates a shape for the Entities physics body with the given verticies
+  def createShape(self, verticies):
+    assert len(verticies) >= 2
+    
+    verticies = self.verticies = map(Vec2d, verticies)
+    if len(verticies) in self.specialPolyTypes:
+      self.polyType = self.specialPolyTypes[len(verticies)]
+    else:
+      self.polyType = pg.GL_POLYGON
+
+    self.shape = Poly(self.body, verticies)
+
+    # note: collisionLayers and collisionType get created by physics.py
+    self.shape.layers = self.collisionLayers
+    self.shape.collision_type = self.collisionType
+    self.shapes = [self.shape]

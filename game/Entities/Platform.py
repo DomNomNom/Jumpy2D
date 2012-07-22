@@ -1,6 +1,6 @@
 import pyglet.gl as gl
 from pyglet.sprite import Sprite
-from pymunk import Vec2d, Poly
+from pymunk import Vec2d
 from pymunk.util import is_clockwise
 
 from Entity import PhysicsEntity
@@ -13,32 +13,15 @@ class Platform(PhysicsEntity):
 
   drawLayer = 'game'
 
-  specialPolyTypes = {
-    2 : gl.GL_LINES,
-    3 : gl.GL_TRIANGLES,
-    4 : gl.GL_QUADS,
-  }
+  
 
   def __init__(self, level, verticies, friction=0):
 
     self.level = level
     self.body = level.space.static_body
 
-    assert len(verticies) >= 2
-    verticies = self.verticies = map(Vec2d, verticies)
-    if len(verticies) in self.specialPolyTypes:
-      self.polyType = self.specialPolyTypes[len(verticies)]
-    else:
-      self.polyType = pg.GL_POLYGON
-    #self.pos = sum(verticies) / len(verticies) # Average of verticies
-
-    self.shape = Poly(self.body, verticies)
+    self.createShape(verticies)
     self.shape.friction = friction
-
-    # note: collisionLayers and collisionType get created by physics.py
-    self.shape.layers = self.collisionLayers
-    self.shape.collision_type = self.collisionType
-    self.shapes = [self.shape]
 
 
   def draw(self):
@@ -59,10 +42,9 @@ class Platform(PhysicsEntity):
       tex.blit_tiled(0,0, 0, *(self.size*2))
     '''
 
-
-  def __repr__(self):
-    return ', '.join(map(repr, [
+  def reconstructionArgs(self):
+    return [
       'Platform',
-      map(tuple, self.verticies),
-      self.shape.friction,
-    ]))
+      map(tuple, self.verticies), # verticies
+      self.shape.friction,        # friction
+    ]

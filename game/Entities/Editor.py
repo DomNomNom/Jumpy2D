@@ -241,5 +241,3 @@ class Editor(Entity):
     newEntity = Platform(self.level, corners)
     newID = max(self.level.ids) + 1 # TODO: do something smarter in case of triggers
     self.level.addEntity(newID, newEntity)
-
-

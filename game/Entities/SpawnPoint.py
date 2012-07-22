@@ -16,11 +16,11 @@ class SpawnPoint(GameEntity):
     self.groups = {'game', 'all'}
     self.drawLayer = 'game'
 
-  def __repr__(self):
-    return repr((
+  def reconstructionArgs(self):
+    return [
       'SpawnPoint',
       tuple(self.pos),
-    ))
+    ]
 
   def draw(self):
     s = self.size # shorthand
