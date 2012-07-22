@@ -26,7 +26,6 @@ class Level(Entity):
     'LevelEnd' : LevelEnd,
     'Platform' : Platform,
     'SpawnPoint' : SpawnPoint,
-    'TrianglePlatform': TrianglePlatform,
   }
 
   chrashOnConstructorFail = True # TODO: move this to a config
