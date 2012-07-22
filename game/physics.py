@@ -101,6 +101,6 @@ def triggerOff(space, arbiter, *args, **kwargs):
 
 def notifyPlayer(space, arbiter, *args, **kwargs):
   player = game.engine.shapeToEntity[arbiter.shapes[0]]
-  if arbiter.total_impulse.y > abs(arbiter.total_impulse.x):
+  if arbiter.total_impulse.y > abs(arbiter.total_impulse.x): # if we are standing on top of something more horizontal than vertical
     player.isTouchingGround = True
   return True

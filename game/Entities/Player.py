@@ -12,7 +12,7 @@ class Player(PhysicsEntity):
 
   size = Vec2d(10, 0)
   speed = 200. # units per second
-  jump_impulse = 3000.
+  jump_impulse = 2500.
 
   def __init__(self, level, playerInput, pos):
     PhysicsEntity.__init__(self)
@@ -56,7 +56,7 @@ class Player(PhysicsEntity):
 
 
     # movement Control
-    # increase our velocity iff our target velocity is 'faster'
+    # increase our velocity if our target velocity is 'faster'
     # (faster is in quotes as going the opposite direction means 'faster')
     # a target velocity of 0 will not change the velocity.
     vel = self.targetVel.x # shorthand
