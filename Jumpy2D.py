@@ -50,7 +50,7 @@ else: # play a level
   # load a level when specified
   levelName = args.level
   if not levelName:
-    levelName = 'test2'
+    levelName = 'test'
   game.globals.gameState.pushState(GameState.Play([playerInput], levelName))
 
 engine.addEntity(DebugCross(engine.windowCenter, (1,1,1) ))
