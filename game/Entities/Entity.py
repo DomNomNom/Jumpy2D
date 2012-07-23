@@ -19,6 +19,7 @@ class Entity(object):
     pass
 
 
+
 class GameEntity(Entity):
   groups = {'all', 'updating', 'game'}
   
@@ -45,6 +46,8 @@ class GameEntity(Entity):
   triggerables = {
     'visible' : visible,
   }
+
+
 
 class PhysicsEntity(GameEntity):
 

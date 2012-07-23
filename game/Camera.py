@@ -3,6 +3,8 @@ from pymunk import Vec2d
 
 from matrixMath import inverse
 
+import game.globals as game
+
 # convenience method to shift the view without needing an instance of a camera
 def shiftView(pos):
   return Camera.ViewShift(pos)
@@ -12,6 +14,16 @@ class Camera(object):
   def __init__(self):
     self.gameFocus = Vec2d(0,0)
     self.angle = 0 # in degrees
+    self.resetTracking()
+
+  # resets the function that is used by track()
+  def resetTracking(self):
+    self.trackingFunction = lambda: self.gameFocus
+
+  # calls the tracking function to do the camerawork
+  # TODO: there should be a object specifiying pos/zoom/maybe other stuff
+  def track(self):
+    self.gameFocus = self.trackingFunction()
 
   def shiftView(self, pos=None):
     if pos is None:

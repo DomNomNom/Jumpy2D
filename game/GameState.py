@@ -41,16 +41,20 @@ class GameState(object):
 
   class Play(BaseState):
     def __init__(self, playerInputs, levelName):
+      assert playerInputs
       self.levels = []
       for playerInput in playerInputs:
         self.levels.append(Level(playerInput, levelName))
+      self.primaryLevel = self.levels[0]
     def start(self):
       for level in self.levels:
         game.engine.addEntity(level)
     def focus(self):   
       for level in self.levels: level.setPaused(False)
+      game.engine.camera.trackingFunction = lambda: game.engine.windowCenter-self.primaryLevel.player.pos
     def unfocus(self): 
       for level in self.levels: level.setPaused(True )
+      game.engine.camera.resetTracking()
     def end(self):
       for level in self.levels: 
         level.player.input.saveReplay()

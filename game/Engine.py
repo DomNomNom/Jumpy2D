@@ -117,6 +117,7 @@ class Engine:
     gl.glLoadIdentity()
 
     #self.camera.gameFocus = (self.windowCenter - self.mousePos) / 2
+    self.camera.track() # does camera work (such as what it focuses on)
     for name in self.drawLayerNames:
       shift = Vec2d() if name.startswith('UI') else None
       with self.camera.shiftView(shift):
@@ -126,7 +127,6 @@ class Engine:
 
     self.fps_display.draw()
     #self.window.flip()
-
 
 
   def addEntity(self, e):
