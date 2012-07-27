@@ -26,10 +26,12 @@ class Editor(Entity):
     self.batch = game.globals.engine.drawLayersBatch[self.drawLayer]
 
     #create variables
+    self.cam = game.globals.engine.camera #the game camera
     self.numTabs = 8 #the number of tabs the editor has
     self.leftMouseDown = False #reflects the left mouse button's state
     self.rightMouseDown = False #reflects the right mouse button's state
     self.mousePos = game.globals.engine.mousePos
+    
     self.windowSize = Vec2d(game.globals.engine.window.get_size()) #gets the window size as a vector
     self.selected = "rectPlatform" #the current slected object
     self.brushShape = "rectangle" #the current brush shape
@@ -37,9 +39,10 @@ class Editor(Entity):
     self.snapToGrid = True #is snap to grid on?
     self.gridSize = Vec2d(16, 16) #the size of a grid unit
     self.gridOffset = Vec2d(0, 0) #the x and y offsets of the grid
-    self.dragBoxStart = Vec2d(0, 0) #the start coords of the dragbox
-    self.dragBoxOrigin = Vec2d(0, 0) #the original drag box start point
-    self.dragBoxEnd = Vec2d(0, 0) #the end coords of the dragbox
+    self.mouseClick = Vec2d() #stores the position where the mouse is pressed
+    self.mousePressed = Vec2d() #stores the current position of where the pressed mouse
+    self.dragBoxStart = Vec2d() #the start coords of the dragbox
+    self.dragBoxEnd = Vec2d() #the end coords of the dragbox
 
     self.level = Level(levelName)  # The level that will store our entities
     if not levelName:
@@ -55,7 +58,7 @@ class Editor(Entity):
     self.sideBarSprite = sprite.Sprite(self.sideBarImage, batch = self.batch)
     self.tabList = [] #list that contains all the sprites of the tabs
     for i in xrange(self.numTabs):
-      self.tabList.append(sprite.Sprite(self.tab0Image, batch = self.batch)) #default load all the tabs to unselected
+      self.tabList.append(sprite.Sprite(self.tab0Image, batch = self.batch)) #default load all the tabs to unselect
 
     #scaling
     self.scale = float(game.globals.engine.window.height)/1080.0 #find the scale
@@ -77,17 +80,10 @@ class Editor(Entity):
     def on_mouse_press(x, y, button, modifiers):
       if button == 1:
         self.leftMouseDown = True
-        pos = Vec2d(x, y) # stores x and y in vector
-        #define drag box start
-        if self.snapToGrid:
-          self.dragBoxStart = pos-(pos%self.gridSize)+Vec2d(0, self.gridSize.x)
-          if abs(self.gridOffset.x) < self.gridSize.x/2: self.dragBoxStart = self.dragBoxStart+Vec2d(self.gridOffset.x, 0)
-          else: self.dragBoxStart = self.dragBoxStart+Vec2d(self.gridSize.x+self.gridOffset.x, 0)
-          if abs(self.gridOffset.y) < self.gridSize.x/2: self.dragBoxStart = self.dragBoxStart+Vec2d(0, self.gridOffset.y)
-          else: self.dragBoxStart = self.dragBoxStart+Vec2d(0, self.gridSize.y+self.gridOffset.y)
-
-        else: self.dragBoxStart = Vec2d(x, y)
-        self.dragBoxOrigin = self.dragBoxStart
+        pos = Vec2d(x, y) #gets the mouse position in a vector
+        if self.snapToGrid: #snaps the mouse position to the grid
+          self.mouseClick = pos-(pos%self.gridSize)+self.gridOffset
+        else: self.mouseClick = pos #sets the mouse click pos without snapping to grid
       elif button == 4: self.rightMouseDown = True
       self.dragBoxEnd = self.dragBoxStart
 
@@ -139,26 +135,26 @@ class Editor(Entity):
         self.gridOffset.x = self.gridOffset.x%self.gridSize.x
         self.gridOffset.y = self.gridOffset.y%self.gridSize.y
 
-    #when the drag box is snapping to grid make sure a dragged over squares are in the box
-    if self.leftMouseDown and self.snapToGrid:
-      if self.mousePos.x < self.dragBoxStart.x and self.dragBoxStart.x == self.dragBoxOrigin.x:
-        self.dragBoxStart = self.dragBoxStart+Vec2d(self.gridSize.x, 0)
-      elif self.mousePos.x >= self.dragBoxStart.x and self.dragBoxStart.x > self.dragBoxOrigin.x:
-        self.dragBoxStart = self.dragBoxStart-Vec2d(self.gridSize.x, 0)
-      if self.mousePos.y > self.dragBoxStart.y and self.dragBoxStart.y == self.dragBoxOrigin.y:
-        self.dragBoxStart = self.dragBoxStart-Vec2d(0, self.gridSize.x)
-      elif self.mousePos.y <= self.dragBoxStart.y and self.dragBoxStart.y < self.dragBoxOrigin.y:
-        self.dragBoxStart = self.dragBoxStart+Vec2d(0, self.gridSize.x)
-
-    #get the mouse position if a drag box is being created
+    #if a box is being dragged
     if self.leftMouseDown:
+      #find the mouse end points
+      if self.snapToGrid: self.mousePressed = self.mousePos-(self.mousePos%self.gridSize)+self.gridOffset
+      else: self.mousePressed = Vec2d(self.mousePos.x, self.mousePos.y) #find the mouse end
+      #find the drag box start and end points
+      self.dragBoxStart = Vec2d(min(self.mouseClick.x, self.mousePressed.x), max(self.mouseClick.y, self.mousePressed.y))
+      self.dragBoxEnd = Vec2d(max(self.mouseClick.x, self.mousePressed.x), min(self.mouseClick.y, self.mousePressed.y))
+      #add 1x1 to dragBox if snap to grid then changes based on offset
       if self.snapToGrid:
-        self.dragBoxEnd = self.mousePos-(self.mousePos%self.gridSize)
-        if self.mousePos.x >= self.dragBoxStart.x: self.dragBoxEnd = self.dragBoxEnd+Vec2d(self.gridSize.x, 0)
-        if self.mousePos.y >= self.dragBoxStart.y: self.dragBoxEnd = self.dragBoxEnd+Vec2d(0, self.gridSize.x)
-        self.dragBoxEnd += self.gridOffset #offset the dragbox end
-      else: self.dragBoxEnd = Vec2d(self.mousePos.x, self.mousePos.y)
-
+        if self.gridOffset.y > self.gridSize.y/2: self.dragBoxStart -= Vec2d(0, self.gridSize.y)
+        elif self.gridOffset.y < -(self.gridSize.y/2):
+          self.dragBoxStart += 2*Vec2d(0, self.gridSize.y)
+          self.dragBoxEnd += Vec2d(0, self.gridSize.y)
+        else: self.dragBoxStart += Vec2d(0, self.gridSize.y)
+        if self.gridOffset.x > self.gridSize.y/2:
+          self.dragBoxStart -= Vec2d(self.gridSize.x, 0)
+          self.dragBoxEnd -= Vec2d(self.gridSize.x, 0)
+        elif self.gridOffset.x < -(self.gridSize.x/2): self.dragBoxStart += 2*Vec2d(self.gridSize.x, 0)
+        self.dragBoxEnd += Vec2d(self.gridSize.x, 0)
 
 
   #Draw the editor
@@ -227,12 +223,11 @@ class Editor(Entity):
 
   #place an object into the level
   def place(self):
-    cam = game.globals.engine.camera
-    with cam.shiftView():
-      s = cam.toModelSpace(self.dragBoxStart)
-      e = cam.toModelSpace(self.dragBoxEnd)
-    size = (e-s) / 2
-
+    #get object coordinates
+    with self.cam.shiftView():
+      s = self.cam.toModelSpace(self.dragBoxStart)
+      e = self.cam.toModelSpace(self.dragBoxEnd)
+    size = (e-s)/2
     #find the approiate object to add to the level
     if self.selected == "rectPlatform": #place a rectangle platoform
       corners = [s, s+Vec2d(0, e.y-s.y), e, s+Vec2d(e.x-s.x, 0)]
