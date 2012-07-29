@@ -14,6 +14,14 @@ class Player(PhysicsEntity):
   speed = 200. # units per second
   jump_impulse = 2500.
 
+  slopeRanges = {
+    # ground range (0 <= )
+    'wall' : 45 +1,
+    # wall range
+    'ceiling'  :  45*3 +1,
+    # ceiling range (<= 180)
+  }
+
   def __init__(self, level, playerInput, pos):
     PhysicsEntity.__init__(self)
     self.input = playerInput
@@ -26,6 +34,8 @@ class Player(PhysicsEntity):
     self.vel = self.body.velocity
     self.level = level
     self.isTouchingGround = False
+    self.isTouchingWall = False
+    self.isTouchingCeiling = False
 
     # init shape
     self.collisionSquare = pymunk.Circle(self.body, self.size.x)
@@ -36,6 +46,21 @@ class Player(PhysicsEntity):
     self.shapes = [self.collisionSquare]
 
 
+  # this shoulbe be called by physics.py when a player-platform collision has taken place
+  # this method decides whether the player is allowed to jump (which is only when standing on a platform)
+  def platformCollision(self, arbiter):
+    # steepness is a angle between 0-180 degrees saying with what we collided   
+    # note: 0 == ground < slope < wall < ceiling == 180
+    steepness = abs(arbiter.total_impulse.rotated_degrees(-90).angle_degrees)
+    #print steepness
+    if steepness < self.slopeRanges['wall']:
+      self.isTouchingGround = True
+    elif steepness < self.slopeRanges['ceiling']:
+      self.isTouchingWall = True
+    else:
+      self.isTouchingCeiling = True
+    
+    
   def update(self, dt):
     self.input.checkInput()
 
@@ -67,6 +92,8 @@ class Player(PhysicsEntity):
       self.body.apply_impulse((self.targetVel.x - self.body.velocity.x, 0))
 
     self.isTouchingGround = False
+    self.isTouchingWall = False
+    self.isTouchingCeiling = False
 
   def draw(self):
     with shiftView(self.pos):
