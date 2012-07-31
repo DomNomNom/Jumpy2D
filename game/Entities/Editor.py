@@ -80,9 +80,10 @@ class Editor(Entity):
     def on_mouse_press(x, y, button, modifiers):
       if button == 1:
         self.leftMouseDown = True
-        pos = Vec2d(x, y) #gets the mouse position in a vector
+        with self.cam.shiftView():
+          pos = self.cam.toModelSpace(Vec2d(x, y)) #gets the mouse position in a vector
         if self.snapToGrid: #snaps the mouse position to the grid
-          self.mouseClick = pos-(pos%self.gridSize)+self.gridOffset
+          self.mouseClick = pos-(pos%self.gridSize)#+self.gridOffset
         else: self.mouseClick = pos #sets the mouse click pos without snapping to grid
       elif button == 4: self.rightMouseDown = True
       self.dragBoxEnd = self.dragBoxStart
@@ -138,23 +139,21 @@ class Editor(Entity):
     #if a box is being dragged
     if self.leftMouseDown:
       #find the mouse end points
-      if self.snapToGrid: self.mousePressed = self.mousePos-(self.mousePos%self.gridSize)+self.gridOffset
-      else: self.mousePressed = Vec2d(self.mousePos.x, self.mousePos.y) #find the mouse end
+      with self.cam.shiftView():
+        pos = self.cam.toModelSpace(Vec2d(self.mousePos.x, self.mousePos.y))
+      if self.snapToGrid: self.mousePressed = pos-(pos%self.gridSize)#+self.gridOffset
+      else: self.mousePressed = pos
       #find the drag box start and end points
       self.dragBoxStart = Vec2d(min(self.mouseClick.x, self.mousePressed.x), max(self.mouseClick.y, self.mousePressed.y))
       self.dragBoxEnd = Vec2d(max(self.mouseClick.x, self.mousePressed.x), min(self.mouseClick.y, self.mousePressed.y))
-      #add 1x1 to dragBox if snap to grid then changes based on offset
+      #add a 1x1 vector the drag box
       if self.snapToGrid:
-        if self.gridOffset.y > self.gridSize.y/2: self.dragBoxStart -= Vec2d(0, self.gridSize.y)
-        elif self.gridOffset.y < -(self.gridSize.y/2):
-          self.dragBoxStart += 2*Vec2d(0, self.gridSize.y)
-          self.dragBoxEnd += Vec2d(0, self.gridSize.y)
-        else: self.dragBoxStart += Vec2d(0, self.gridSize.y)
-        if self.gridOffset.x > self.gridSize.y/2:
-          self.dragBoxStart -= Vec2d(self.gridSize.x, 0)
-          self.dragBoxEnd -= Vec2d(self.gridSize.x, 0)
-        elif self.gridOffset.x < -(self.gridSize.x/2): self.dragBoxStart += 2*Vec2d(self.gridSize.x, 0)
+        self.dragBoxStart += Vec2d(0, self.gridSize.y)
         self.dragBoxEnd += Vec2d(self.gridSize.x, 0)
+      #finally translate back to screen space
+      with self.cam.shiftView():
+        self.dragBoxStart = self.cam.toScreenSpace(self.dragBoxStart)
+        self.dragBoxEnd = self.cam.toScreenSpace(self.dragBoxEnd)
 
 
   #Draw the editor
