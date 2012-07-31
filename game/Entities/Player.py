@@ -30,8 +30,6 @@ class Player(PhysicsEntity):
     self.targetVel = Vec2d(0, 0) # target velocity
     self.body = pymunk.Body(self.mass, float('inf'))
     self.body.position = Vec2d(pos)
-    self.pos = self.body.position
-    self.vel = self.body.velocity
     self.level = level
     self.isTouchingGround = False
     self.isTouchingWall = False
@@ -44,6 +42,12 @@ class Player(PhysicsEntity):
     self.collisionSquare.layers = self.collisionLayers
     self.collisionSquare.collision_type = self.collisionType
     self.shapes = [self.collisionSquare]
+
+  # pos/vel now return the our physics-bodys properties
+  @property
+  def pos(self): return self.body.position
+  @property
+  def vel(self): return self.body.velocity
 
 
   # this shoulbe be called by physics.py when a player-platform collision has taken place
@@ -63,9 +67,13 @@ class Player(PhysicsEntity):
   # kills the player; respawning him at the closest checkpoint
   def die(self, state):
     if state:
-      pass # TODO: respawn
+      self.respawn()
   triggerables = dict(PhysicsEntity.triggerables) # copy and extend
   triggerables['die'] = die  # the above method is triggerable
+
+  def respawn(self):
+    self.body.position = self.level.currentSpawn.pos
+    self.body.velocity =  Vec2d(0, 0)
 
   def update(self, dt):
     self.input.checkInput()

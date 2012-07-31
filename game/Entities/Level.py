@@ -56,6 +56,7 @@ class Level(Entity):
       self.loadEntities(levelName)
     else:
       self.ids[0] = self.player
+    self.player.respawn()
 
   # note: This will NOT be called from the loop though the 'updating' groups,
   #       It'll be from the 'level' group.
@@ -114,6 +115,8 @@ class Level(Entity):
 
   def addEntity(self, entityID, entity):
     assert entityID not in self.ids, "Every entity needs a unique ID (start of line)"
+    if entityID == 1:
+      self.currentSpawn = entity
     self.ids[entityID] = entity
     game.engine.addEntity(entity)
 
