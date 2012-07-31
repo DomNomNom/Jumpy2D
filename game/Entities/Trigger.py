@@ -14,11 +14,11 @@ class Trigger(PhysicsEntity):
 
   def __init__(self, level, verticies, thingsToTrigger={}, startState=False):
     self.level = level
-
-    self.thingsToTrigger = thingsToTrigger
-
-    self.createBody(verticies)
+    self.body = level.space.static_body
+    self.createShape(verticies)
     self.shape.sensor = True
+  
+    self.thingsToTrigger = thingsToTrigger
     self.triggered(startState)
 
 

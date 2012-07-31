@@ -1,4 +1,5 @@
 from pymunk import Vec2d, Poly
+from pymunk.util import is_clockwise, is_convex
 import pyglet.gl as gl
 
 import game.globals as game
@@ -72,6 +73,9 @@ class PhysicsEntity(GameEntity):
     assert len(verticies) >= 2
     
     verticies = self.verticies = map(Vec2d, verticies)
+    assert not is_clockwise(verticies), 'Shape verticies must be listed anti-clockwise!'
+    assert is_convex(verticies), 'Shape verticies must be convex!'
+
     if len(verticies) in self.specialPolyTypes:
       self.polyType = self.specialPolyTypes[len(verticies)]
     else:

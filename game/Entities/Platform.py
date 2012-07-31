@@ -13,13 +13,10 @@ class Platform(PhysicsEntity):
 
   drawLayer = 'game'
 
-  
 
   def __init__(self, level, verticies, friction=0):
-
     self.level = level
     self.body = level.space.static_body
-
     self.createShape(verticies)
     self.shape.friction = friction
 

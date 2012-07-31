@@ -27,10 +27,16 @@ class Level(Entity):
     'Platform' : Platform,
     'SpawnPoint' : SpawnPoint,
   }
-  
+
   groups = {'all', 'level'} # note: updating is not in this as we're special
 
-  chrashOnConstructorFail = True # TODO: move this to a config
+  chrashOnFail = True # TODO: move this to a config
+
+  currentSpawn = None
+
+  class InvalidLevelError(Exception):
+    def __init__(self, reason): self.reason = reason
+    def __str__(self):  return repr(self.reason)
 
 
   def __init__(self, playerInput=None, levelName=None):
@@ -57,12 +63,12 @@ class Level(Entity):
     if self.isPaused: return
     self.levelTime += dt
     self.space.step(dt)
-    
+
 
   def setPaused(self, isPaused):
     self.isPaused = isPaused
     self.player.input.currentlyRecording = not isPaused
-  
+
 
   def loadEntities(self, levelName):
     # TODO: uncompression
@@ -82,23 +88,29 @@ class Level(Entity):
           continue
 
         entityID, entityType, args = data[0], data[1], data[2:]
-
         if entityType not in Level.constructors:
           print lineErr, "This is not a valid entity type:", entityType
           print lineErr, "Possible types:", Level.constructors.keys()
           continue
         constructor = self.constructors[entityType]
 
-        if self.chrashOnConstructorFail:
+        try:
           newEntity = constructor(self, *args)
-        else:
-          try:
-            newEntity = constructor(self, *args)
-          except:
-            print lineErr, "Constructing", entityType, "failed. probably weird arguments:", args
-            continue
-        self.addEntity(entityID, newEntity)
+        except:
+          print lineErr, "Constructing", entityType, "failed. probably weird arguments:", args
+          if self.chrashOnFail: raise  # TODO: test me!
+          continue
 
+        if entityID == 1 and entityType != 'SpawnPoint':
+          raise Level.InvalidLevelError('EntityID 1 must be a SpawnPoint!')
+        elif entityID == 2 and entityType != 'LevelEnd':
+          raise InvalidLevelError('EntityID 2 must be a LevelEnd!')
+        else:
+          self.addEntity(entityID, newEntity)
+
+    # check that we have entityIDs 1 and 2 (for spawnPoint and levelEnd)
+    if 1 not in self.ids or 2 not in self.ids:
+      raise InvalidLevelError('There must be a SpawnPoint and LevelEnd for IDs 1 and 2')
 
   def addEntity(self, entityID, entity):
     assert entityID not in self.ids, "Every entity needs a unique ID (start of line)"
@@ -108,12 +120,6 @@ class Level(Entity):
 
   def save(self):
     assert self.levelName
-    '''
-    levelPath = path.join(path.dirname(__file__), pardir, 'Resources', 'Levels', 'uncompressed', levelName, 'level.txt')
-    levelDir = path.dirname(levelPath)
-    if not path.exists(levelDir):
-      mkdir(levelDir)
-    '''
     # TODO: test whether this will create folders
     with resourceOpen('Levels/uncompressed/'+self.levelName+'/level.txt', 'w') as f:
       for entityID, entity in self.ids.iteritems():

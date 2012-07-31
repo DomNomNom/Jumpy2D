@@ -11,6 +11,7 @@ import game.globals as game
 class Player(PhysicsEntity):
 
   size = Vec2d(10, 0)
+  drawLayer = 'player'
   speed = 200. # units per second
   jump_impulse = 2500.
 
@@ -26,10 +27,9 @@ class Player(PhysicsEntity):
     PhysicsEntity.__init__(self)
     self.input = playerInput
     self.groups = self.groups | {'player'}
-    self.drawLayer = 'player'
+    self.targetVel = Vec2d(0, 0) # target velocity
     self.body = pymunk.Body(self.mass, float('inf'))
     self.body.position = Vec2d(pos)
-    self.targetVel = Vec2d(0, 0) # target velocity
     self.pos = self.body.position
     self.vel = self.body.velocity
     self.level = level
@@ -49,7 +49,7 @@ class Player(PhysicsEntity):
   # this shoulbe be called by physics.py when a player-platform collision has taken place
   # this method decides whether the player is allowed to jump (which is only when standing on a platform)
   def platformCollision(self, arbiter):
-    # steepness is a angle between 0-180 degrees saying with what we collided   
+    # steepness is a angle between 0-180 degrees saying with what we collided
     # note: 0 == ground < slope < wall < ceiling == 180
     steepness = abs(arbiter.total_impulse.rotated_degrees(-90).angle_degrees)
     #print steepness
@@ -59,8 +59,14 @@ class Player(PhysicsEntity):
       self.isTouchingWall = True
     else:
       self.isTouchingCeiling = True
-    
-    
+
+  # kills the player; respawning him at the closest checkpoint
+  def die(self, state):
+    if state:
+      pass # TODO: respawn
+  triggerables = dict(PhysicsEntity.triggerables) # copy and extend
+  triggerables['die'] = die  # the above method is triggerable
+
   def update(self, dt):
     self.input.checkInput()
 
@@ -103,7 +109,7 @@ class Player(PhysicsEntity):
       for i in xrange(0, 365, 5):
         gl.glVertex2f(*self.size.rotated_degrees(i))
       gl.glEnd()
-    
+
       gl.glRotatef(degrees(self.body.angle), 0, 0, 1)
       gl.glColor3f(1.0, 0.0, 1.0)
       gl.glBegin(gl.GL_LINES)
