@@ -32,3 +32,10 @@ class SpawnPoint(GameEntity):
       gl.glVertex2f(-s.x, +s.y)
       gl.glVertex2f(+s.x, -s.y)
       gl.glEnd()
+
+  def changeSpawnLocation(self, state):
+    if state:
+      self.level.currentSpawn = self
+
+  triggerables = dict(GameEntity.triggerables) # copy and extend
+  triggerables['checkpoint'] = changeSpawnLocation  # the above method is triggerable

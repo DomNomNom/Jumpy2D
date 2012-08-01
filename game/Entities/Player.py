@@ -64,17 +64,6 @@ class Player(PhysicsEntity):
     else:
       self.isTouchingCeiling = True
 
-  # kills the player; respawning him at the closest checkpoint
-  def die(self, state):
-    if state:
-      self.respawn()
-  triggerables = dict(PhysicsEntity.triggerables) # copy and extend
-  triggerables['die'] = die  # the above method is triggerable
-
-  def respawn(self):
-    self.body.position = self.level.currentSpawn.pos
-    self.body.velocity =  Vec2d(0, 0)
-
   def update(self, dt):
     self.input.checkInput()
 
@@ -124,3 +113,14 @@ class Player(PhysicsEntity):
       gl.glVertex2f(0,0)
       gl.glVertex2f(*Vec2d(30, 0).rotated(self.input.currentAim))
       gl.glEnd()
+
+  def respawn(self):
+    self.body.position = self.level.currentSpawn.pos
+    self.body.velocity =  Vec2d(0, 0)
+
+  # kills the player; respawning him at the closest checkpoint
+  def die(self, state):
+    if state:
+      self.respawn()
+  triggerables = dict(PhysicsEntity.triggerables) # copy and extend
+  triggerables['die'] = die  # the above method is triggerable

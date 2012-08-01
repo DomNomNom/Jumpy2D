@@ -30,10 +30,14 @@ class Level(Entity):
 
   groups = {'all', 'level'} # note: updating is not in this as we're special
 
+  # a flag to chrash when anything goes wrong when the level isn't valid
   chrashOnFail = True # TODO: move this to a config
 
-  currentSpawn = None
+  # our spawn
+  levelStart = None   # the initial one (should not be changed)
+  currentSpawn = None # the current one (for checkpoint-triggers to change)
 
+  # this can be thrown when the level file is not playable
   class InvalidLevelError(Exception):
     def __init__(self, reason): self.reason = reason
     def __str__(self):  return repr(self.reason)
@@ -46,6 +50,7 @@ class Level(Entity):
 
     self.ids = {} # a dict for IDs to entities
 
+    # put the plyer into our level
     if not playerInput:
       playerInput = PlayerInput()
     playerInput.level = self
