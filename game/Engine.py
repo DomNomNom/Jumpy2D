@@ -10,55 +10,51 @@ from Camera import Camera
 
 class Engine:
 
-  # dictionary from group to list of Entities. they are NOT mutually exclusive
-  # don't manually add to this directly! use addEntity/removeEntity.
-  groups = {
-    'all':      set(), # all entities should be in here
-    'updating': set(), # everything that wants to be updated goes in here
-    'level':    set(),
-    'player':   set(),
-    'physics':  set(),
-    'rockets':  set(),
-    'game':     set(), # will draw dependent   on camera movement
-    'UI':       set(), # will draw independent of camera movement
-    'UI_editor': set(), # entites that are part of the editor UI
-  }
-
-  entityAddQueue = set()
-  entityDelQueue = set()
-
-  # layers specify the order in which they are drawn. (ordered back to front)
-  drawLayerNames = [
-    'background',
-    'game',
-    'player',
-    # UI ones from here on
-    'UI_editor',
-    'UI_pauseMenu',
-    'UI_debug',
-  ]
-
-  # A dict from drawLayerNames to a list of entities. they are mutually exclusive
-  drawLayers = {}
-  drawLayersBatch = {} #a dict from drawLayerNames to a list of batches
-
-  levelStartTime = time.time()
-  levelTime = 0. # TODO proper pausing (maybe move to gameState or some level class)
-
-  accumulatedFrameTime = 0.
   updateRate = 1/120. # how often our physics will kick in (in seconds)
 
-  window = None
-  windowCenter = Vec2d()
-
-  shapeToEntity = {} # a dict that gives the entity that contains the keyed shape
-
-
   def __init__(self):
-    # init draw layers
+
+    # dictionary from group to list of Entities. they are NOT mutually exclusive
+    # don't manually add to this directly! use addEntity/removeEntity.
+    self.groups = {
+      'all':      set(), # all entities should be in here
+      'updating': set(), # everything that wants to be updated goes in here
+      'level':    set(),
+      'player':   set(),
+      'physics':  set(),
+      'rockets':  set(),
+      'game':     set(), # will draw dependent   on camera movement
+      'UI':       set(), # will draw independent of camera movement
+      'UI_editor': set(), # entites that are part of the editor UI
+    }
+
+    self.entityAddQueue = set()
+    self.entityDelQueue = set()
+
+    # layers specify the order in which they are drawn. (ordered back to front)
+    self.drawLayerNames = [
+      'background',
+      'game',
+      'player',
+      # UI ones from here on
+      'UI_editor',
+      'UI_pauseMenu',
+      'UI_debug',
+    ]
+
+    # A dict from drawLayerNames to a list of entities. they are mutually exclusive
+    self.drawLayers = {}
+    self.drawLayersBatch = {} #a dict from drawLayerNames to a list of batches
     for name in self.drawLayerNames:
       self.drawLayers[name] = set()
       self.drawLayersBatch[name] = Batch()
+
+    self.levelStartTime = time.time()
+    self.levelTime = 0. # TODO proper pausing (maybe move to gameState or some level class)
+
+    self.accumulatedFrameTime = 0.
+
+    self.shapeToEntity = {} # a dict that gives the entity that contains the keyed shape
 
     # Window
     config = gl.Config(
@@ -73,7 +69,7 @@ class Engine:
     self.windowCenter = Vec2d(self.window.get_size()) / 2
     self.mousePos = Vec2d(self.windowCenter)
 
-    # opengl
+    # opengl flags
     gl.glEnable(gl.GL_BLEND) #enables transparency
 
     # camera

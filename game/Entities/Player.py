@@ -8,6 +8,7 @@ from Rocket import Rocket
 from game.Camera import shiftView
 import game.globals as game
 
+
 class Player(PhysicsEntity):
 
   size = Vec2d(10, 0)
