@@ -117,7 +117,7 @@ class Engine:
     for name in self.drawLayerNames:
       shift = Vec2d() if name.startswith('UI') else None
       with self.camera.shiftView(shift):
-        for entity in self.drawLayers[name]:  # TODO: batch drawing?
+        for entity in self.drawLayers[name]: # TODO: not iterate over batched things
           entity.draw()
         self.drawLayersBatch[name].draw()
 
