@@ -24,13 +24,12 @@ class Player(PhysicsEntity):
     # ceiling range (<= 180)
   }
 
-  def __init__(self, level, playerInput, pos):
+  def __init__(self, level, playerInput):
     PhysicsEntity.__init__(self)
     self.input = playerInput
     self.groups = self.groups | {'player'}
     self.targetVel = Vec2d(0, 0) # target velocity
     self.body = pymunk.Body(self.mass, float('inf'))
-    self.body.position = Vec2d(pos)
     self.level = level
     self.isTouchingGround = False
     self.isTouchingWall = False

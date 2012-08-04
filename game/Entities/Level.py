@@ -33,9 +33,6 @@ class Level(Entity):
   # a flag to chrash when anything goes wrong when the level isn't valid
   chrashOnFail = True # TODO: move this to a config
 
-  # our spawn
-  levelStart = None   # the initial one (should not be changed)
-  currentSpawn = None # the current one (for checkpoint-triggers to change)
 
   # this can be thrown when the level file is not playable
   class InvalidLevelError(Exception):
@@ -54,13 +51,23 @@ class Level(Entity):
     if not playerInput:
       playerInput = PlayerInput()
     playerInput.level = self
-    self.player = Player(self, playerInput, pos=(320, 240))
+    self.player = Player(self, playerInput)
+    
+    # our spawn
+    self.levelStart = None   # the initial one (should not be changed)
+    self.currentSpawn = None # the current one (for checkpoint-triggers to change)
+
     self.levelName = levelName
     if levelName:
       self.addEntity(0, self.player)
       self.loadEntities(levelName)
     else:
       self.ids[0] = self.player
+
+    # TODO: assert level start/end exists
+    if self.levelStart is None:
+      self.addEntity(1, SpawnPoint(self, (0,0)))
+
     self.player.respawn()
 
   # note: This will NOT be called from the loop though the 'updating' groups,
@@ -121,7 +128,7 @@ class Level(Entity):
   def addEntity(self, entityID, entity):
     assert entityID not in self.ids, "Every entity needs a unique ID (start of line)"
     if entityID == 1:
-      self.currentSpawn = entity
+      self.levelStart = self.currentSpawn = entity
     self.ids[entityID] = entity
     game.engine.addEntity(entity)
 
