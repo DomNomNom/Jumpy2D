@@ -41,7 +41,7 @@ class Trigger(PhysicsEntity):
     return [
       'Platform',
       map(tuple, self.verticies), # verticies
-      thingsToTrigger
+      self.thingsToTrigger
     ]
 
 
@@ -55,5 +55,5 @@ class LevelEnd(Trigger):
     return [
       'LevelEnd',
       map(tuple, self.verticies), # verticies
-      thingsToTrigger
+      self.thingsToTrigger
     ]

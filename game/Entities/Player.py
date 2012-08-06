@@ -114,6 +114,9 @@ class Player(PhysicsEntity):
       gl.glVertex2f(*Vec2d(30, 0).rotated(self.input.currentAim))
       gl.glEnd()
 
+  def reconstructionArgs(self):
+    return ['PLAYER']
+
   def respawn(self):
     self.body.position = self.level.currentSpawn.pos
     self.body.velocity =  Vec2d(0, 0)

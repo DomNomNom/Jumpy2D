@@ -42,9 +42,7 @@ class GameState(object):
   class Play(BaseState):
     def __init__(self, playerInputs, levelName):
       assert playerInputs
-      self.levels = []
-      for playerInput in playerInputs:
-        self.levels.append(Level(playerInput, levelName))
+      self.levels = [Level(playerInput, levelName) for playerInput in playerInputs]
       self.primaryLevel = self.levels[0]
     def start(self):
       for level in self.levels:
