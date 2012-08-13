@@ -82,6 +82,10 @@ class Player(PhysicsEntity):
       elif action.type == 'shoot':
         game.engine.addEntity(Rocket(self.level, self.pos, action.aim, self))
 
+    # Stop sticking to walls
+    # TODO: stop the initial contact slowing it down
+    if self.isTouchingWall:   self.collisionSquare.friction = 0
+    else:                     self.collisionSquare.friction = 1
 
     # movement Control
     # increase our velocity if our target velocity is 'faster'
