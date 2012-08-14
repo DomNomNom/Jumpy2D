@@ -5,6 +5,7 @@ from pymunk import Vec2d
 
 from Entity import Entity
 from Level import Level
+from EditorIcon import EditorIcon
 from Platform import Platform
 import game.globals
 
@@ -28,9 +29,17 @@ class Editor(Entity):
     #create variables
     self.cam = game.globals.engine.camera #the game camera
     self.numTabs = 8 #the number of tabs the editor has
+    
+    #mouse variables
     self.leftMouseDown = False #reflects the left mouse button's state
+    self.prevLeftDown = False #if the left mouse was previously pressed down
     self.rightMouseDown = False #reflects the right mouse button's state
+    self.prevRightDown = False #if the right mouse was previuosly pressed down
     self.mousePos = game.globals.engine.mousePos
+    self.mouseClick = Vec2d() #stores the position where the mouse is pressed
+    self.mousePressed = Vec2d() #stores the current position of where the pressed mouse
+    self.dragBoxStart = Vec2d() #the start coords of the dragbox
+    self.dragBoxEnd = Vec2d() #the end coords of the dragbox
     
     self.windowSize = Vec2d(game.globals.engine.window.get_size()) #gets the window size as a vector
     self.selected = "rectPlatform" #the current slected object
@@ -39,21 +48,17 @@ class Editor(Entity):
     self.snapToGrid = True #is snap to grid on?
     self.gridSize = Vec2d(16, 16) #the size of a grid unit
     self.gridOffset = Vec2d(0, 0) #the x and y offsets of the grid
-    self.mouseClick = Vec2d() #stores the position where the mouse is pressed
-    self.mousePressed = Vec2d() #stores the current position of where the pressed mouse
-    self.dragBoxStart = Vec2d() #the start coords of the dragbox
-    self.dragBoxEnd = Vec2d() #the end coords of the dragbox
 
     self.level = Level(levelName)  # The level that will store our entities
     if not levelName:
       levelName = 'test'
     self.level.levelName = levelName # having this after the constructor will avoid the level trying to load the file
 
-    #until resources is implement the editor currently loads its own images
+    #until resources is implemented the editor currently loads its own images
     self.sideBarImage  = image.load("game/Resources/Graphics/EditorUI/editorUI.png")
     self.tab0Image     = image.load("game/Resources/Graphics/EditorUI/editorTab0.png") #deslected tab
     self.tab1Image     = image.load("game/Resources/Graphics/EditorUI/editorTab1.png") #selected tab
-
+    
     #set sprites
     self.sideBarSprite = sprite.Sprite(self.sideBarImage, batch = self.batch)
     self.tabList = [] #list that contains all the sprites of the tabs
@@ -74,24 +79,27 @@ class Editor(Entity):
       j += 1
 
     self.selectTab(0) #select the first tab
+    
+    #generate resources for creating the icons
+    iconImages = ["squarePlatformIcon"]
+    iconFunctions = [self.place]
+    #create the side bar icons
+    for img, func in zip(iconImages, iconFunctions):
+      newImage = image.load("game/Resources/Graphics/EditorUI/"+img+".png")
+      newSprite = sprite.Sprite(newImage, batch = self.batch)
+      game.globals.engine.addEntity(EditorIcon(Vec2d(50, 940), newSprite, self.scale, func))
 
     #mouse event functions
     @game.globals.engine.window.event
     def on_mouse_press(x, y, button, modifiers):
-      if button == 1:
-        self.leftMouseDown = True
-        with self.cam.shiftView():
-          pos = self.cam.toModelSpace(Vec2d(x, y)) #gets the mouse position in a vector
-        if self.snapToGrid: #snaps the mouse position to the grid
-          self.mouseClick = pos-(pos%self.gridSize)#+self.gridOffset
-        else: self.mouseClick = pos #sets the mouse click pos without snapping to grid
+      if button == 1: self.leftMouseDown = True
       elif button == 4: self.rightMouseDown = True
-      self.dragBoxEnd = self.dragBoxStart
 
     @game.globals.engine.window.event
     def on_mouse_release(x, y, button, modifiers):
       if button == 1:
         self.leftMouseDown = False
+        self.prevLeftDown = False
         self.place()
       elif button == 4:
         self.rightMouseDown = False
@@ -135,25 +143,13 @@ class Editor(Entity):
     if abs(self.gridOffset.x) >= self.gridSize.x or abs(self.gridOffset.y) >= self.gridSize.y:
         self.gridOffset.x = self.gridOffset.x%self.gridSize.x
         self.gridOffset.y = self.gridOffset.y%self.gridSize.y
-
-    #if a box is being dragged
-    if self.leftMouseDown:
-      #find the mouse end points
-      with self.cam.shiftView():
-        pos = self.cam.toModelSpace(Vec2d(self.mousePos.x, self.mousePos.y))
-      if self.snapToGrid: self.mousePressed = pos-(pos%self.gridSize)#+self.gridOffset
-      else: self.mousePressed = pos
-      #find the drag box start and end points
-      self.dragBoxStart = Vec2d(min(self.mouseClick.x, self.mousePressed.x), max(self.mouseClick.y, self.mousePressed.y))
-      self.dragBoxEnd = Vec2d(max(self.mouseClick.x, self.mousePressed.x), min(self.mouseClick.y, self.mousePressed.y))
-      #add a 1x1 vector the drag box
-      if self.snapToGrid:
-        self.dragBoxStart += Vec2d(0, self.gridSize.y)
-        self.dragBoxEnd += Vec2d(self.gridSize.x, 0)
-      #finally translate back to screen space
-      with self.cam.shiftView():
-        self.dragBoxStart = self.cam.toScreenSpace(self.dragBoxStart)
-        self.dragBoxEnd = self.cam.toScreenSpace(self.dragBoxEnd)
+        
+    #Process the mouse presses
+    #When the left mouse is first clicked
+    if (self.leftMouseDown and not self.prevLeftDown): self.mouseClicked()
+    
+    #while the mouse is being held down
+    if (self.leftMouseDown): self.mouseHeld()
 
 
   #Draw the editor
@@ -214,11 +210,45 @@ class Editor(Entity):
         gl.glVertex2f(self.dragBoxStart.x, self.dragBoxEnd.y)
         gl.glEnd()
 
+
+  #processes the mouse when it is first clicked
+  def mouseClicked(self):
+    with self.cam.shiftView():
+      pos = self.cam.toModelSpace(self.mousePos) #gets the mouse position in a vector
+    if self.snapToGrid: #snaps the mouse position to the grid
+      self.mouseClick = pos-(pos%self.gridSize)#+self.gridOffset
+    else: self.mouseClick = pos #sets the mouse click pos without snapping to grid
+    self.prevLeftDown = True;
+    
+    
+    #processes the mouse while it is being held down
+  def mouseHeld(self):
+    #if a box is being dragged
+    if self.leftMouseDown:
+      #find the mouse end points
+      with self.cam.shiftView():
+        pos = self.cam.toModelSpace(Vec2d(self.mousePos.x, self.mousePos.y))
+      if self.snapToGrid: self.mousePressed = pos-(pos%self.gridSize)#+self.gridOffset
+      else: self.mousePressed = pos
+      #find the drag box start and end points
+      self.dragBoxStart = Vec2d(min(self.mouseClick.x, self.mousePressed.x), max(self.mouseClick.y, self.mousePressed.y))
+      self.dragBoxEnd = Vec2d(max(self.mouseClick.x, self.mousePressed.x), min(self.mouseClick.y, self.mousePressed.y))
+      #add a 1x1 vector the drag box
+      if self.snapToGrid:
+        self.dragBoxStart += Vec2d(0, self.gridSize.y)
+        self.dragBoxEnd += Vec2d(self.gridSize.x, 0)
+      #finally translate back to screen space
+      with self.cam.shiftView():
+        self.dragBoxStart = self.cam.toScreenSpace(self.dragBoxStart)
+        self.dragBoxEnd = self.cam.toScreenSpace(self.dragBoxEnd)
+      
+    
   #set the given tab as the selected tab
   def selectTab(self, tabNo):
     for i in range(self.numTabs):
       if i == tabNo: self.tabList[i].image = self.tab1Image
       else: self.tabList[i].image = self.tab0Image
+
 
   #place an object into the level
   def place(self):
