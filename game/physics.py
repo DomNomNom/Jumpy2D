@@ -63,7 +63,7 @@ def initSpace():
   space.add_collision_handler(
     Player.collisionType,
     Platform.collisionType,
-    post_solve = notifyPlayer
+    pre_solve = notifyPlayer,
   )
 
   return space

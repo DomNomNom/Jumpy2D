@@ -50,19 +50,24 @@ class Player(PhysicsEntity):
   def vel(self): return self.body.velocity
 
 
-  # this shoulbe be called by physics.py when a player-platform collision has taken place
-  # this method decides whether the player is allowed to jump (which is only when standing on a platform)
+
+  # this should be called by physics.py when a player-platform collision has taken place
+  # it decides whether the player is allowed to jump (which is only when standing on a platform)
+  # it also makes a player slide up a wall without friction
   def platformCollision(self, arbiter):
-    # steepness is a angle between 0-180 degrees saying with what we collided
-    # note: 0 == ground < slope < wall < ceiling == 180
-    steepness = abs(arbiter.total_impulse.rotated_degrees(-90).angle_degrees)
-    #print steepness
-    if steepness < self.slopeRanges['wall']:
-      self.isTouchingGround = True
-    elif steepness < self.slopeRanges['ceiling']:
-      self.isTouchingWall = True
-    else:
-      self.isTouchingCeiling = True
+    for contact in arbiter.contacts:
+      # steepness is a angle between 0-180 degrees saying with what we collided
+      # note: 0 == ground < slope < wall < ceiling == 180
+      steepness = abs(contact.normal.rotated_degrees(90).angle_degrees)
+      # TODO: maybe use this for animation
+      #print steepness
+      if steepness < self.slopeRanges['wall']:
+        self.isTouchingGround = True
+      elif steepness < self.slopeRanges['ceiling']:
+        self.isTouchingWall = True
+        arbiter.friction = 0 # stop sticking to walls
+      else:
+        self.isTouchingCeiling = True
 
   def update(self, dt):
     self.input.checkInput()
@@ -81,11 +86,6 @@ class Player(PhysicsEntity):
           self.body.apply_impulse((0, self.jump_impulse))
       elif action.type == 'shoot':
         game.engine.addEntity(Rocket(self.level, self.pos, action.aim, self))
-
-    # Stop sticking to walls
-    # TODO: stop the initial contact slowing it down
-    if self.isTouchingWall:   self.collisionSquare.friction = 0
-    else:                     self.collisionSquare.friction = 1
 
     # movement Control
     # increase our velocity if our target velocity is 'faster'
