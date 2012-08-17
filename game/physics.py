@@ -10,19 +10,21 @@ from Entities.Rocket import Rocket
 from Entities.Player import Player
 from Entities.Trigger import Trigger
 from Entities.Platform import Platform
-from Entities.Explosion import Explosion
+from Entities.Explosion import Explosion, ExplosionDerbis
+
 
 import game.globals as game
 
 
-physicsEntities = [Platform, Player, Rocket, Trigger, Explosion]
+physicsEntities = [Platform, Player, Rocket, Trigger, Explosion, ExplosionDerbis]
 
 # a dict from a unique power of 2 (the layer number) to the entities that are in the layer
 collisionLayers = {
   2**0 : [Platform, Player],
   2**1 : [Platform, Rocket],
-  2**2 : [Player,  Trigger],
-  2**3 : [Player,  Explosion],
+  2**2 : [Platform, ExplosionDerbis],
+  2**3 : [Player,  Trigger],
+  2**4 : [Player,  Explosion],
 }
 
 
@@ -44,6 +46,7 @@ def initSpace():
   space.gravity = Vec2d(0.0, -900.0)
   space.collision_bias = 0
 
+  # attach collision handlers (defined at the end of the file)
   space.add_collision_handler(
     Rocket.collisionType,
     Platform.collisionType,

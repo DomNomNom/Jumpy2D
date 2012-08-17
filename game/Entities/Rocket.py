@@ -3,7 +3,7 @@ import pymunk
 from pymunk import Vec2d
 
 from Entity import PhysicsEntity
-from Explosion import Explosion
+from Explosion import Explosion, ExplosionDerbis
 import game.globals as game
 
 
@@ -44,3 +44,7 @@ class Rocket(PhysicsEntity):
 
   def explode(self):
     game.engine.addEntity(Explosion(self.level, self.body.position, self.player))
+    for i in xrange(10):
+      game.engine.addEntity(
+        ExplosionDerbis(self.level, self.body.position, self.player)
+      )
