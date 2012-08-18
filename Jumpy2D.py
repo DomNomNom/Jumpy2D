@@ -49,7 +49,7 @@ else: # play a level
     try:
       playerInputs = [Controller()] # use a game pad input if we have one
     except:
-      playerInput = [KeyboardControl()]
+      playerInputs = [KeyboardControl()]
   # load a level when specified
   levelName = args.level
   if not levelName:

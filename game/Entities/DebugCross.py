@@ -5,7 +5,7 @@ from Entity import Entity
 import game.globals
 
 class DebugCross(Entity):
-  '''A simple Entity that just draws a cross at engine.mousePos'''
+  '''A simple Entity that just draws a cross at the given position'''
 
   size = Vec2d(8, 8)
 
