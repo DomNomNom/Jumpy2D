@@ -66,8 +66,8 @@ class ExplosionDerbis(PhysicsEntity):
 
   colour = (0.5, 0.5, 0.5)
   mass = 1
-  initialSpeed = 300
-  lifeSpan = 0.3 # seconds
+  initialSpeed = 500
+  lifeSpan = 0.1 # seconds
 
   verticies = ( (10, -5), (0, 10), (-10, -5) )
 

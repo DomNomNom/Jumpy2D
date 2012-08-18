@@ -211,11 +211,15 @@ class Replay(PlayerInput):
     self.history = {}
     for line in inFile:
       # TODO: make parsing safe (try/except)
-      actionArgs = literal_eval(line)
-      time = actionArgs[0]
-      if time not in self.history:
-        self.history[time] = []
-      self.history[time].append(self.PlayerAction(*actionArgs))
+      try:
+        actionArgs = literal_eval(line)
+        time = actionArgs[0]
+        if time not in self.history:
+          self.history[time] = []
+        self.history[time].append(self.PlayerAction(*actionArgs))
+      except:
+        print "This line could not be parsed:", line
+        continue
     self.times = sorted(self.history.keys())
     self.nextTime = 0
 
