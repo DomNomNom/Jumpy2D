@@ -1,4 +1,5 @@
 #!/usr/bin/python
+
 from pyglet import app
 from pymunk import Vec2d
 import argparse

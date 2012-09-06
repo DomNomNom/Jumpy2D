@@ -1,9 +1,11 @@
+from code import InteractiveConsole
+import time
+
 import pyglet.gl as gl
 from pyglet.graphics import Batch
-from pyglet.window import Window
+from pyglet.window import Window, key
 from pyglet import clock
 from pymunk import Vec2d
-import time
 
 from Camera import Camera
 
@@ -89,6 +91,17 @@ class Engine:
     # shedule our main loop so we don't need to manually deal with time
     clock.schedule(self.run)
 
+    def makeConsole():
+      ic = InteractiveConsole(globals())
+      try:
+        ic.interact("Welcome to the scripting console! press ctrl+D to resume the game")
+      except SystemExit, e:
+        exit()
+    @self.window.event
+    def on_key_press(symbol, modifiers):
+      if symbol==key.QUOTELEFT and modifiers & key.MOD_CTRL:
+        makeConsole()
+
 
   # our main game loop
   def run(self, dt):
@@ -112,7 +125,6 @@ class Engine:
     gl.glClear(gl.GL_COLOR_BUFFER_BIT)
     gl.glLoadIdentity()
 
-    #self.camera.gameFocus = (self.windowCenter - self.mousePos) / 2
     self.camera.track() # does camera work (such as what it focuses on)
     for name in self.drawLayerNames:
       shift = Vec2d() if name.startswith('UI') else None

@@ -1,5 +1,4 @@
 import pyglet.gl as gl
-from pyglet.sprite import Sprite
 from pymunk import Vec2d
 from itertools import chain
 

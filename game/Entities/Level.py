@@ -12,6 +12,7 @@ from Gates import NotGate
 from Entity import Entity
 from Rocket import Rocket
 from Player import Player
+from Sprite import Sprite
 from Trigger import Trigger, LevelEnd
 from Platform import Platform
 from SpawnPoint import SpawnPoint
@@ -21,6 +22,7 @@ import game.globals as game
 
 class Level(Entity):
   constructors = { # To construct the entities when we load a level from a file
+    'Sprite' : Sprite,
     'NotGate' : NotGate,
     'Trigger' : Trigger,
     'LevelEnd' : LevelEnd,
@@ -28,7 +30,7 @@ class Level(Entity):
     'SpawnPoint' : SpawnPoint,
   }
 
-  groups = {'all', 'level'} # note: updating is not in this as we're special
+  groups = {'all', 'level'} # note: 'updating' is not in this as we're special
 
   # a flag to chrash when anything goes wrong when the level isn't valid
   chrashOnFail = True # TODO: move this to a config

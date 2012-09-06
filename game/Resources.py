@@ -4,7 +4,7 @@ import os # for creating files
 
 def createFile(path, fileName):
   # path format example: 'Graphics/path/To/folder'
-  # paths are relativae to game/Resources/
+  # paths are relative to game/Resources/
   
   # make a ['path', 'to', 'file.txt'] form
   fullPath = (

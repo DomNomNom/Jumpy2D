@@ -166,7 +166,7 @@ class KeyboardControl(PlayerInput):
       'right' : key.RIGHT,
       'jump'  : key.UP,
     }
-    self.keyBindings = { # re-bind with WASD control
+    self.keyBindings = { # re-bind with WASD control TODO: move to config!
       'left'  : key.A,
       'right' : key.D,
       'jump'  : key.W,
