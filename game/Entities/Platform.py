@@ -6,6 +6,7 @@ from Entity import PhysicsEntity
 
 from game.Camera import shiftView
 import game.globals as game # engine, resources
+from game.DrawingGroups import TextureBindGroup
 
 
 class Platform(PhysicsEntity):
@@ -20,11 +21,19 @@ class Platform(PhysicsEntity):
     self.shape.friction = friction
     
     self.colour = (0.0, 1.0, int(self.shape.friction==0)/3.) # make it a slightly different colour when frictionless
+    self.colour = (1,1,1)
+
+    self.texture = game.resources.textures['platform']
+    texCoords = self.size / (self.texture.width, self.texture.height)
+    texCoords = Vec2d(texCoords.y, texCoords.x) # i don't even know why
+    print "ratio", texCoords
+
     self.vertexList = game.engine.drawLayersBatch[self.drawLayer].add(
-      len(self.verticies), self.polyType, None, # draw mode
-      ('v2f/static', (
-        [x for x in chain(*self.verticies)]    # verticies
-      )),
+      len(self.verticies), 
+      self.polyType, 
+      TextureBindGroup(self.texture), # group
+      ('v2f/static', tuple(chain(*self.verticies))),    # verticies
+      ('t2f/static', (0,0,  texCoords.x,0,  texCoords.x,texCoords.y,  0,texCoords.y)),
       ('c3f/static', self.colour * len(self.verticies)), # colour for each vertex
     )
 
