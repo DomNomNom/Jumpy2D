@@ -26,14 +26,13 @@ class Platform(PhysicsEntity):
     self.texture = game.resources.textures['platform']
     texCoords = self.size / (self.texture.width, self.texture.height)
     texCoords = Vec2d(texCoords.y, texCoords.x) # i don't even know why
-    print "ratio", texCoords
 
     self.vertexList = game.engine.drawLayersBatch[self.drawLayer].add(
-      len(self.verticies), 
-      self.polyType, 
+      len(self.verticies),
+      self.polyType,
       TextureBindGroup(self.texture), # group
       ('v2f/static', tuple(chain(*self.verticies))),    # verticies
-      ('t2f/static', (0,0,  texCoords.x,0,  texCoords.x,texCoords.y,  0,texCoords.y)),
+      ('t2f/static', (0,0,  texCoords.x,0,  texCoords.x,texCoords.y,  0,texCoords.y)), # texture coordinates FIXME: this will not work for non-rectangle shapes!
       ('c3f/static', self.colour * len(self.verticies)), # colour for each vertex
     )
 
