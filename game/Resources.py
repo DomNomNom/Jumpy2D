@@ -29,6 +29,7 @@ class Resources(object):
   
   textures = {
     'platform' : 'platform.jpg',
+    #'platform' : 'debug.png',
   }
   
   def load(self): # loads all the things. TODO: make a gameState that only loads sepcific things

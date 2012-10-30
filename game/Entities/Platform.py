@@ -20,41 +20,25 @@ class Platform(PhysicsEntity):
     self.createShape(verticies)
     self.shape.friction = friction
     
-    self.colour = (0.0, 1.0, int(self.shape.friction==0)/3.) # make it a slightly different colour when frictionless
+    #self.colour = (0.0, 1.0, int(self.shape.friction==0)/3.) # make it a slightly different colour when frictionless
     self.colour = (1,1,1)
 
     self.texture = game.resources.textures['platform']
-    texCoords = self.size / (self.texture.width, self.texture.height)
-    texCoords = Vec2d(texCoords.y, texCoords.x) # i don't even know why
+    texScale = 1/Vec2d(self.texture.width, self.texture.height)
+    texCoords = [xy*texScale for xy in self.verticies]
 
     self.vertexList = game.engine.drawLayersBatch[self.drawLayer].add(
       len(self.verticies),
       self.polyType,
       TextureBindGroup(self.texture), # group
-      ('v2f/static', tuple(chain(*self.verticies))),    # verticies
-      ('t2f/static', (0,0,  texCoords.x,0,  texCoords.x,texCoords.y,  0,texCoords.y)), # texture coordinates FIXME: this will not work for non-rectangle shapes!
-      ('c3f/static', self.colour * len(self.verticies)), # colour for each vertex
+      ('v2f/static', list(chain(*self.verticies))),      # verticies
+      ('t2f/static', list(chain(*texCoords     ))),      # texture coordinates
+      ('c3f/static', self.colour * len(self.verticies)), # colour for each vertex (all the same)
     )
 
 
   def draw(self):
-    pass
-    '''
-    s = self.size # just a shorthand
-    gl.glColor3f(*self.colour)
-    gl.glBegin(self.polyType)
-    for vertex in self.verticies:
-      gl.glVertex2f(*vertex)
-    gl.glEnd()
-    '''
-    
-    # TODO: textures
-    '''
-    with shiftView(self.pos - self.size):
-      tex = game.resources.textures['platform']
-      Sprite(tex)
-      tex.blit_tiled(0,0, 0, *(self.size*2))
-    '''
+    pass # we are using a vertex list
 
   def reconstructionArgs(self):
     return [

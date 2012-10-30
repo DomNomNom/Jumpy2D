@@ -83,14 +83,11 @@ class PhysicsEntity(GameEntity):
 
     self.shape = Poly(self.body, verticies)
 
-    minX = min(verticies, key=lambda v: v.x).x
-    maxX = max(verticies, key=lambda v: v.x).x
-    minY = min(verticies, key=lambda v: v.y).y
-    maxY = max(verticies, key=lambda v: v.y).y
-    #print minX
-    self.size = Vec2d(maxX-minX, maxY-minY)
 
     # note: collisionLayers and collisionType get created by physics.py
     self.shape.layers = self.collisionLayers
     self.shape.collision_type = self.collisionType
     self.shapes = [self.shape]
+
+    bb = self.shape.cache_bb()
+    self.size = Vec2d(bb.right-bb.left, bb.top-bb.bottom)
