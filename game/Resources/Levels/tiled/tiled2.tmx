@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="40" height="25" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="tileset" tilewidth="32" tileheight="32">
+  <image source="tileset.png" width="64" height="64"/>
+ </tileset>
+ <objectgroup name="Object Layer 1" width="40" height="25">
+  <object type="SpawnPoint" gid="1" x="128" y="640">
+   <properties>
+    <property name="id" value="1"/>
+   </properties>
+  </object>
+  <object type="LevelEnd" x="960" y="256">
+   <properties>
+    <property name="id" value="2"/>
+   </properties>
+   <polygon points="32,-192 160,-192 160,-64 32,-64"/>
+  </object>
+  <object x="64" y="704">
+   <polygon points="0,0 0,-416 -32,-416 -32,0"/>
+  </object>
+  <object x="32" y="288">
+   <polygon points="0,0 128,0 192,-32 0,-32"/>
+  </object>
+  <object x="32" y="704">
+   <polygon points="0,0 0,32 288,32 288,0"/>
+  </object>
+  <object x="544" y="704">
+   <polygon points="0,0 320,0 320,32 0,32"/>
+  </object>
+  <object x="864" y="704">
+   <polygon points="0,32 0,-160 256,-160 256,32"/>
+  </object>
+  <object x="992" y="480">
+   <polygon points="0,64 0,-160 128,-160 128,64"/>
+  </object>
+  <object type="Trigger" x="288" y="736">
+   <properties>
+    <property name="0" value="die"/>
+    <property name="id" value="15"/>
+   </properties>
+   <polygon points="0,0 288,0 288,32 0,32"/>
+  </object>
+ </objectgroup>
+</map>

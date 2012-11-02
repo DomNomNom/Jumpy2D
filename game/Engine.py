@@ -60,7 +60,7 @@ class Engine:
 
     # Window
     config = gl.Config(
-      #sample_buffers=1, samples=4   # antialiasing
+      sample_buffers=1, samples=4   # antialiasing
     )
     self.window = Window(
       config = config,
@@ -73,6 +73,7 @@ class Engine:
 
     # opengl flags
     gl.glEnable(gl.GL_BLEND) #enables transparency
+
 
     # camera
     self.camera = Camera()

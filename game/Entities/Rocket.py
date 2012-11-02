@@ -10,7 +10,7 @@ import game.globals as game
 class Rocket(PhysicsEntity):
 
   size = Vec2d(9, 4)
-  speed = 300. # units per second
+  speed = 500. # units per second
 
   def __init__(self, level, pos, angle, player):
     self.level = level
