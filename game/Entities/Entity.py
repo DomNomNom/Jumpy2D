@@ -73,7 +73,11 @@ class PhysicsEntity(GameEntity):
     assert len(verticies) >= 2
     
     verticies = self.verticies = map(Vec2d, verticies)
-    assert not is_clockwise(verticies), 'Shape verticies must be listed anti-clockwise!'
+    if is_clockwise(verticies): # fix it if it is clockwise
+      average = sum(verticies) / len(verticies)
+      verticies.sort(key=lambda v: (average-v).get_angle())
+
+    assert not is_clockwise(verticies), 'OMG, my code is wrong! the poly points are still clockwise'
     assert is_convex(verticies), 'Shape verticies must be convex!'
 
     if len(verticies) in self.specialPolyTypes:

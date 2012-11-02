@@ -119,13 +119,13 @@ class Level(Entity):
         if entityID == 1 and entityType != 'SpawnPoint':
           raise Level.InvalidLevelError('EntityID 1 must be a SpawnPoint!')
         elif entityID == 2 and entityType != 'LevelEnd':
-          raise InvalidLevelError('EntityID 2 must be a LevelEnd!')
+          raise Level.InvalidLevelError('EntityID 2 must be a LevelEnd!')
         else:
           self.addEntity(entityID, newEntity)
 
     # check that we have entityIDs 1 and 2 (for spawnPoint and levelEnd)
     if 1 not in self.ids or 2 not in self.ids:
-      raise InvalidLevelError('There must be a SpawnPoint and LevelEnd for IDs 1 and 2')
+      raise Level.InvalidLevelError('There must be a SpawnPoint and LevelEnd for IDs 1 and 2')
 
   def addEntity(self, entityID, entity):
     assert entityID not in self.ids, "Every entity needs a unique ID (start of line)"
