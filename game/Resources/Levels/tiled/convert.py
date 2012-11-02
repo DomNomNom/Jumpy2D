@@ -56,7 +56,7 @@ for fileName in filter(lambda x: x.endswith('.tmx'), os.listdir(currentDir)):
         elif entityType == 'Trigger':
             thingsToTrigger = {}
             for prop in obj.findall("./properties/property[@name]"):
-                if not is_int(prop.attrib['name']): continu
+                if not is_int(prop.attrib['name']): continue
                 thingsToTrigger[int(prop.attrib['name'])] = str(prop.attrib['value'])
             args = (getPolygon(obj, offset), thingsToTrigger)
         else:
